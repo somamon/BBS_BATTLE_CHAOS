@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Routing;
 
+use App\Presentation\Routing\Middleware\AuthMiddleware;
 use App\Presentation\Routing\Middleware\CsrfMiddleware;
 use App\Presentation\Routing\Middleware\MiddlewareInterface;
 
@@ -16,6 +17,7 @@ final class MiddlewareFactory
 
         return match ($key) {
             'csrf'       => new CsrfMiddleware(),
+            'auth'       => new AuthMiddleware(),
             // 'rate_limit' => new RateLimitMiddleware($arg),  // 実装時に追加
             default      => throw new \InvalidArgumentException("unknown middleware: {$name}"),
         };
