@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Presentation\Controller;
+
+use App\Presentation\Http\Request;
+use App\Presentation\Http\Response;
 
 class PlaygroundController
 {
-    public function index(): void
+    public function index(Request $request): Response
     {
-        header('Content-Type: text/html; charset=UTF-8');
-        echo <<<'HTML'
+        $html = <<<'HTML'
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -73,5 +77,7 @@ class PlaygroundController
 </body>
 </html>
 HTML;
+
+        return Response::html($html);
     }
 }
