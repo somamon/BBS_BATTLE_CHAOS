@@ -20,7 +20,7 @@ services:
     depends_on: [db]
 
   db:
-    image: mariadb:11
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
@@ -29,6 +29,8 @@ services:
     ports: ["${DB_PORT}:3306"]      # 外部DBクライアント → localhost:${DB_PORT}
     volumes:
       - dbdata:/var/lib/mysql
+      # 初回起動（dbdataが空）時に連番SQLを自動適用
+      - ./database/migrations:/docker-entrypoint-initdb.d:ro
 
 volumes:
   dbdata:
