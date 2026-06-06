@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use App\Infrastructure\Container;
 use App\Presentation\Http\Request;
 use App\Presentation\Http\Response;
 use App\Presentation\Routing\Router;
@@ -14,7 +15,8 @@ session_start();
 
 $request = Request::fromGlobals();
 
-$router = new Router();
+$container = Container::build();
+$router    = new Router(fn(string $class): object => $container->get($class));
 require __DIR__ . '/../src/Presentation/Routing/routes.php';
 
 try {
