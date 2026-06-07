@@ -12,5 +12,13 @@ interface PostRepository
     /** @return Post[] */
     public function findAliveByThread(string $threadId): array;
 
+    public function findById(string $id): ?Post;
+
+    /** 行ロック付きで取得（投資トランザクション用）。 */
+    public function findByIdForUpdate(string $id): ?Post;
+
     public function insert(Post $post): void;
+
+    /** 株・HP・レベル等の状態を保存（投資・減衰確定時）。 */
+    public function save(Post $post): void;
 }
