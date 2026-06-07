@@ -1,0 +1,90 @@
+# 本番用 compose（単体で完結。開発用 docker-compose.yml とは別物）。
+#   起動: docker compose -f docker-compose.prod.yml up -d
+#
+# 開発との違い:
+#   - Web は Caddy（Let's Encrypt 自動取得/更新）。nginx + 自己署名は使わない。
+#   - mailpit なし（本番は実SMTP=SESなどを使う）。
+#   - 全サービス restart: unless-stopped。
+#   - コードは git clone したホスト側をマウント（vendor は composer install で用意）。
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"     # ACME(HTTP-01) と 80→443 リダイレクト
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./:/var/www/html:ro          # 静的配信用（public 配下）
+      - caddy_data:/data             # 取得した証明書の永続化（重要）
+      - caddy_config:/config
+    depends_on: [php]
+
+  php:
+    build: ./docker/php
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_URL: ${APP_URL}
+      APP_TIMEZONE: ${APP_TIMEZONE}
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_DRIVER: ${MAIL_DRIVER}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  # スキーマ適用（台帳管理で連番SQLを適用して終了する一回限りのサービス）
+  migrate:
+    build: ./docker/php
+    restart: "no"
+    environment:
+      APP_TIMEZONE: ${APP_TIMEZONE}
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    command: php /var/www/html/bin/migrate.php
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    # 本番は 3306 を外部公開しない（同一 compose ネットワーク内からのみ接続）。
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  dbdata:
+  caddy_data:
+  caddy_config:
