@@ -255,6 +255,8 @@ return [
     'err.email_unverified' => 'Your email is not verified. Open the link in the verification email to finish sign-up',
     'err.invalid_token' => 'The verification link is invalid or has expired',
     'err.too_many_attempts' => 'Too many attempts. Please wait a while and try again',
+    'err.posting_too_fast' => 'You are posting too quickly. Please wait a moment and try again',
+    'err.duplicate_post' => 'Same as your previous post. Duplicate posts are not allowed',
     'err.google_failed' => 'Google login failed. Please try again',
     'err.google_email_unverified' => 'Your Google account email is not verified, so you cannot log in',
     'err.invest_not_found' => 'Post not found',

@@ -37,6 +37,8 @@ $totalPages = $totalPages ?? 1;
   <?php endforeach; ?>
 <?php endif; ?>
 
+<a href="/thread/create" class="fab" aria-label="<?= View::e(t('threads.new')) ?>">＋</a>
+
 <?php if ($totalPages > 1): ?>
   <div class="card" style="text-align:center;">
     <?php if ($page > 1): ?>

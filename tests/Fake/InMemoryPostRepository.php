@@ -30,6 +30,17 @@ final class InMemoryPostRepository implements PostRepository
         return array_values($byThread);
     }
 
+    public function findLatestByThread(string $threadId): ?Post
+    {
+        $latest = null;
+        foreach ($this->posts as $p) {
+            if ($p->threadId === $threadId) {
+                $latest = $p; // 挿入順＝古い順なので、最後に見たものが最新
+            }
+        }
+        return $latest;
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $alive = array_filter($this->posts, static fn (Post $p): bool => $p->isAlive());

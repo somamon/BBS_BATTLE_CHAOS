@@ -52,6 +52,12 @@ final class PostReply
                 throw ValidationException::field('content', 'validation.content.too_long', '本文は' . Game::POST_CONTENT_MAX . '文字以内にしてください');
             }
 
+            // 二重カキコ（同一投稿者が直前と同じ本文を連投）を弾く。
+            $latest = $this->posts->findLatestByThread($threadId);
+            if ($latest !== null && $latest->authorHash === $authorHash && trim($latest->content) === $content) {
+                throw BoardException::duplicatePost();
+            }
+
             $post = Post::create($threadId, $authorHash, $authorId, $content, $now);
             $this->posts->insert($post);
 

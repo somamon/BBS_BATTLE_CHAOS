@@ -255,6 +255,8 @@ return [
     'err.email_unverified' => 'メールアドレスが未確認です。確認メールのリンクから登録を完了してください',
     'err.invalid_token' => '確認リンクが無効か、有効期限が切れています',
     'err.too_many_attempts' => '試行回数が多すぎます。しばらく時間をおいて再度お試しください',
+    'err.posting_too_fast' => '投稿の間隔が短すぎます。少し時間をおいてからお試しください',
+    'err.duplicate_post' => '直前と同じ内容です。連投はできません',
     'err.google_failed' => 'Googleログインに失敗しました。お手数ですが、もう一度お試しください',
     'err.google_email_unverified' => 'Googleアカウントのメールアドレスが未確認のため、ログインできません',
     'err.invest_not_found' => '投稿が見つかりません',

@@ -39,6 +39,17 @@ final class PdoPostRepository implements PostRepository
         );
     }
 
+    public function findLatestByThread(string $threadId): ?Post
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM posts WHERE thread_id = ? ORDER BY created_at DESC, id DESC LIMIT 1'
+        );
+        $stmt->execute([$threadId]);
+        $row = $stmt->fetch();
+
+        return $row ? $this->hydrate($row) : null;
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $stmt = $this->pdo->prepare(

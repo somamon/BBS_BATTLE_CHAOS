@@ -23,4 +23,10 @@ final class BoardException extends \RuntimeException
     {
         return new self('err.thread_dead', 'このスレッドは朽ちており書き込めません');
     }
+
+    /** 直前と同じ内容の連投（二重カキコ）。 */
+    public static function duplicatePost(): self
+    {
+        return new self('err.duplicate_post', '直前と同じ内容です。連投はできません');
+    }
 }
