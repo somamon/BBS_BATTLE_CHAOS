@@ -107,7 +107,7 @@ return [
     'register.password_hint' => '8文字以上で設定してください。',
     'register.submit' => '登録する',
     'register.have_account' => 'すでにアカウントをお持ちですか？',
-    'register.agree' => '私は満18歳以上であり、<a href="/terms" target="_blank" rel="noopener">利用規約</a>と<a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',
+    'register.agree' => '<a href="/terms" target="_blank" rel="noopener">利用規約</a>と<a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',
 
     // 確認メール送信完了
     'verify_sent.title' => '確認メールを送信しました',
@@ -241,7 +241,7 @@ return [
     'err.invest_invalid_amount' => '投資額が不正です',
     'err.invest_too_small' => '投資額が小さすぎて株を取得できません',
     'err.all_fields' => 'すべての項目を入力してください',
-    'err.must_agree' => '登録には、年齢確認と利用規約・プライバシーポリシーへの同意が必要です',
+    'err.must_agree' => '登録には、利用規約・プライバシーポリシーへの同意が必要です',
 
     // 入力検証
     'validation.email.required' => 'メールアドレスを入力してください',

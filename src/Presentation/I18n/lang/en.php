@@ -107,7 +107,7 @@ return [
     'register.password_hint' => 'Use at least 8 characters.',
     'register.submit' => 'Create account',
     'register.have_account' => 'Already have an account?',
-    'register.agree' => 'I am at least 18 years old and agree to the <a href="/terms" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
+    'register.agree' => 'I agree to the <a href="/terms" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
 
     // Verification email sent
     'verify_sent.title' => 'Verification email sent',
@@ -241,7 +241,7 @@ return [
     'err.invest_invalid_amount' => 'Invalid investment amount',
     'err.invest_too_small' => 'The amount is too small to acquire any shares',
     'err.all_fields' => 'Please fill in all fields',
-    'err.must_agree' => 'To register, you must confirm your age and agree to the Terms and Privacy Policy',
+    'err.must_agree' => 'To register, you must agree to the Terms and Privacy Policy',
 
     // Validation
     'validation.email.required' => 'Please enter your email',

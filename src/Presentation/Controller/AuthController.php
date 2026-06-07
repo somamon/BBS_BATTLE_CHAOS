@@ -73,7 +73,7 @@ final class AuthController
         }
         $this->rateLimiter->hit($key, self::REGISTER_WINDOW);
 
-        // 年齢確認＋規約・プライバシー同意（M5）。未同意なら登録させない。
+        // 利用規約・プライバシーポリシーへの同意（M5）。未同意なら登録させない。
         if (!$agree) {
             return Response::html($this->registerView(t('err.must_agree'), $email, $name, false), 422);
         }

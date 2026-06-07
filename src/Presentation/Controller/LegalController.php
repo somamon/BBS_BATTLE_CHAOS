@@ -44,8 +44,9 @@ final class LegalController
      */
     private function legalParams(): array
     {
+        // 連絡先は実在アドレスを既定にする（MAIL_FROM の no-reply 等にフォールバックしない）。
         $operator = (string) (getenv('LEGAL_OPERATOR') ?: 'BBS BATTLE CHAOS 運営チーム');
-        $contact  = (string) (getenv('LEGAL_CONTACT') ?: (getenv('MAIL_FROM') ?: ''));
+        $contact  = (string) (getenv('LEGAL_CONTACT') ?: '8556iamsmartphone0124@gmail.com');
 
         return [
             'operator' => $operator,
