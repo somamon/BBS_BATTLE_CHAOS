@@ -35,14 +35,12 @@ final class ListThreads
             }
 
             $result[] = [
-                'id'            => $thread->id,
-                'title'         => $thread->title,
-                'hp'            => $hp,
-                'maxHp'         => $thread->maxHp(),
-                'mutationLevel' => $thread->mutationLevel(),
-                'totalShares'   => $thread->totalShares(),
-                'postCount'     => $thread->postCount(),
-                'createdAt'     => $thread->createdAt->format('Y-m-d H:i'),
+                'id'        => $thread->id,
+                'title'     => $thread->title,
+                'hp'        => $hp,
+                'maxHp'     => $thread->maxHp(),
+                'postCount' => $thread->postCount(),
+                'createdAt' => $thread->createdAt->format('Y-m-d H:i'),
             ];
         }
 

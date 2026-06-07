@@ -9,11 +9,12 @@ final class InvestResult
 {
     public function __construct(
         public readonly int $amount,
+        public readonly int $shares,
+        public readonly float $price,
+        public readonly int $toShares,
         public readonly int $toHp,
-        public readonly int $toDividend,
-        public readonly int $toSink,
-        public readonly int $threadHpAfter,
-        public readonly int $mutationLevelAfter,
-        public readonly bool $mutated,
+        public readonly int $postHpAfter,
+        public readonly int $levelAfter,
+        public readonly bool $leveledUp,
     ) {}
 }
