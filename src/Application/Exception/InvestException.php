@@ -9,12 +9,12 @@ final class InvestException extends \RuntimeException
 {
     public static function notFound(): self
     {
-        return new self('スレッドが見つかりません');
+        return new self('投稿が見つかりません');
     }
 
     public static function dead(): self
     {
-        return new self('このスレッドは朽ちており投資できません');
+        return new self('この投稿は朽ちており投資できません');
     }
 
     public static function insufficientFunds(): self
@@ -25,5 +25,10 @@ final class InvestException extends \RuntimeException
     public static function invalidAmount(): self
     {
         return new self('投資額が不正です');
+    }
+
+    public static function tooSmall(): self
+    {
+        return new self('投資額が小さすぎて株を取得できません');
     }
 }
