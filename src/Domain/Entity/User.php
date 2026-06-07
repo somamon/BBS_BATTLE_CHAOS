@@ -20,9 +20,10 @@ final class User
         public readonly string $passwordHash,
         private int $money,
         public readonly DateTimeImmutable $createdAt,
+        private ?DateTimeImmutable $emailVerifiedAt = null,
     ) {}
 
-    /** 新規登録ユーザー（初期所持金を付与）。 */
+    /** 新規登録ユーザー（初期所持金を付与。メールは未確認状態で作る）。 */
     public static function register(string $email, string $name, string $passwordHash, DateTimeImmutable $now): self
     {
         return new self(
@@ -32,7 +33,25 @@ final class User
             passwordHash: $passwordHash,
             money: Game::INITIAL_MONEY,
             createdAt: $now,
+            emailVerifiedAt: null,
         );
+    }
+
+    /** メール確認が完了しているか。 */
+    public function isEmailVerified(): bool
+    {
+        return $this->emailVerifiedAt !== null;
+    }
+
+    public function emailVerifiedAt(): ?DateTimeImmutable
+    {
+        return $this->emailVerifiedAt;
+    }
+
+    /** メール確認を完了させる（冪等。既に確認済みなら何もしない）。 */
+    public function markEmailVerified(DateTimeImmutable $now): void
+    {
+        $this->emailVerifiedAt ??= $now;
     }
 
     public function canAfford(int $amount): bool

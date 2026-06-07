@@ -22,3 +22,4 @@ use App\Presentation\View\View;
   <button type="submit">ログイン</button>
 </form>
 <p class="muted">アカウントがありませんか？ <a href="/register">新規登録</a></p>
+<p class="muted">メール未確認の方は <a href="/verify/resend">確認メールを再送</a></p>

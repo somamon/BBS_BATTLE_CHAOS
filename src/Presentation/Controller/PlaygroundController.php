@@ -19,32 +19,32 @@ class PlaygroundController
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JS Playground</title>
 <style>
-  body { font-family: -apple-system, sans-serif; margin: 0; background: #1e1e2e; color: #e4e4f0; }
-  h1 { font-size: 16px; padding: 12px 16px; margin: 0; border-bottom: 1px solid #3b3d57; }
-  .wrap { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+  body { font-family: "MS PGothic",Meiryo,sans-serif; margin: 0; background: #efefef; color: #000; }
+  h1 { font-size: 15px; padding: 5px 10px; margin: 0; background: #e0e0e0; border-bottom: 2px solid #889; color: #cc0000; }
+  .wrap { display: flex; flex-direction: column; gap: 8px; padding: 10px; max-width: 900px; margin: 0 auto; }
   textarea {
     width: 100%; height: 200px; box-sizing: border-box; resize: vertical;
-    background: #15151f; color: #e4e4f0; border: 1px solid #3b3d57; border-radius: 6px;
-    padding: 12px; font-family: Menlo, Consolas, monospace; font-size: 14px; line-height: 1.5;
+    background: #fff; color: #000; border: 1px solid #999; border-radius: 0;
+    padding: 8px; font-family: Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5;
   }
   button {
-    align-self: flex-start; background: #7c6cff; color: #fff; border: 0; border-radius: 6px;
-    padding: 8px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
+    align-self: flex-start; background: #f0f0f0; color: #000; border: 2px outset #f5f5f5; border-radius: 0;
+    padding: 2px 14px; font-size: 13px; cursor: pointer; font-family: inherit;
   }
-  button:hover { background: #9385ff; }
+  button:active { border-style: inset; }
   pre {
-    margin: 0; min-height: 80px; background: #15151f; border: 1px solid #3b3d57; border-radius: 6px;
-    padding: 12px; font-family: Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap;
+    margin: 0; min-height: 80px; background: #fff; border: 1px solid #999; border-radius: 0;
+    padding: 8px; font-family: Menlo, Consolas, monospace; font-size: 13px; white-space: pre-wrap;
   }
-  .err { color: #f87171; }
+  .err { color: #cc0000; }
 </style>
 </head>
 <body>
-  <h1>⚡ JS Playground <span style="color:#9a9ab5;font-weight:400;font-size:12px">— Ctrl/⌘ + Enter で実行</span></h1>
+  <h1>JS Playground <span style="color:#555;font-weight:400;font-size:12px">— Ctrl/⌘ + Enter で実行</span></h1>
   <div class="wrap">
     <textarea id="code">console.log("Hello, World!");
 1 + 2;</textarea>
-    <button id="run">▶ 実行</button>
+    <button id="run">実行</button>
     <pre id="out"></pre>
   </div>
 <script>

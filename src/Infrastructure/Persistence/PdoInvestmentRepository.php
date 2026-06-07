@@ -16,18 +16,19 @@ final class PdoInvestmentRepository implements InvestmentRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO investments
-                (id, investor_id, thread_id, amount, to_hp, to_dividend, to_sink, created_at)
+                (id, investor_id, post_id, amount, shares, price, to_shares, to_hp, created_at)
              VALUES
-                (:id, :investor_id, :thread_id, :amount, :to_hp, :to_dividend, :to_sink, :created_at)'
+                (:id, :investor_id, :post_id, :amount, :shares, :price, :to_shares, :to_hp, :created_at)'
         );
         $stmt->execute([
             ':id'          => $investment->id,
             ':investor_id' => $investment->investorId,
-            ':thread_id'   => $investment->threadId,
+            ':post_id'     => $investment->postId,
             ':amount'      => $investment->amount,
+            ':shares'      => $investment->shares,
+            ':price'       => $investment->price,
+            ':to_shares'   => $investment->toShares,
             ':to_hp'       => $investment->toHp,
-            ':to_dividend' => $investment->toDividend,
-            ':to_sink'     => $investment->toSink,
             ':created_at'  => $investment->createdAt->format('Y-m-d H:i:s'),
         ]);
     }

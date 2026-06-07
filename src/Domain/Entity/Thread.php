@@ -9,8 +9,8 @@ use App\Domain\Support\Ulid;
 use DateTimeImmutable;
 
 /**
- * スレッド。投資対象であり、HPが時間で朽ち、累計投資で変異する。
- * 遅延減衰・回復・変異のドメインロジックをここに集約する（docs/design/02, 04）。
+ * スレッド＝板（コンテナ）。doc21 で投資対象から格下げ。
+ * 株・変異は持たず、HPが時間で朽ちる「寿命」だけを持つ（doc21 §2.1 / §4）。
  */
 final class Thread
 {
@@ -21,8 +21,6 @@ final class Thread
         private int $hp,
         private int $maxHp,
         public readonly int $decayPerMin,
-        private int $mutationLevel,
-        private int $totalShares,
         private DateTimeImmutable $lastDecayAt,
         private string $status,
         private int $postCount,
@@ -40,8 +38,6 @@ final class Thread
             hp: Game::THREAD_INIT_HP,
             maxHp: Game::THREAD_MAX_HP,
             decayPerMin: Game::THREAD_DECAY_PER_MIN,
-            mutationLevel: 0,
-            totalShares: 0,
             lastDecayAt: $now,
             status: 'alive',
             postCount: 0,
@@ -74,34 +70,6 @@ final class Thread
         }
     }
 
-    /** HPを回復（max_hpで上限）。吸収しきれなかった超過分を返す。 */
-    public function heal(int $amount, DateTimeImmutable $now): int
-    {
-        $space   = max(0, $this->maxHp - $this->hp);
-        $applied = min($amount, $space);
-        $this->hp += $applied;
-        $this->updatedAt = $now;
-        return $amount - $applied;
-    }
-
-    /** 株を発行し、閾値到達で変異（max_hp引き上げ）。 */
-    public function issueShares(int $shares, DateTimeImmutable $now): void
-    {
-        $this->totalShares += $shares;
-        $newLevel = Game::mutationLevelFor($this->totalShares);
-        if ($newLevel > $this->mutationLevel) {
-            $this->mutationLevel = $newLevel;
-            $this->maxHp = Game::maxHpFor($newLevel);
-        }
-        $this->updatedAt = $now;
-    }
-
-    /** いまの変異レベルに応じた配当ボーナス倍率。 */
-    public function dividendBonus(): float
-    {
-        return Game::dividendBonusFor($this->mutationLevel);
-    }
-
     public function incrementPostCount(DateTimeImmutable $now): void
     {
         $this->postCount++;
@@ -111,8 +79,6 @@ final class Thread
     // --- getters（永続化・表示用） ---
     public function hp(): int { return $this->hp; }
     public function maxHp(): int { return $this->maxHp; }
-    public function mutationLevel(): int { return $this->mutationLevel; }
-    public function totalShares(): int { return $this->totalShares; }
     public function lastDecayAt(): DateTimeImmutable { return $this->lastDecayAt; }
     public function status(): string { return $this->status; }
     public function postCount(): int { return $this->postCount; }

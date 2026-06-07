@@ -43,26 +43,30 @@ final class PdoUserRepository implements UserRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO users
-                (id, email, name, password_hash, money, created_at)
+                (id, email, name, password_hash, money, email_verified_at, created_at)
              VALUES
-                (:id, :email, :name, :password_hash, :money, :created_at)'
+                (:id, :email, :name, :password_hash, :money, :email_verified_at, :created_at)'
         );
         $stmt->execute([
-            ':id'            => $user->id,
-            ':email'         => $user->email,
-            ':name'          => $user->name,
-            ':password_hash' => $user->passwordHash,
-            ':money'         => $user->money(),
-            ':created_at'    => $user->createdAt->format('Y-m-d H:i:s'),
+            ':id'                => $user->id,
+            ':email'             => $user->email,
+            ':name'              => $user->name,
+            ':password_hash'     => $user->passwordHash,
+            ':money'             => $user->money(),
+            ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
+            ':created_at'        => $user->createdAt->format('Y-m-d H:i:s'),
         ]);
     }
 
     public function save(User $user): void
     {
-        $stmt = $this->pdo->prepare('UPDATE users SET money = :money WHERE id = :id');
+        $stmt = $this->pdo->prepare(
+            'UPDATE users SET money = :money, email_verified_at = :email_verified_at WHERE id = :id'
+        );
         $stmt->execute([
-            ':money' => $user->money(),
-            ':id'    => $user->id,
+            ':money'             => $user->money(),
+            ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
+            ':id'                => $user->id,
         ]);
     }
 
@@ -79,12 +83,15 @@ final class PdoUserRepository implements UserRepository
     private function hydrate(array $row): User
     {
         return new User(
-            id:           $row['id'],
-            email:        $row['email'],
-            name:         $row['name'],
-            passwordHash: $row['password_hash'],
-            money:        (int) $row['money'],
-            createdAt:    new DateTimeImmutable($row['created_at']),
+            id:              $row['id'],
+            email:           $row['email'],
+            name:            $row['name'],
+            passwordHash:    $row['password_hash'],
+            money:           (int) $row['money'],
+            createdAt:       new DateTimeImmutable($row['created_at']),
+            emailVerifiedAt: $row['email_verified_at'] !== null
+                ? new DateTimeImmutable($row['email_verified_at'])
+                : null,
         );
     }
 }

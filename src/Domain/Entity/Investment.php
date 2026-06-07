@@ -8,38 +8,41 @@ use App\Domain\Support\Ulid;
 use DateTimeImmutable;
 
 /**
- * 投資1回の監査ログ。配分の内訳（HP/配当/sink）を記録する追記専用レコード。
+ * 投資1回の監査ログ（追記専用）。約定した株数・株価と配分内訳（株取得/HP回復）を記録する。
  */
 final class Investment
 {
     public function __construct(
         public readonly string $id,
         public readonly string $investorId,
-        public readonly string $threadId,
+        public readonly string $postId,
         public readonly int $amount,
+        public readonly int $shares,
+        public readonly float $price,
+        public readonly int $toShares,
         public readonly int $toHp,
-        public readonly int $toDividend,
-        public readonly int $toSink,
         public readonly DateTimeImmutable $createdAt,
     ) {}
 
     public static function record(
         string $investorId,
-        string $threadId,
+        string $postId,
         int $amount,
+        int $shares,
+        float $price,
+        int $toShares,
         int $toHp,
-        int $toDividend,
-        int $toSink,
         DateTimeImmutable $now,
     ): self {
         return new self(
             id: Ulid::generate(),
             investorId: $investorId,
-            threadId: $threadId,
+            postId: $postId,
             amount: $amount,
+            shares: $shares,
+            price: $price,
+            toShares: $toShares,
             toHp: $toHp,
-            toDividend: $toDividend,
-            toSink: $toSink,
             createdAt: $now,
         );
     }

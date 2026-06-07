@@ -8,12 +8,9 @@ use App\Domain\Entity\Holding;
 
 interface HoldingRepository
 {
-    public function find(string $userId, string $threadId): ?Holding;
+    public function find(string $userId, string $postId): ?Holding;
 
-    /** @return Holding[] 指定スレッドの株主一覧（配当分配用）。 */
-    public function findByThread(string $threadId): array;
-
-    /** @return Holding[] 指定ユーザーの保有株一覧（マイページ用）。 */
+    /** @return Holding[] 指定ユーザーの保有株一覧（マイページ・ランキング用）。 */
     public function findByUser(string $userId): array;
 
     /** 新規・既存どちらも保存（UPSERT）。 */

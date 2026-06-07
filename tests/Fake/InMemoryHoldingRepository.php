@@ -9,25 +9,17 @@ use App\Domain\Repository\HoldingRepository;
 
 final class InMemoryHoldingRepository implements HoldingRepository
 {
-    /** @var array<string, Holding> key = "userId|threadId" */
+    /** @var array<string, Holding> key = "userId|postId" */
     private array $holdings = [];
 
-    private function key(string $userId, string $threadId): string
+    private function key(string $userId, string $postId): string
     {
-        return $userId . '|' . $threadId;
+        return $userId . '|' . $postId;
     }
 
-    public function find(string $userId, string $threadId): ?Holding
+    public function find(string $userId, string $postId): ?Holding
     {
-        return $this->holdings[$this->key($userId, $threadId)] ?? null;
-    }
-
-    public function findByThread(string $threadId): array
-    {
-        return array_values(array_filter(
-            $this->holdings,
-            static fn (Holding $h): bool => $h->threadId === $threadId,
-        ));
+        return $this->holdings[$this->key($userId, $postId)] ?? null;
     }
 
     public function findByUser(string $userId): array
@@ -40,6 +32,6 @@ final class InMemoryHoldingRepository implements HoldingRepository
 
     public function save(Holding $holding): void
     {
-        $this->holdings[$this->key($holding->userId, $holding->threadId)] = $holding;
+        $this->holdings[$this->key($holding->userId, $holding->postId)] = $holding;
     }
 }
