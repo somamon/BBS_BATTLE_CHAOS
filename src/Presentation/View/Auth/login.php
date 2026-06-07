@@ -23,3 +23,4 @@ use App\Presentation\View\View;
 </form>
 <p class="muted"><?= t('login.no_account') ?> <a href="/register"><?= t('login.register_link') ?></a></p>
 <p class="muted"><?= t('login.unverified_pre') ?> <a href="/verify/resend"><?= t('login.resend_link') ?></a></p>
+<p class="muted"><a href="/password/forgot"><?= t('login.forgot_link') ?></a></p>

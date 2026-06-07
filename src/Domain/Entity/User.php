@@ -17,7 +17,7 @@ final class User
         public readonly string $id,
         public readonly string $email,
         public readonly string $name,
-        public readonly string $passwordHash,
+        private string $passwordHash,
         private int $money,
         public readonly DateTimeImmutable $createdAt,
         private ?DateTimeImmutable $emailVerifiedAt = null,
@@ -32,7 +32,7 @@ final class User
             email: $email,
             name: $name,
             passwordHash: $passwordHash,
-            money: Game::INITIAL_MONEY,
+            money: Game::initialMoney(),
             createdAt: $now,
             emailVerifiedAt: null,
         );
@@ -81,5 +81,16 @@ final class User
     public function verifyPassword(string $password): bool
     {
         return password_verify($password, $this->passwordHash);
+    }
+
+    public function passwordHash(): string
+    {
+        return $this->passwordHash;
+    }
+
+    /** パスワードを再設定する（再設定フローから呼ぶ。引数はハッシュ化済み）。 */
+    public function changePassword(string $newPasswordHash): void
+    {
+        $this->passwordHash = $newPasswordHash;
     }
 }

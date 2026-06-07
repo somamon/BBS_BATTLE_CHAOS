@@ -26,7 +26,7 @@ use App\Presentation\View\View;
     </tr>
     <tr>
       <th><?= t('home.layers.investor.head') ?></th>
-      <td><?= t('home.layers.investor.body', ['money' => number_format(Game::INITIAL_MONEY)]) ?></td>
+      <td><?= t('home.layers.investor.body', ['money' => number_format(Game::initialMoney())]) ?></td>
     </tr>
   </table>
 </div>
@@ -60,7 +60,7 @@ use App\Presentation\View\View;
   <p><?= t('home.npc.p1') ?></p>
   <ul>
     <li><?= t('home.npc.l1') ?></li>
-    <li><?= t('home.npc.l2', ['limit' => Game::BOT_MAX_HUMANS]) ?></li>
+    <li><?= t('home.npc.l2', ['limit' => Game::botMaxHumans()]) ?></li>
     <li><?= t('home.npc.l3') ?></li>
   </ul>
   <p class="muted"><?= t('home.npc.note') ?></p>

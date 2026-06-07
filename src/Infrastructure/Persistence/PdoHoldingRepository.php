@@ -57,6 +57,12 @@ final class PdoHoldingRepository implements HoldingRepository
         ]);
     }
 
+    public function deleteForUser(string $userId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM holdings WHERE user_id = ?');
+        $stmt->execute([$userId]);
+    }
+
     private function hydrate(array $row): Holding
     {
         return new Holding(

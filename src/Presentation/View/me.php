@@ -44,3 +44,7 @@ use App\Presentation\View\View;
     </table>
   </div>
 <?php endif; ?>
+
+<p class="muted" style="margin-top:16px;">
+  <a href="/account/delete"><?= t('account.delete.link') ?></a>
+</p>

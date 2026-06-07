@@ -1,9 +1,11 @@
 <?php
 
+use App\Presentation\Controller\AccountController;
 use App\Presentation\Controller\AuthController;
 use App\Presentation\Controller\HomeController;
 use App\Presentation\Controller\InvestController;
 use App\Presentation\Controller\LanguageController;
+use App\Presentation\Controller\LegalController;
 use App\Presentation\Controller\MyPageController;
 use App\Presentation\Controller\RankingController;
 use App\Presentation\Controller\ResController;
@@ -42,7 +44,21 @@ $router->get('/verify', [AuthController::class, 'verify']);                     
 $router->get('/verify/resend', [AuthController::class, 'resendForm']);               // 再送フォーム
 $router->post('/verify/resend', [AuthController::class, 'resend'], ['csrf']);        // 再送実行
 
+// パスワード再設定（M1）
+$router->get('/password/forgot', [AuthController::class, 'forgotForm']);             // 申請フォーム
+$router->post('/password/forgot', [AuthController::class, 'forgot'], ['csrf']);      // 申請（メール送信）
+$router->get('/password/reset', [AuthController::class, 'resetForm']);               // 新パスワード設定フォーム
+$router->post('/password/reset', [AuthController::class, 'reset'], ['csrf']);        // 新パスワード確定
+
 // マイページ・ランキング・結果
 $router->get('/me', [MyPageController::class, 'index'], ['auth']);
 $router->get('/ranking', [RankingController::class, 'index']);
 $router->get('/result', [ResultController::class, 'index']);
+
+// 退会（アカウント削除。要ログイン。M5）
+$router->get('/account/delete', [AccountController::class, 'confirm'], ['auth']);
+$router->post('/account/delete', [AccountController::class, 'delete'], ['csrf', 'auth']);
+
+// 法務ページ（M5）
+$router->get('/terms', [LegalController::class, 'terms']);
+$router->get('/privacy', [LegalController::class, 'privacy']);

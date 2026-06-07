@@ -23,6 +23,10 @@ use App\Presentation\View\View;
   <label for="password"><?= t('register.password') ?></label>
   <input type="password" id="password" name="password" minlength="8" required>
   <div class="muted"><?= t('register.password_hint') ?></div>
+  <label style="margin-top:10px;">
+    <input type="checkbox" name="agree" value="1" <?= !empty($agree) ? 'checked' : '' ?> required>
+    <?= t('register.agree') ?>
+  </label>
   <button type="submit"><?= t('register.submit') ?></button>
 </form>
 <p class="muted"><?= t('register.have_account') ?> <a href="/login"><?= t('auth.login') ?></a></p>

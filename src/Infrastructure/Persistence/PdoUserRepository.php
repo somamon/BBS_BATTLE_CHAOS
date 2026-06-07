@@ -51,7 +51,7 @@ final class PdoUserRepository implements UserRepository
             ':id'                => $user->id,
             ':email'             => $user->email,
             ':name'              => $user->name,
-            ':password_hash'     => $user->passwordHash,
+            ':password_hash'     => $user->passwordHash(),
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':is_bot'            => $user->isBot ? 1 : 0,
@@ -62,13 +62,24 @@ final class PdoUserRepository implements UserRepository
     public function save(User $user): void
     {
         $stmt = $this->pdo->prepare(
-            'UPDATE users SET money = :money, email_verified_at = :email_verified_at WHERE id = :id'
+            'UPDATE users
+                SET money = :money,
+                    email_verified_at = :email_verified_at,
+                    password_hash = :password_hash
+             WHERE id = :id'
         );
         $stmt->execute([
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
+            ':password_hash'     => $user->passwordHash(),
             ':id'                => $user->id,
         ]);
+    }
+
+    public function delete(string $userId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM users WHERE id = ?');
+        $stmt->execute([$userId]);
     }
 
     public function all(): array

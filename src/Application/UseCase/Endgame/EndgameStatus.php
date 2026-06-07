@@ -44,7 +44,7 @@ final class EndgameStatus
         foreach ($this->users->all() as $user) {
             $totalMoney += $user->money();
         }
-        if ($totalMoney < Game::MIN_INVEST) {
+        if ($totalMoney < Game::minInvest()) {
             return ['over' => true, 'reason' => 'no_money'];
         }
 

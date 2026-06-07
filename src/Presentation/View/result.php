@@ -4,8 +4,11 @@
  * @var bool                            $over
  * @var string|null                     $reason
  * @var array<int,array<string,mixed>>  $rows  name,isBot,money,shareValue,total
+ * @var int|null                        $roundNo  進行中ラウンド番号
  */
 use App\Presentation\View\View;
+
+$roundNo = $roundNo ?? null;
 
 $reasonKey = match ($reason) {
     'all_dead' => 'result.reason.all_dead',
@@ -13,10 +16,15 @@ $reasonKey = match ($reason) {
     default    => 'result.reason.over',
 };
 ?>
+<?php if ($roundNo !== null): ?>
+  <p class="muted"><?= t('result.round', ['n' => $roundNo]) ?></p>
+<?php endif; ?>
+
 <?php if ($over): ?>
   <div class="banner">
     <h2><?= t('result.world_end') ?></h2>
     <p class="muted"><?= t($reasonKey) ?></p>
+    <p class="muted"><?= t('result.reset_note') ?></p>
   </div>
 <?php else: ?>
   <div class="card">

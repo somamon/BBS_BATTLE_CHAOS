@@ -7,9 +7,17 @@ namespace App\Config;
 /**
  * ゲームバランス定数の一元管理（設計: docs/design/21 §3）。
  * 数値はすべてここから参照し、マジックナンバーをコードに散らさない。
+ *
+ * M3: バランス調整を再デプロイ無しで行えるよう、主要パラメータは環境変数で上書きできる。
+ *   - 各 const が「既定値」、対応する GAME_* 環境変数が「上書き値」。
+ *   - 値の参照はアクセサメソッド（例 {@see initialMoney()}）経由で行う。
+ *   - 環境変数の一覧と意味は docs/ゲームバランス調整.md / .env.example を参照。
+ * 既定運用（環境変数なし）では const の値がそのまま使われ、挙動は従来どおり。
  */
 final class Game
 {
+    // ===== 既定値（環境変数が無いときに使う） =====
+
     // お金
     public const INITIAL_MONEY = 500;
     public const MIN_INVEST    = 1;
@@ -31,7 +39,7 @@ final class Game
     public const POST_INIT_HP       = 100;
     public const POST_DECAY_PER_MIN = 5;
 
-    // 入力長の上限（DBカラム/UIと整合）
+    // 入力長の上限（DBカラム/UIと整合）。※構造的制約のため env 上書き対象外。
     public const THREAD_TITLE_MAX = 255;   // threads.title VARCHAR(255)
     public const POST_CONTENT_MAX = 2000;  // レス本文（textarea maxlength と一致）
 
@@ -62,10 +70,37 @@ final class Game
     public const BOT_MAX_INVEST   = 150;  // ボット1回の最大投資額
     public const BOT_REFILL_TO    = 2000; // 資金が尽きたボットを補充する残高（相場の停止防止）
 
-    /** フェーズ名 → 減衰倍率（未知は平常 1.0）。 */
+    // ===== アクセサ（GAME_* 環境変数で上書き可。未設定なら const を返す） =====
+
+    public static function initialMoney(): int    { return self::envInt('GAME_INITIAL_MONEY', self::INITIAL_MONEY); }
+    public static function minInvest(): int        { return self::envInt('GAME_MIN_INVEST', self::MIN_INVEST); }
+    public static function splitShares(): float    { return self::envFloat('GAME_SPLIT_SHARES', self::SPLIT_SHARES); }
+
+    public static function postInitHp(): int       { return self::envInt('GAME_POST_INIT_HP', self::POST_INIT_HP); }
+    public static function postDecayPerMin(): int  { return self::envInt('GAME_POST_DECAY_PER_MIN', self::POST_DECAY_PER_MIN); }
+
+    public static function threadInitHp(): int     { return self::envInt('GAME_THREAD_INIT_HP', self::THREAD_INIT_HP); }
+    public static function threadMaxHp(): int      { return self::envInt('GAME_THREAD_MAX_HP', self::THREAD_MAX_HP); }
+    public static function threadDecayPerMin(): int{ return self::envInt('GAME_THREAD_DECAY_PER_MIN', self::THREAD_DECAY_PER_MIN); }
+
+    public static function phaseMinSec(): int      { return self::envInt('GAME_PHASE_MIN_SEC', self::PHASE_MIN_SEC); }
+    public static function phaseMaxSec(): int      { return self::envInt('GAME_PHASE_MAX_SEC', self::PHASE_MAX_SEC); }
+
+    public static function botMaxHumans(): int     { return self::envInt('GAME_BOT_MAX_HUMANS', self::BOT_MAX_HUMANS); }
+    public static function botTickSeconds(): int   { return self::envInt('GAME_BOT_TICK_SECONDS', self::BOT_TICK_SECONDS); }
+    public static function botMaxBurst(): int      { return self::envInt('GAME_BOT_MAX_BURST', self::BOT_MAX_BURST); }
+    public static function botMinInvest(): int     { return self::envInt('GAME_BOT_MIN_INVEST', self::BOT_MIN_INVEST); }
+    public static function botMaxInvest(): int     { return self::envInt('GAME_BOT_MAX_INVEST', self::BOT_MAX_INVEST); }
+    public static function botRefillTo(): int      { return self::envInt('GAME_BOT_REFILL_TO', self::BOT_REFILL_TO); }
+
+    /** フェーズ名 → 減衰倍率（未知は平常 1.0）。GAME_PHASE_{BOOM|CALM|STORM|CRASH} で上書き可。 */
     public static function phaseMultiplier(string $phase): float
     {
-        return self::PHASES[$phase] ?? 1.0;
+        $default = self::PHASES[$phase] ?? 1.0;
+        if (!isset(self::PHASES[$phase])) {
+            return $default;
+        }
+        return self::envFloat('GAME_PHASE_' . strtoupper($phase), $default);
     }
 
     /**
@@ -74,21 +109,26 @@ final class Game
      */
     public static function populationDecayFactor(int $humanCount): float
     {
-        $ramp = min(1.0, max(0, $humanCount) / self::DECAY_FULL_AT_HUMANS);
-        return self::DECAY_MIN_FACTOR + (1.0 - self::DECAY_MIN_FACTOR) * $ramp;
+        $minFactor = self::envFloat('GAME_DECAY_MIN_FACTOR', self::DECAY_MIN_FACTOR);
+        $fullAt    = self::envInt('GAME_DECAY_FULL_AT_HUMANS', self::DECAY_FULL_AT_HUMANS);
+        $fullAt    = max(1, $fullAt);
+        $ramp      = min(1.0, max(0, $humanCount) / $fullAt);
+        return $minFactor + (1.0 - $minFactor) * $ramp;
     }
 
-    /** 累計投資額からスポット株価を求める（後から買うほど高い）。 */
+    /** 累計投資額からスポット株価を求める（後から買うほど高い）。BASE/SLOPE は env 上書き可。 */
     public static function sharePrice(int $totalInvested): float
     {
-        return self::SHARE_PRICE_BASE + self::SHARE_PRICE_SLOPE * $totalInvested;
+        $base  = self::envFloat('GAME_SHARE_PRICE_BASE', (float) self::SHARE_PRICE_BASE);
+        $slope = self::envFloat('GAME_SHARE_PRICE_SLOPE', self::SHARE_PRICE_SLOPE);
+        return $base + $slope * $totalInvested;
     }
 
-    /** total_invested から到達している投稿レベル（0..3）を求める。 */
+    /** total_invested から到達している投稿レベル（0..3）を求める。閾値は env 上書き可。 */
     public static function postLevelFor(int $totalInvested): int
     {
         $level = 0;
-        foreach (self::POST_LEVEL_TIERS as $i => $required) {
+        foreach (self::levelTiers() as $i => $required) {
             if ($totalInvested >= $required) {
                 $level = $i + 1;
             }
@@ -96,9 +136,57 @@ final class Game
         return $level;
     }
 
-    /** 投稿レベル → max_hp。 */
+    /** 投稿レベル → max_hp。テーブルは env 上書き可。 */
     public static function postMaxHpFor(int $level): int
     {
-        return self::POST_LEVEL_MAX_HP[$level] ?? self::POST_LEVEL_MAX_HP[0];
+        $table = self::levelMaxHp();
+        return $table[$level] ?? $table[0];
+    }
+
+    /** @return int[] レベル閾値（GAME_POST_LEVEL_TIERS=カンマ区切り で上書き可）。 */
+    private static function levelTiers(): array
+    {
+        return self::envIntList('GAME_POST_LEVEL_TIERS', self::POST_LEVEL_TIERS);
+    }
+
+    /** @return int[] レベル別 max_hp（GAME_POST_LEVEL_MAX_HP=カンマ区切り で上書き可）。 */
+    private static function levelMaxHp(): array
+    {
+        return self::envIntList('GAME_POST_LEVEL_MAX_HP', self::POST_LEVEL_MAX_HP);
+    }
+
+    // ===== env 読み取りヘルパ =====
+
+    private static function envInt(string $key, int $default): int
+    {
+        $v = getenv($key);
+        return ($v === false || $v === '') ? $default : (int) $v;
+    }
+
+    private static function envFloat(string $key, float $default): float
+    {
+        $v = getenv($key);
+        return ($v === false || $v === '') ? $default : (float) $v;
+    }
+
+    /**
+     * カンマ区切りの整数リストを env から読む。空・不正なら $default。
+     * @param int[] $default
+     * @return int[]
+     */
+    private static function envIntList(string $key, array $default): array
+    {
+        $v = getenv($key);
+        if ($v === false || $v === '') {
+            return $default;
+        }
+        $out = [];
+        foreach (explode(',', $v) as $part) {
+            $part = trim($part);
+            if ($part !== '') {
+                $out[] = (int) $part;
+            }
+        }
+        return $out === [] ? $default : $out;
     }
 }

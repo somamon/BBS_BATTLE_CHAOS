@@ -18,6 +18,26 @@ return [
     'common.to_login' => 'Go to login',
     'common.back_to_threads' => '← Back to threads',
 
+    // Footer / legal
+    'footer.terms' => 'Terms of Use',
+    'footer.privacy' => 'Privacy Policy',
+    'footer.disclaimer' => 'This is a game. In-game currency and shares have no monetary value and cannot be cashed out.',
+    'legal.updated' => 'Last updated: {date}',
+    'legal.terms.title' => 'Terms of Use',
+    'legal.privacy.title' => 'Privacy Policy',
+
+    // Account deletion
+    'account.delete.title' => 'Delete account',
+    'account.delete.link' => 'Delete my account',
+    'account.delete.lead' => 'Deleting your account removes the following data.',
+    'account.delete.item_account' => 'Account info (email, display name, password)',
+    'account.delete.item_assets' => 'Cash, holdings, and investment records',
+    'account.delete.item_posts' => 'Anonymous posts remain, with identifying links removed.',
+    'account.delete.warning' => 'This action cannot be undone. Deleted data cannot be recovered.',
+    'account.delete.confirm_label' => 'I understand the above and agree to delete my account.',
+    'account.delete.submit' => 'Delete account',
+    'account.delete.cancel' => 'Cancel (back to My Page)',
+
     // Market phases
     'phase.boom'  => 'Boom market',
     'phase.calm'  => 'Calm market',
@@ -34,7 +54,7 @@ return [
     'status.dead'  => 'dead',
 
     // Home
-    'home.tagline' => 'Bet money on great posts—buy their shares. The sharp-eyed who spot them early win. An anonymous BBS battle.',
+    'home.tagline' => 'Invest in great posts—buy their shares. The sharp-eyed who spot them early grow. An anonymous BBS battle.',
     'home.what.title' => 'What is this?',
     'home.what.p1' => 'This is not an ordinary message board. Anyone can start threads and post anonymously, and registered users can <strong>invest in—buy shares of—replies</strong> they find interesting.',
     'home.what.p2' => 'The more investment a reply attracts later, the higher its <strong>share price</strong> climbs. So those who <strong>spot a hidden gem early and buy in grow their wealth</strong>—a game where the sharp-eyed star.',
@@ -45,7 +65,7 @@ return [
     'home.layers.investor.body' => 'Buy reply shares with a starting balance of <strong>{money}</strong>. The more people buy later, the higher the price—so early buys appreciate.',
     'home.loop.title' => 'How to play (core loop)',
     'home.loop.s1' => 'Post a reply anonymously (free, no reward)',
-    'home.loop.s2' => '<strong>Bet money on—buy shares of—great replies</strong> (sign-up required)',
+    'home.loop.s2' => '<strong>Invest in—buy shares of—great replies</strong> (sign-up required)',
     'home.loop.s3' => 'The more follow-on investment, the <strong>higher the price</strong>',
     'home.loop.s4' => 'Shares bought early appreciate and <strong>grow your wealth</strong>',
     'home.loop.s5' => 'Cumulative investment evolves a reply (<span class="badge">New</span> → <span class="badge">Notable</span> → <span class="badge">Popular</span> → <span class="badge">Hall of Fame</span>)',
@@ -77,6 +97,7 @@ return [
     'login.register_link' => 'Sign up',
     'login.unverified_pre' => 'If your email is unverified,',
     'login.resend_link' => 'resend the verification email',
+    'login.forgot_link' => 'Forgot your password?',
 
     // Register
     'register.title' => 'Sign up',
@@ -86,6 +107,7 @@ return [
     'register.password_hint' => 'Use at least 8 characters.',
     'register.submit' => 'Create account',
     'register.have_account' => 'Already have an account?',
+    'register.agree' => 'I am at least 18 years old and agree to the <a href="/terms" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.',
 
     // Verification email sent
     'verify_sent.title' => 'Verification email sent',
@@ -112,6 +134,22 @@ return [
     'resend_done.body' => "If <strong>{email}</strong> is registered as an unverified account, we've resent the verification email.",
     'resend_done.note' => 'Open the link in the email (valid for 24h) to finish. Older links become invalid.',
 
+    // Password reset (request)
+    'forgot.title' => 'Reset your password',
+    'forgot.intro' => "Enter the email you registered with. We'll send a reset link only if an account exists.",
+    'forgot.email' => 'Email',
+    'forgot.submit' => 'Send reset email',
+
+    // Password reset (request done)
+    'forgot_done.title' => 'Reset email sent',
+    'forgot_done.body' => 'If an account exists for <strong>{email}</strong>, we have sent a password reset email.',
+    'forgot_done.note' => 'Open the link in the email (valid for 1h) to set a new password. Older links become invalid.',
+
+    // Password reset (set new password)
+    'reset.title' => 'Set a new password',
+    'reset.password' => 'New password',
+    'reset.submit' => 'Change password',
+
     // Thread create
     'thread_create.title' => 'New thread',
     'thread_create.label' => 'Title',
@@ -126,7 +164,7 @@ return [
 
     // Thread detail
     'show.board_hp' => 'Board HP',
-    'show.invest_hint' => 'Bet on great replies and buy shares. The earlier you buy, the cheaper.',
+    'show.invest_hint' => 'Spot great replies and buy shares. The earlier you buy, the cheaper.',
     'show.replies_heading' => 'Replies ({n})',
     'show.no_replies' => 'No replies yet. Be the first to post.',
     'show.name_anon' => 'Anonymous',
@@ -178,6 +216,8 @@ return [
     'result.reason.over' => 'Game over',
     'result.ongoing_title' => 'The game is ongoing.',
     'result.ongoing_note' => "The world hasn't ended yet. Here's the current ranking.",
+    'result.round' => 'Round #{n}',
+    'result.reset_note' => 'The world has ended. After the operator resets, a new round begins (cash, threads, and shares are reset).',
     'result.final_ranking' => 'Final ranking',
     'result.current_ranking' => 'Current ranking',
     'result.no_players' => 'No participants.',
@@ -187,6 +227,8 @@ return [
     'flash.invest_leveled' => ' — evolved to "{label}"!',
     'flash.invest_failed' => 'Investment failed: {msg}',
     'flash.verified' => 'Email verified. Welcome!',
+    'flash.password_reset' => 'Password changed. You are now logged in.',
+    'flash.account_deleted' => 'Your account has been deleted. Thank you for playing.',
 
     // Error (exception) messages
     'err.invalid_credentials' => 'Email or password is incorrect',
@@ -199,6 +241,7 @@ return [
     'err.invest_invalid_amount' => 'Invalid investment amount',
     'err.invest_too_small' => 'The amount is too small to acquire any shares',
     'err.all_fields' => 'Please fill in all fields',
+    'err.must_agree' => 'To register, you must confirm your age and agree to the Terms and Privacy Policy',
 
     // Validation
     'validation.email.required' => 'Please enter your email',

@@ -6,6 +6,8 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use App\Config\Environment;
 use App\Infrastructure\Container;
+use App\Infrastructure\Logging\JsonLogger;
+use App\Infrastructure\Logging\RequestContext;
 use App\Presentation\I18n\Translator;
 use App\Presentation\Http\Request;
 use App\Presentation\Http\Response;
@@ -15,6 +17,10 @@ use App\Presentation\Routing\MethodNotAllowedException;
 
 // アプリ全体のタイムゾーン（表示・保存の基準）。MySQL セッションも Database で合わせる。
 date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Tokyo');
+
+// 相関ID（リクエストID）を確定。上流（LB/プロキシ）が付けていれば引き継ぐ。M4。
+$requestId = RequestContext::init($_SERVER['HTTP_X_REQUEST_ID'] ?? null);
+$logger    = new JsonLogger(Environment::appEnv());
 
 // 表示言語の解決：Cookie 'lang' を優先、無ければ Accept-Language、既定は日本語。
 $lang = $_COOKIE['lang'] ?? null;
@@ -28,7 +34,7 @@ Translator::activate(Translator::for($lang));
 try {
     Environment::assertProductionReady();
 } catch (\Throwable $e) {
-    error_log('[boot] ' . $e->getMessage());
+    $logger->error('boot_failed', ['error' => $e->getMessage()]);
     http_response_code(500);
     header('Content-Type: text/html; charset=UTF-8');
     echo '<h1>500</h1><p>設定エラーにより起動できません。管理者にお問い合わせください。</p>';
@@ -60,7 +66,7 @@ if ($request->method() === 'GET') {
     try {
         $container->get(App\Application\Service\MarketSimulator::class)->tick(new DateTimeImmutable());
     } catch (\Throwable $e) {
-        error_log('[sim] ' . $e);
+        $logger->error('market_sim_failed', ['error' => $e->getMessage()]);
     }
 }
 
@@ -72,14 +78,28 @@ try {
     $response = Response::error(405, 'Method Not Allowed')
         ->withHeader('Allow', implode(', ', $e->allowed));
 } catch (\Throwable $e) {
-    error_log((string) $e);
+    $logger->error('unhandled_exception', [
+        'exception' => $e::class,
+        'message'   => $e->getMessage(),
+        'where'     => $e->getFile() . ':' . $e->getLine(),
+    ]);
 
-    $env = $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?: 'production';
-    $message = $env === 'development'
+    $message = Environment::appEnv() === 'development'
         ? (string) $e
         : 'Internal Server Error';
 
     $response = Response::error(500, $message);
 }
+
+// 相関IDをレスポンスにも出し、クライアント側の問い合わせと突き合わせられるようにする。
+$response->withHeader('X-Request-Id', $requestId);
+
+// アクセスログ（主要KPI：エラー率は status と組み合わせて算出できる）。
+$logger->event('request', [
+    'method'      => $request->method(),
+    'path'        => $request->path(),
+    'status'      => $response->status(),
+    'duration_ms' => RequestContext::elapsedMs(),
+]);
 
 $response->send();

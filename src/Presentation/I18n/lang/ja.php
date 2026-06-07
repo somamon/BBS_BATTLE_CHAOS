@@ -18,6 +18,26 @@ return [
     'common.to_login' => 'ログインへ',
     'common.back_to_threads' => '← スレ一覧へ',
 
+    // フッター / 法務
+    'footer.terms' => '利用規約',
+    'footer.privacy' => 'プライバシーポリシー',
+    'footer.disclaimer' => '本サービスはゲームです。ゲーム内通貨・株に財産的価値はなく、換金できません。',
+    'legal.updated' => '最終更新: {date}',
+    'legal.terms.title' => '利用規約',
+    'legal.privacy.title' => 'プライバシーポリシー',
+
+    // 退会（アカウント削除）
+    'account.delete.title' => '退会（アカウント削除）',
+    'account.delete.link' => '退会する（アカウントを削除）',
+    'account.delete.lead' => '退会すると、以下のデータが削除されます。',
+    'account.delete.item_account' => 'アカウント情報（メールアドレス・表示名・パスワード）',
+    'account.delete.item_assets' => '所持金・保有株・投資の記録',
+    'account.delete.item_posts' => '匿名で書いた投稿は、本人と紐づく情報を除去したうえで残ります。',
+    'account.delete.warning' => 'この操作は取り消せません。削除されたデータは復元できません。',
+    'account.delete.confirm_label' => '上記を理解し、退会してアカウントを削除することに同意します。',
+    'account.delete.submit' => '退会する',
+    'account.delete.cancel' => 'やめる（マイページへ戻る）',
+
     // 相場フェーズ
     'phase.boom'  => 'ブーム相場',
     'phase.calm'  => '平穏相場',
@@ -34,7 +54,7 @@ return [
     'status.dead'  => '消滅',
 
     // トップ（home）
-    'home.tagline' => '面白い投稿に“お金を賭ける”＝株を買う。早く見抜いた目利きが儲かる匿名掲示板バトル。',
+    'home.tagline' => '面白い投稿を見抜いて“投資する”＝株を買う。早く見抜いた目利きが伸びる匿名掲示板バトル。',
     'home.what.title' => 'どんなサイト？',
     'home.what.p1' => 'ここは普通の掲示板ではありません。誰でも匿名でスレ立て・レスができ、登録ユーザーは「面白い」と思ったレスに<strong>投資して株を買えます</strong>。',
     'home.what.p2' => '後から投資が集まるほどそのレスの<strong>株価が上がる</strong>ので、まだ誰も気づいていない名レスを<strong>早く見抜いて仕込んだ人ほど資産が増える</strong>——「目利き」が主役のゲームです。',
@@ -45,7 +65,7 @@ return [
     'home.layers.investor.body' => '初期資金 <strong>{money}</strong> でレスの株を買う。後から買う人が増えるほど株価が上がり、早く仕込んだ株が値上がりする。',
     'home.loop.title' => '遊び方（中核ループ）',
     'home.loop.s1' => '匿名でレスを書く（無料・無報酬）',
-    'home.loop.s2' => '面白いレスに<strong>お金を賭ける＝株を買う</strong>（要登録）',
+    'home.loop.s2' => '面白いレスに<strong>投資する＝株を買う</strong>（要登録）',
     'home.loop.s3' => '後続の投資が増えるほど<strong>株価が上がる</strong>',
     'home.loop.s4' => '早く買った株が値上がりして<strong>資産が増える</strong>',
     'home.loop.s5' => '累計投資でレスが進化（<span class="badge">新規</span> → <span class="badge">注目</span> → <span class="badge">人気</span> → <span class="badge">殿堂入り</span>）',
@@ -77,6 +97,7 @@ return [
     'login.register_link' => '新規登録',
     'login.unverified_pre' => 'メール未確認の方は',
     'login.resend_link' => '確認メールを再送',
+    'login.forgot_link' => 'パスワードをお忘れですか？',
 
     // 新規登録
     'register.title' => '新規登録',
@@ -86,6 +107,7 @@ return [
     'register.password_hint' => '8文字以上で設定してください。',
     'register.submit' => '登録する',
     'register.have_account' => 'すでにアカウントをお持ちですか？',
+    'register.agree' => '私は満18歳以上であり、<a href="/terms" target="_blank" rel="noopener">利用規約</a>と<a href="/privacy" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します。',
 
     // 確認メール送信完了
     'verify_sent.title' => '確認メールを送信しました',
@@ -112,6 +134,22 @@ return [
     'resend_done.body' => '<strong>{email}</strong> が未確認のアカウントとして登録されている場合、確認メールを再送しました。',
     'resend_done.note' => 'メール内のリンク（24時間有効）を開くと登録が完了します。古いリンクは無効になります。',
 
+    // パスワード再設定（申請）
+    'forgot.title' => 'パスワードの再設定',
+    'forgot.intro' => '登録に使ったメールアドレスを入力してください。アカウントがある場合のみ、再設定用のリンクをお送りします。',
+    'forgot.email' => 'メールアドレス',
+    'forgot.submit' => '再設定メールを送る',
+
+    // パスワード再設定（申請完了）
+    'forgot_done.title' => '再設定メールを送信しました',
+    'forgot_done.body' => '<strong>{email}</strong> のアカウントが存在する場合、パスワード再設定用のメールを送信しました。',
+    'forgot_done.note' => 'メール内のリンク（1時間有効）を開いて、新しいパスワードを設定してください。古いリンクは無効になります。',
+
+    // パスワード再設定（新パスワード入力）
+    'reset.title' => '新しいパスワードの設定',
+    'reset.password' => '新しいパスワード',
+    'reset.submit' => 'パスワードを変更する',
+
     // スレ作成
     'thread_create.title' => '新しいスレッド',
     'thread_create.label' => 'タイトル',
@@ -126,7 +164,7 @@ return [
 
     // スレ詳細
     'show.board_hp' => '板HP',
-    'show.invest_hint' => '面白いレスに賭けて株を買おう。早く買うほど株価が安い。',
+    'show.invest_hint' => '面白いレスを見極めて株を買おう。早く買うほど株価が安い。',
     'show.replies_heading' => 'レス（{n}）',
     'show.no_replies' => 'まだレスがありません。最初の1レスを書こう。',
     'show.name_anon' => '名無しさん',
@@ -178,6 +216,8 @@ return [
     'result.reason.over' => 'ゲーム終了',
     'result.ongoing_title' => 'ゲームは進行中です。',
     'result.ongoing_note' => '世界はまだ終わっていません。今のランキングはこちら。',
+    'result.round' => 'ラウンド #{n}',
+    'result.reset_note' => '終局しました。運営による初期化後、新しいラウンドが始まります（所持金・スレ・株はリセット）。',
     'result.final_ranking' => '最終ランキング',
     'result.current_ranking' => '現在のランキング',
     'result.no_players' => '参加者がいません。',
@@ -187,6 +227,8 @@ return [
     'flash.invest_leveled' => '／「{label}」へ進化！',
     'flash.invest_failed' => '投資できませんでした: {msg}',
     'flash.verified' => 'メールアドレスを確認しました。ようこそ！',
+    'flash.password_reset' => 'パスワードを変更しました。ログインしました。',
+    'flash.account_deleted' => '退会が完了しました。ご利用ありがとうございました。',
 
     // エラー（例外）メッセージ
     'err.invalid_credentials' => 'メールアドレスまたはパスワードが正しくありません',
@@ -199,6 +241,7 @@ return [
     'err.invest_invalid_amount' => '投資額が不正です',
     'err.invest_too_small' => '投資額が小さすぎて株を取得できません',
     'err.all_fields' => 'すべての項目を入力してください',
+    'err.must_agree' => '登録には、年齢確認と利用規約・プライバシーポリシーへの同意が必要です',
 
     // 入力検証
     'validation.email.required' => 'メールアドレスを入力してください',

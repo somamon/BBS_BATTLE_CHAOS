@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Auth;
 
+use App\Application\Port\Logger;
 use App\Application\Service\VerificationMailSender;
 use App\Domain\Repository\UserRepository;
 use App\Domain\ValueObject\Email;
@@ -20,6 +21,7 @@ final class ResendVerification
     public function __construct(
         private readonly UserRepository $users,
         private readonly VerificationMailSender $verificationMail,
+        private readonly ?Logger $logger = null,
     ) {}
 
     public function execute(string $emailRaw, ?DateTimeImmutable $now = null): void
@@ -39,7 +41,7 @@ final class ResendVerification
             try {
                 $this->verificationMail->send($user, $now);
             } catch (\Throwable $e) {
-                error_log('[mail] 確認メール再送失敗: ' . $e->getMessage());
+                $this->logger?->error('verification_resend_failed', ['error' => $e->getMessage()]);
             }
         }
     }

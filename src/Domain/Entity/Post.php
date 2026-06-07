@@ -45,9 +45,9 @@ final class Post
             authorHash: $authorHash,
             authorId: $authorId,
             content: $content,
-            hp: Game::POST_INIT_HP,
+            hp: Game::postInitHp(),
             maxHp: Game::postMaxHpFor(0),
-            decayPerMin: Game::POST_DECAY_PER_MIN,
+            decayPerMin: Game::postDecayPerMin(),
             totalInvested: 0,
             totalShares: 0,
             level: 0,
@@ -122,7 +122,7 @@ final class Post
     public function applyInvestment(int $amount, DateTimeImmutable $now): array
     {
         $price    = $this->spotPrice();                       // 増加前の total_invested で算定
-        $toShares = (int) floor($amount * Game::SPLIT_SHARES); // 株取得に回す額（70%）
+        $toShares = (int) floor($amount * Game::splitShares()); // 株取得に回す額（70%）
         $toHp     = $amount - $toShares;                       // 残りをHP回復へ（合計=amount）
         $shares   = (int) floor($toShares / $price);           // 取得株数（0株は呼び出し側で拒否）
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Application\UseCase\Invest;
 
 use App\Application\Exception\InvestException;
+use App\Application\Port\Logger;
 use App\Application\Port\TransactionManager;
 use App\Application\Service\DecayRate;
 use App\Config\Game;
@@ -33,13 +34,14 @@ final class InvestInPost
         private readonly UserRepository $users,
         private readonly HoldingRepository $holdings,
         private readonly InvestmentRepository $investments,
+        private readonly ?Logger $logger = null,
     ) {}
 
     public function execute(string $investorId, string $postId, int $amount, ?DateTimeImmutable $now = null): InvestResult
     {
         $now ??= new DateTimeImmutable();
 
-        if ($amount < Game::MIN_INVEST) {
+        if ($amount < Game::minInvest()) {
             throw InvestException::invalidAmount();
         }
 
@@ -101,6 +103,15 @@ final class InvestInPost
                 $applied['toHp'],
                 $now,
             ));
+
+            // KPI: 投資イベント。NPC(bot)分は is_bot で区別できるよう付与する。
+            $this->logger?->event('investment_made', [
+                'investor_id' => $investorId,
+                'post_id'     => $postId,
+                'amount'      => $amount,
+                'shares'      => $applied['shares'],
+                'is_bot'      => $investor->isBot,
+            ]);
 
             return new InvestResult(
                 amount: $amount,
