@@ -21,6 +21,15 @@ final class InMemoryPostRepository implements PostRepository
         return array_values($alive);
     }
 
+    public function findByThread(string $threadId): array
+    {
+        $byThread = array_filter(
+            $this->posts,
+            static fn (Post $p): bool => $p->threadId === $threadId,
+        );
+        return array_values($byThread);
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $alive = array_filter($this->posts, static fn (Post $p): bool => $p->isAlive());

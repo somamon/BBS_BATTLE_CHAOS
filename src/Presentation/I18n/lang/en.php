@@ -181,6 +181,8 @@ return [
     // Thread detail
     'show.board_hp' => 'Board HP',
     'show.invest_hint' => 'Spot great replies and buy shares. The earlier you buy, the cheaper.',
+    'show.archived' => 'This thread has decayed (archived). It is read-only—no posting or investing.',
+    'show.archived_footer' => 'This is an archived thread, so you cannot post.',
     'show.replies_heading' => 'Replies ({n})',
     'show.no_replies' => 'No replies yet. Be the first to post.',
     'show.name_anon' => 'Anonymous',
@@ -199,6 +201,7 @@ return [
     // Graveyard
     'dead.title' => 'Graveyard',
     'dead.empty' => 'No decayed threads yet.',
+    'dead.view_hint' => 'Click a title to view the archived thread and its replies. Posting is disabled.',
     'dead.died' => 'decayed between {from} and {to}',
 
     // Ranking

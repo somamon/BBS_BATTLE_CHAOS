@@ -181,6 +181,8 @@ return [
     // スレ詳細
     'show.board_hp' => '板HP',
     'show.invest_hint' => '面白いレスを見極めて株を買おう。早く買うほど株価が安い。',
+    'show.archived' => 'このスレッドは朽ちています（過去ログ）。閲覧のみ可能で、書き込み・投資はできません。',
+    'show.archived_footer' => '過去ログのため、書き込みはできません。',
     'show.replies_heading' => 'レス（{n}）',
     'show.no_replies' => 'まだレスがありません。最初の1レスを書こう。',
     'show.name_anon' => '名無しさん',
@@ -199,6 +201,7 @@ return [
     // 墓場
     'dead.title' => '墓場',
     'dead.empty' => 'まだ朽ちたスレッドはありません。',
+    'dead.view_hint' => 'タイトルをクリックすると、過去ログ（レス）を閲覧できます。書き込みはできません。',
     'dead.died' => '{from} 〜 {to} に朽ちた',
 
     // ランキング
