@@ -78,6 +78,13 @@ $op = View::e($operator);
   <h3>Article 10 (Changes, suspension, and termination of the Service)</h3>
   <p>The Operator may change, add to, suspend, or terminate all or part of the Service, and may reset data, at any time without prior notice. The Operator is not liable for resulting damage to Users.</p>
 
+  <h3>Article 10-2 (Advertising)</h3>
+  <ul>
+    <li>The Operator may display advertisements provided by a third-party network ("Ninja AdMax" / Ninja Tools) within the Service.</li>
+    <li>The Operator does not warrant the content of advertisements, advertisers, or linked websites, and is not liable for any damage arising from them. Any transaction with an advertiser is at your own risk and responsibility.</li>
+    <li>You must not fraudulently click advertisements, inflate impressions, or interfere with ad delivery.</li>
+  </ul>
+
   <h3>Article 11 (Disclaimer)</h3>
   <ul>
     <li>The Service is provided "as is" without any warranty as to fitness for a particular purpose, accuracy, completeness, or continued availability.</li>
@@ -163,6 +170,13 @@ $op = View::e($operator);
 
   <h3>第10条（本サービスの変更・中断・終了）</h3>
   <p>運営者は、本サービスの全部または一部を、事前の通知なくいつでも変更・追加・中断・終了し、またデータを初期化することができます。これによりユーザーに生じた損害について、運営者は責任を負いません。</p>
+
+  <h3>第10条の2（広告の掲載）</h3>
+  <ul>
+    <li>運営者は、本サービスに第三者配信事業者（忍者AdMax（忍者ツールズ））による広告を掲載することがあります。</li>
+    <li>運営者は、広告の内容・広告主・リンク先ウェブサイトについて保証せず、これらに起因する損害について責任を負いません。広告に関する取引は、ユーザーと広告主の責任において行ってください。</li>
+    <li>広告の不正なクリック、インプレッションの水増し、その他広告配信を妨害する行為を禁止します。</li>
+  </ul>
 
   <h3>第11条（免責）</h3>
   <ul>
