@@ -32,7 +32,6 @@ $op = View::e($operator);
   <h3>Article 3 (Registration and eligibility)</h3>
   <ul>
     <li>The Service is open to all ages. Minors must use the Service with the consent of a parent or other legal guardian.</li>
-    <li>You must provide true and accurate information and keep it up to date.</li>
     <li>Each person may hold only one account. Creating multiple accounts to manipulate rankings or the market is prohibited.</li>
     <li>You are responsible for managing your credentials and for all activity under your account. The Operator is not liable for loss arising from inadequate management, misuse, or third-party use of your credentials.</li>
   </ul>
@@ -54,8 +53,7 @@ $op = View::e($operator);
     <li>violate laws or these Terms, or infringe the rights of others (copyright, privacy, portrait, honor, etc.);</li>
     <li>post defamatory, discriminatory, obscene, violent, or otherwise harmful content;</li>
     <li>post content that promotes crime or harms public order and morals;</li>
-    <li>gain unauthorized access, or use bots, scraping, or other automated means to abuse the Service;</li>
-    <li>use AI or other automated generation to post in bulk, or repeatedly post/operate by mechanical means;</li>
+    <li>gain unauthorized access, or abuse the Service using bots, scraping, AI, or other automated means (including bulk or mechanical posting or operations);</li>
     <li>impose excessive load on, or interfere with, the Service or its servers/networks;</li>
     <li>create multiple or fraudulent accounts, or manipulate rankings or the market;</li>
     <li>impersonate others or use the Service for commercial solicitation without permission;</li>
@@ -129,7 +127,6 @@ $op = View::e($operator);
   <h3>第3条（登録・利用資格）</h3>
   <ul>
     <li>本サービスは全年齢を対象とします。未成年者が利用する場合は、親権者その他の法定代理人の同意を得たうえで利用するものとします。</li>
-    <li>登録情報は真実かつ正確なものを提供し、常に最新の状態に保つものとします。</li>
     <li>アカウントは1人につき1つのみ保有できます。ランキングや相場を操作する目的での複数アカウントの作成を禁止します。</li>
     <li>ユーザーは自己の認証情報を適切に管理する責任を負い、アカウントでの一切の行為について責任を負います。管理不十分・第三者による使用等によって生じた損害について、運営者は責任を負いません。</li>
   </ul>
@@ -151,8 +148,7 @@ $op = View::e($operator);
     <li>法令もしくは本規約に違反する行為、または第三者の権利（著作権・プライバシー・肖像・名誉等）を侵害する行為</li>
     <li>誹謗中傷・差別・わいせつ・暴力的その他有害なコンテンツの投稿</li>
     <li>犯罪を助長し、または公序良俗に反するコンテンツの投稿</li>
-    <li>不正アクセス、ボット・スクレイピング等の自動的手段による濫用</li>
-    <li>AIその他の自動生成手段を利用して大量に投稿する行為、または機械的に投稿・操作を繰り返す行為</li>
+    <li>不正アクセス、または、ボット・スクレイピング・AIその他の自動的手段を用いた濫用（大量・機械的な投稿や操作の繰り返しを含む）</li>
     <li>本サービスやサーバー・ネットワークに過度の負荷をかけ、または運営を妨害する行為</li>
     <li>複数アカウントや不正なアカウントの作成、ランキング・相場の操作</li>
     <li>他者へのなりすまし、許可のない営業・勧誘行為</li>
