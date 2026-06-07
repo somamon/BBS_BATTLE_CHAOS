@@ -11,6 +11,17 @@ use App\Presentation\Routing\Router;
 use App\Presentation\Routing\NotFoundException;
 use App\Presentation\Routing\MethodNotAllowedException;
 
+// セッションのセキュリティ強化：JS から触れない / クロスサイト送信を抑止 /
+// 未初期化IDを採用しない（セッション固定対策の土台）。HTTPS では Secure を付与。
+$https = ($_SERVER['HTTPS'] ?? '') !== '' || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+ini_set('session.use_strict_mode', '1');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'httponly' => true,
+    'secure'   => $https,
+    'samesite' => 'Lax',
+]);
 session_start();
 
 $request = Request::fromGlobals();
