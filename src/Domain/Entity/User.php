@@ -17,11 +17,12 @@ final class User
         public readonly string $id,
         public readonly string $email,
         public readonly string $name,
-        private string $passwordHash,
+        private ?string $passwordHash,
         private int $money,
         public readonly DateTimeImmutable $createdAt,
         private ?DateTimeImmutable $emailVerifiedAt = null,
         public readonly bool $isBot = false,
+        private ?string $googleSub = null,
     ) {}
 
     /** 新規登録ユーザー（初期所持金を付与。メールは未確認状態で作る）。 */
@@ -35,6 +36,25 @@ final class User
             money: Game::initialMoney(),
             createdAt: $now,
             emailVerifiedAt: null,
+        );
+    }
+
+    /**
+     * Googleログインで新規作成するユーザー。
+     * パスワードは持たず（passwordHash=null）、メールはGoogleが確認済みのため確認済みで作る。
+     */
+    public static function fromGoogle(string $email, string $name, string $googleSub, DateTimeImmutable $now): self
+    {
+        return new self(
+            id: Ulid::generate(),
+            email: $email,
+            name: $name,
+            passwordHash: null,
+            money: Game::initialMoney(),
+            createdAt: $now,
+            emailVerifiedAt: $now, // Google が確認済みのアドレス
+            isBot: false,
+            googleSub: $googleSub,
         );
     }
 
@@ -80,10 +100,11 @@ final class User
 
     public function verifyPassword(string $password): bool
     {
-        return password_verify($password, $this->passwordHash);
+        // パスワード未設定（Googleのみのアカウント）はパスワードログイン不可。
+        return $this->passwordHash !== null && password_verify($password, $this->passwordHash);
     }
 
-    public function passwordHash(): string
+    public function passwordHash(): ?string
     {
         return $this->passwordHash;
     }
@@ -92,5 +113,17 @@ final class User
     public function changePassword(string $newPasswordHash): void
     {
         $this->passwordHash = $newPasswordHash;
+    }
+
+    public function googleSub(): ?string
+    {
+        return $this->googleSub;
+    }
+
+    /** このアカウントを Google 連携する（生成済みアカウントへ sub を結びつけ、メールを確認済みにする）。 */
+    public function linkGoogle(string $googleSub, DateTimeImmutable $now): void
+    {
+        $this->googleSub = $googleSub;
+        $this->markEmailVerified($now); // Google が確認済みのアドレス
     }
 }

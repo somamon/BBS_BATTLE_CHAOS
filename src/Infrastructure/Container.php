@@ -10,6 +10,7 @@ use App\Application\Port\Mailer;
 use App\Application\Port\RateLimiter;
 use App\Application\Port\TransactionManager;
 use App\Config\Environment;
+use App\Infrastructure\Auth\GoogleOAuth;
 use App\Infrastructure\Logging\JsonLogger;
 use App\Application\Service\PasswordResetMailSender;
 use App\Application\Service\VerificationMailSender;
@@ -99,6 +100,17 @@ final class Container
             // 確認リンクの絶対URL生成に使うベースURL（env: APP_URL）。
             'app.url' => fn(): string => getenv('APP_URL')
                 ?: ('http://localhost:' . (getenv('NGINX_PORT') ?: '8080')),
+
+            // Googleログイン（OAuth/OIDC）。未設定（CLIENT_ID/SECRET空）ならボタンも導線も無効。
+            GoogleOAuth::class => function (ContainerInterface $c): GoogleOAuth {
+                $redirect = getenv('GOOGLE_REDIRECT_URL')
+                    ?: (rtrim((string) $c->get('app.url'), '/') . '/auth/google/callback');
+                return new GoogleOAuth(
+                    clientId: getenv('GOOGLE_CLIENT_ID') ?: '',
+                    clientSecret: getenv('GOOGLE_CLIENT_SECRET') ?: '',
+                    redirectUrl: $redirect,
+                );
+            },
 
             // 確認メール送信サービス（RegisterUser / ResendVerification が共用）。
             VerificationMailSender::class => autowire()->constructorParameter('appUrl', get('app.url')),

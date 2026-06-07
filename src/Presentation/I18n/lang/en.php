@@ -14,6 +14,7 @@ return [
     'auth.logout'  => 'Log out',
     'auth.register' => 'Sign up',
     'auth.login'   => 'Log in',
+    'auth.google'  => 'Continue with Google',
     'lang.other'   => '日本語',
     'common.to_login' => 'Go to login',
     'common.back_to_threads' => '← Back to threads',
@@ -228,6 +229,7 @@ return [
     'flash.invest_failed' => 'Investment failed: {msg}',
     'flash.verified' => 'Email verified. Welcome!',
     'flash.password_reset' => 'Password changed. You are now logged in.',
+    'flash.logged_in' => 'You are now logged in.',
     'flash.account_deleted' => 'Your account has been deleted. Thank you for playing.',
 
     // Error (exception) messages
@@ -235,6 +237,8 @@ return [
     'err.email_unverified' => 'Your email is not verified. Open the link in the verification email to finish sign-up',
     'err.invalid_token' => 'The verification link is invalid or has expired',
     'err.too_many_attempts' => 'Too many attempts. Please wait a while and try again',
+    'err.google_failed' => 'Google login failed. Please try again',
+    'err.google_email_unverified' => 'Your Google account email is not verified, so you cannot log in',
     'err.invest_not_found' => 'Post not found',
     'err.invest_dead' => 'This post has decayed and cannot be invested in',
     'err.insufficient_funds' => 'Insufficient funds',

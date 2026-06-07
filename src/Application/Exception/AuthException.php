@@ -33,4 +33,14 @@ final class AuthException extends \RuntimeException
     {
         return new self('err.too_many_attempts', '試行回数が多すぎます。しばらく時間をおいて再度お試しください');
     }
+
+    public static function googleFailed(): self
+    {
+        return new self('err.google_failed', 'Googleログインに失敗しました。お手数ですが、もう一度お試しください');
+    }
+
+    public static function googleEmailUnverified(): self
+    {
+        return new self('err.google_email_unverified', 'Googleアカウントのメールアドレスが未確認のため、ログインできません');
+    }
 }

@@ -27,6 +27,16 @@ final class InMemoryUserRepository implements UserRepository
         return null;
     }
 
+    public function findByGoogleSub(string $googleSub): ?User
+    {
+        foreach ($this->users as $user) {
+            if ($user->googleSub() === $googleSub) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
     public function existsByEmail(string $email): bool
     {
         return $this->findByEmail($email) !== null;
