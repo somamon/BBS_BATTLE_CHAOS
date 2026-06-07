@@ -25,8 +25,8 @@ $router->post('/threads', [ThreadController::class, 'create'], ['csrf']); // ス
 $router->get('/thread/{id}', [ThreadController::class, 'show']);
 
 // 書き込み系（CSRF 検証付き）
-$router->post('/thread/{id}/posts', [ResController::class, 'create'], ['csrf']);            // レス投稿
-$router->post('/thread/{id}/invest', [InvestController::class, 'invest'], ['csrf', 'auth']); // 投資（要ログイン）
+$router->post('/thread/{id}/posts', [ResController::class, 'create'], ['csrf']);          // レス投稿
+$router->post('/post/{id}/invest', [InvestController::class, 'invest'], ['csrf', 'auth']); // 投稿へ投資（要ログイン）
 
 // 認証
 $router->get('/register', [AuthController::class, 'registerForm']);

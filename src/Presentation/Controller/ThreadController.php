@@ -61,7 +61,7 @@ final class ThreadController
     public function show(Request $request): Response
     {
         $id   = (string) $request->param('id');
-        $data = $this->showThread->execute($id);
+        $data = $this->showThread->execute($id, $this->auth->userId());
         if ($data === null) {
             return Response::error(404, 'スレッドが見つかりません');
         }

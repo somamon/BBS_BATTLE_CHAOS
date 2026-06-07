@@ -10,7 +10,7 @@ use App\Presentation\View\View;
 ?>
 <p><a href="/threads">← スレッド一覧へ</a></p>
 
-<h2>🪦 墓場</h2>
+<h2>墓場</h2>
 
 <?php if ($threads === []): ?>
   <div class="empty">まだ朽ちたスレッドはありません。</div>
@@ -25,9 +25,9 @@ use App\Presentation\View\View;
 
 <style>
   .tombstone {
-    color: #9a9ab5;
-    font-weight: 600;
+    color: #777;
+    font-weight: bold;
     text-decoration: line-through;
-    text-decoration-color: #5a5a72;
+    text-decoration-color: #aaa;
   }
 </style>

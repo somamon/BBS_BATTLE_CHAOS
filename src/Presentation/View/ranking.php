@@ -22,7 +22,7 @@ use App\Presentation\View\View;
             <td><?= View::e($r['name']) ?></td>
             <td><?= View::e(number_format((int) $r['money'])) ?></td>
             <td><?= View::e(number_format((int) $r['shareValue'])) ?></td>
-            <td style="color:#ffd479;"><?= View::e(number_format((int) $r['total'])) ?></td>
+            <td style="color:#cc0000; font-weight:bold;"><?= View::e(number_format((int) $r['total'])) ?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
