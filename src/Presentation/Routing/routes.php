@@ -1,9 +1,9 @@
 <?php
 
 use App\Presentation\Controller\AuthController;
+use App\Presentation\Controller\HomeController;
 use App\Presentation\Controller\InvestController;
 use App\Presentation\Controller\MyPageController;
-use App\Presentation\Controller\PlaygroundController;
 use App\Presentation\Controller\RankingController;
 use App\Presentation\Controller\ResController;
 use App\Presentation\Controller\ResultController;
@@ -12,8 +12,8 @@ use App\Presentation\Routing\Router;
 
 /** @var Router $router */
 
-// 開発用 JS プレイグラウンド
-$router->get('/playground', [PlaygroundController::class, 'index']);
+// トップ（サイト概要・遊び方）
+$router->get('/', [HomeController::class, 'index']);
 
 // スレッド一覧・作成
 $router->get('/threads', [ThreadController::class, 'index']);            // 一覧

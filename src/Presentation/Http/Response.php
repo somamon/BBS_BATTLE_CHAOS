@@ -6,6 +6,20 @@ namespace App\Presentation\Http;
 
 final class Response
 {
+    /**
+     * 全レスポンスに付与するセキュリティヘッダ（明示設定があれば上書きされる）。
+     * - frame-ancestors / X-Frame-Options: クリックジャッキング防止
+     * - nosniff: MIME スニッフィング防止
+     * - Referrer-Policy: URL（確認トークン等）の Referer 漏洩防止
+     * - CSP: 既定は self のみ。インラインstyleを使うため style だけ unsafe-inline を許可
+     */
+    private const SECURITY_HEADERS = [
+        'X-Frame-Options'        => 'DENY',
+        'X-Content-Type-Options' => 'nosniff',
+        'Referrer-Policy'        => 'no-referrer',
+        'Content-Security-Policy' => "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
+    ];
+
     /** @var array<string,string> */
     private array $headers = [];
 
@@ -48,11 +62,25 @@ final class Response
         return $this;
     }
 
+    /**
+     * 送出する全ヘッダ（セキュリティ既定 ＋ 明示設定）。明示設定が既定を上書きする。
+     * @return array<string,string>
+     */
+    public function headers(): array
+    {
+        return array_merge(self::SECURITY_HEADERS, $this->headers);
+    }
+
+    public function status(): int
+    {
+        return $this->status;
+    }
+
     /** 実際にクライアントへ送る（最後に1回だけ呼ぶ） */
     public function send(): void
     {
         http_response_code($this->status);
-        foreach ($this->headers as $name => $value) {
+        foreach ($this->headers() as $name => $value) {
             header("{$name}: {$value}");
         }
         echo $this->body;

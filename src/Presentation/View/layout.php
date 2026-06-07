@@ -85,8 +85,9 @@ $phaseLabels = [
 </head>
 <body>
   <header>
-    <h1><a href="/threads">BBS BATTLE CHAOS</a></h1>
+    <h1><a href="/">BBS BATTLE CHAOS</a></h1>
     <nav>
+      <a href="/">概要</a>
       <a href="/threads">スレ一覧</a>
       <a href="/ranking">ランキング</a>
       <a href="/result">結果</a>
