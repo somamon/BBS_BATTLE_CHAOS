@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Endgame;
 
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Config\Game;
 use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
@@ -17,7 +17,7 @@ use DateTimeImmutable;
 final class EndgameStatus
 {
     public function __construct(
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly ThreadRepository $threads,
         private readonly UserRepository $users,
     ) {}
@@ -26,7 +26,7 @@ final class EndgameStatus
     public function execute(?DateTimeImmutable $now = null): array
     {
         $now ??= new DateTimeImmutable();
-        $multiplier = $this->market->resolve($now)->multiplier();
+        $multiplier = $this->decay->multiplier($now);
 
         // 生存スレッド（現在HP > 0 のもの）が1件もないか。
         $aliveCount = 0;

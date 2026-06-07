@@ -6,7 +6,7 @@ namespace App\Application\UseCase\Invest;
 
 use App\Application\Exception\InvestException;
 use App\Application\Port\TransactionManager;
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Config\Game;
 use App\Domain\Entity\Holding;
 use App\Domain\Entity\Investment;
@@ -27,7 +27,7 @@ final class InvestInPost
 {
     public function __construct(
         private readonly TransactionManager $tx,
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly PostRepository $posts,
         private readonly ThreadRepository $threads,
         private readonly UserRepository $users,
@@ -54,7 +54,7 @@ final class InvestInPost
                 throw InvestException::notFound();
             }
 
-            $multiplier = $this->market->resolve($now)->multiplier();
+            $multiplier = $this->decay->multiplier($now);
 
             // 投稿の減衰を確定。死んでいたら投資不可。
             $post->settleDecay($now, $multiplier);

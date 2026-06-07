@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application;
 
+use App\Application\Service\DecayRate;
 use App\Application\Service\MarketPhaseService;
 use App\Application\Service\MarketSimulator;
 use App\Application\UseCase\Invest\InvestInPost;
@@ -50,8 +51,9 @@ final class MarketSimulatorTest extends TestCase
         $this->investments = new InMemoryInvestmentRepository();
         $simState          = new InMemoryBotSimStateRepository($lastTick);
 
-        $invest      = new InvestInPost($tx, $market, $this->posts, $this->threads, $this->users, $holdings, $this->investments);
-        $postReply   = new PostReply($tx, $market, $this->threads, $this->posts);
+        $decay       = new DecayRate($market, $this->users);
+        $invest      = new InvestInPost($tx, $decay, $this->posts, $this->threads, $this->users, $holdings, $this->investments);
+        $postReply   = new PostReply($tx, $decay, $this->threads, $this->posts);
         $createThread = new CreateThread($this->threads);
 
         return new MarketSimulator($simState, $this->users, $this->threads, $this->posts, $invest, $postReply, $createThread);

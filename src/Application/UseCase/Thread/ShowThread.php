@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Thread;
 
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Domain\Repository\HoldingRepository;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\ThreadRepository;
@@ -19,7 +19,7 @@ final class ShowThread
     private const LEVEL_LABELS = ['新規', '注目', '人気', '殿堂入り'];
 
     public function __construct(
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly ThreadRepository $threads,
         private readonly PostRepository $posts,
         private readonly HoldingRepository $holdings,
@@ -35,7 +35,7 @@ final class ShowThread
             return null;
         }
 
-        $multiplier = $this->market->resolve($now)->multiplier();
+        $multiplier = $this->decay->multiplier($now);
         $thread->settleDecay($now, $multiplier);
         $this->threads->save($thread);
 

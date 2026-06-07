@@ -46,6 +46,10 @@ final class Game
     public const PHASE_MIN_SEC = 180;
     public const PHASE_MAX_SEC = 900;
 
+    // 人口による減衰スピード調整：人（人間）が少ないうちは朽ちを遅くし、集まるほど通常速度へ。
+    public const DECAY_MIN_FACTOR     = 0.3;  // 人がいない時の減衰倍率（通常の30%＝ゆっくり）
+    public const DECAY_FULL_AT_HUMANS = 20;   // この人数で通常速度(×1.0)に到達
+
     // NPC投資家（ボット）。ソロ/少人数を成立させる擬似他人。cron不要の遅延シミュレーション。
     public const BOT_MAX_HUMANS   = 50;   // 人間ユーザーがこの数以下のときだけ稼働
     public const BOT_TICK_SECONDS = 30;   // 何秒の経過ごとに1アクション
@@ -57,6 +61,16 @@ final class Game
     public static function phaseMultiplier(string $phase): float
     {
         return self::PHASES[$phase] ?? 1.0;
+    }
+
+    /**
+     * 人口（人間の人数）に応じた減衰スピード係数（DECAY_MIN_FACTOR〜1.0）。
+     * 0人で最も遅く、DECAY_FULL_AT_HUMANS 人で通常速度（1.0）に線形到達する。
+     */
+    public static function populationDecayFactor(int $humanCount): float
+    {
+        $ramp = min(1.0, max(0, $humanCount) / self::DECAY_FULL_AT_HUMANS);
+        return self::DECAY_MIN_FACTOR + (1.0 - self::DECAY_MIN_FACTOR) * $ramp;
     }
 
     /** 累計投資額からスポット株価を求める（後から買うほど高い）。 */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\User;
 
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Domain\Repository\HoldingRepository;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\UserRepository;
@@ -22,7 +22,7 @@ final class MyPageQuery
     private const LEVEL_LABELS = ['新規', '注目', '人気', '殿堂入り'];
 
     public function __construct(
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly UserRepository $users,
         private readonly HoldingRepository $holdings,
         private readonly PostRepository $posts,
@@ -38,7 +38,7 @@ final class MyPageQuery
             return null;
         }
 
-        $multiplier = $this->market->resolve($now)->multiplier();
+        $multiplier = $this->decay->multiplier($now);
 
         $shareValue = 0;
         $holdingRows = [];
