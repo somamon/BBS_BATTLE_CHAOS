@@ -18,36 +18,37 @@ final class GameTest extends TestCase
         self::assertSame(1.0, Game::phaseMultiplier('unknown'));
     }
 
-    public function testMutationLevelForThresholds(): void
+    public function testSharePriceBondingCurve(): void
     {
-        self::assertSame(0, Game::mutationLevelFor(0));
-        self::assertSame(0, Game::mutationLevelFor(499));
-        self::assertSame(1, Game::mutationLevelFor(500));
-        self::assertSame(1, Game::mutationLevelFor(1999));
-        self::assertSame(2, Game::mutationLevelFor(2000));
-        self::assertSame(2, Game::mutationLevelFor(7999));
-        self::assertSame(3, Game::mutationLevelFor(8000));
-        self::assertSame(3, Game::mutationLevelFor(100000));
+        // BASE=10, SLOPE=0.01
+        self::assertSame(10.0, Game::sharePrice(0));
+        self::assertSame(11.0, Game::sharePrice(100));
+        self::assertSame(20.0, Game::sharePrice(1000));
+        self::assertSame(110.0, Game::sharePrice(10000));
     }
 
-    public function testMaxHpFor(): void
+    public function testPostLevelForThresholds(): void
     {
-        self::assertSame(1000, Game::maxHpFor(0));
-        self::assertSame(2000, Game::maxHpFor(1));
-        self::assertSame(4000, Game::maxHpFor(2));
-        self::assertSame(8000, Game::maxHpFor(3));
+        self::assertSame(0, Game::postLevelFor(0));
+        self::assertSame(0, Game::postLevelFor(99));
+        self::assertSame(1, Game::postLevelFor(100));
+        self::assertSame(1, Game::postLevelFor(999));
+        self::assertSame(2, Game::postLevelFor(1000));
+        self::assertSame(2, Game::postLevelFor(9999));
+        self::assertSame(3, Game::postLevelFor(10000));
+        self::assertSame(3, Game::postLevelFor(1000000));
     }
 
-    public function testDividendBonusFor(): void
+    public function testPostMaxHpFor(): void
     {
-        self::assertSame(1.0, Game::dividendBonusFor(0));
-        self::assertSame(1.1, Game::dividendBonusFor(1));
-        self::assertSame(1.2, Game::dividendBonusFor(2));
-        self::assertSame(1.3, Game::dividendBonusFor(3));
+        self::assertSame(100, Game::postMaxHpFor(0));
+        self::assertSame(300, Game::postMaxHpFor(1));
+        self::assertSame(800, Game::postMaxHpFor(2));
+        self::assertSame(2000, Game::postMaxHpFor(3));
     }
 
     public function testSplitSumsToWhole(): void
     {
-        self::assertSame(1.0, Game::SPLIT_HP + Game::SPLIT_DIVIDEND + Game::SPLIT_SINK);
+        self::assertSame(1.0, Game::SPLIT_SHARES + Game::SPLIT_HP);
     }
 }
