@@ -2,6 +2,7 @@
 
 use App\Presentation\Controller\AccountController;
 use App\Presentation\Controller\AuthController;
+use App\Presentation\Controller\GoogleAuthController;
 use App\Presentation\Controller\HomeController;
 use App\Presentation\Controller\InvestController;
 use App\Presentation\Controller\LanguageController;
@@ -43,6 +44,10 @@ $router->post('/logout', [AuthController::class, 'logout'], ['csrf']);
 $router->get('/verify', [AuthController::class, 'verify']);                          // メール確認リンク
 $router->get('/verify/resend', [AuthController::class, 'resendForm']);               // 再送フォーム
 $router->post('/verify/resend', [AuthController::class, 'resend'], ['csrf']);        // 再送実行
+
+// Googleアカウントログイン（OAuth/OIDC）
+$router->get('/auth/google', [GoogleAuthController::class, 'start']);                 // 同意画面へ
+$router->get('/auth/google/callback', [GoogleAuthController::class, 'callback']);     // コールバック
 
 // パスワード再設定（M1）
 $router->get('/password/forgot', [AuthController::class, 'forgotForm']);             // 申請フォーム

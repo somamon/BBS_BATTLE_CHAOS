@@ -51,6 +51,7 @@ final class AuthController
         private readonly RequestPasswordReset $requestPasswordReset,
         private readonly ResetPassword $resetPassword,
         private readonly RateLimiter $rateLimiter,
+        private readonly \App\Infrastructure\Auth\GoogleOAuth $googleOauth,
     ) {}
 
     /** GET /register 登録フォーム */
@@ -234,18 +235,20 @@ final class AuthController
     private function registerView(?string $error, string $email, string $name, bool $agree): string
     {
         return $this->page($this->market, $this->auth, $this->users, t('register.title'), 'Auth/register', [
-            'error' => $error,
-            'email' => $email,
-            'name'  => $name,
-            'agree' => $agree,
+            'error'         => $error,
+            'email'         => $email,
+            'name'          => $name,
+            'agree'         => $agree,
+            'googleEnabled' => $this->googleOauth->isConfigured(),
         ]);
     }
 
     private function loginView(?string $error, string $email): string
     {
         return $this->page($this->market, $this->auth, $this->users, t('login.title'), 'Auth/login', [
-            'error' => $error,
-            'email' => $email,
+            'error'         => $error,
+            'email'         => $email,
+            'googleEnabled' => $this->googleOauth->isConfigured(),
         ]);
     }
 

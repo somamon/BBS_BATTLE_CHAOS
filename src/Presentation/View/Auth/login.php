@@ -13,6 +13,12 @@ use App\Presentation\View\View;
   <div class="error"><?= View::e($error) ?></div>
 <?php endif; ?>
 
+<?php if (!empty($googleEnabled)): ?>
+  <p class="card" style="text-align:center;">
+    <a href="/auth/google"><?= t('auth.google') ?></a>
+  </p>
+<?php endif; ?>
+
 <form method="post" action="/login" class="card">
   <?= Csrf::field() ?>
   <label for="email"><?= t('login.email') ?></label>

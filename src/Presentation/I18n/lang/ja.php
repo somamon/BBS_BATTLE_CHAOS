@@ -14,6 +14,7 @@ return [
     'auth.logout'  => 'ログアウト',
     'auth.register' => '登録',
     'auth.login'   => 'ログイン',
+    'auth.google'  => 'Googleでログイン / 新規登録',
     'lang.other'   => 'English',
     'common.to_login' => 'ログインへ',
     'common.back_to_threads' => '← スレ一覧へ',
@@ -228,6 +229,7 @@ return [
     'flash.invest_failed' => '投資できませんでした: {msg}',
     'flash.verified' => 'メールアドレスを確認しました。ようこそ！',
     'flash.password_reset' => 'パスワードを変更しました。ログインしました。',
+    'flash.logged_in' => 'ログインしました。',
     'flash.account_deleted' => '退会が完了しました。ご利用ありがとうございました。',
 
     // エラー（例外）メッセージ
@@ -235,6 +237,8 @@ return [
     'err.email_unverified' => 'メールアドレスが未確認です。確認メールのリンクから登録を完了してください',
     'err.invalid_token' => '確認リンクが無効か、有効期限が切れています',
     'err.too_many_attempts' => '試行回数が多すぎます。しばらく時間をおいて再度お試しください',
+    'err.google_failed' => 'Googleログインに失敗しました。お手数ですが、もう一度お試しください',
+    'err.google_email_unverified' => 'Googleアカウントのメールアドレスが未確認のため、ログインできません',
     'err.invest_not_found' => '投稿が見つかりません',
     'err.invest_dead' => 'この投稿は朽ちており投資できません',
     'err.insufficient_funds' => '所持金が足りません',

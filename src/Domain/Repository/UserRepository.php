@@ -12,6 +12,9 @@ interface UserRepository
 
     public function findByEmail(string $email): ?User;
 
+    /** Google の sub（OIDCの一意ID）でユーザーを引く。連携済みでなければ null。 */
+    public function findByGoogleSub(string $googleSub): ?User;
+
     public function existsByEmail(string $email): bool;
 
     public function insert(User $user): void;

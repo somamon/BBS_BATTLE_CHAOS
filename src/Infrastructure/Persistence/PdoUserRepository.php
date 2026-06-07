@@ -31,6 +31,15 @@ final class PdoUserRepository implements UserRepository
         return $row ? $this->hydrate($row) : null;
     }
 
+    public function findByGoogleSub(string $googleSub): ?User
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE google_sub = ?');
+        $stmt->execute([$googleSub]);
+        $row = $stmt->fetch();
+
+        return $row ? $this->hydrate($row) : null;
+    }
+
     public function existsByEmail(string $email): bool
     {
         $stmt = $this->pdo->prepare('SELECT 1 FROM users WHERE email = ?');
@@ -43,15 +52,16 @@ final class PdoUserRepository implements UserRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO users
-                (id, email, name, password_hash, money, email_verified_at, is_bot, created_at)
+                (id, email, name, password_hash, google_sub, money, email_verified_at, is_bot, created_at)
              VALUES
-                (:id, :email, :name, :password_hash, :money, :email_verified_at, :is_bot, :created_at)'
+                (:id, :email, :name, :password_hash, :google_sub, :money, :email_verified_at, :is_bot, :created_at)'
         );
         $stmt->execute([
             ':id'                => $user->id,
             ':email'             => $user->email,
             ':name'              => $user->name,
             ':password_hash'     => $user->passwordHash(),
+            ':google_sub'        => $user->googleSub(),
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':is_bot'            => $user->isBot ? 1 : 0,
@@ -65,13 +75,15 @@ final class PdoUserRepository implements UserRepository
             'UPDATE users
                 SET money = :money,
                     email_verified_at = :email_verified_at,
-                    password_hash = :password_hash
+                    password_hash = :password_hash,
+                    google_sub = :google_sub
              WHERE id = :id'
         );
         $stmt->execute([
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':password_hash'     => $user->passwordHash(),
+            ':google_sub'        => $user->googleSub(),
             ':id'                => $user->id,
         ]);
     }
@@ -120,6 +132,7 @@ final class PdoUserRepository implements UserRepository
                 ? new DateTimeImmutable($row['email_verified_at'])
                 : null,
             isBot:           (bool) $row['is_bot'],
+            googleSub:       $row['google_sub'] ?? null,
         );
     }
 }
