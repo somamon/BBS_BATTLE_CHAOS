@@ -4,12 +4,36 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use App\Config\Environment;
 use App\Infrastructure\Container;
+use App\Presentation\I18n\Translator;
 use App\Presentation\Http\Request;
 use App\Presentation\Http\Response;
 use App\Presentation\Routing\Router;
 use App\Presentation\Routing\NotFoundException;
 use App\Presentation\Routing\MethodNotAllowedException;
+
+// アプリ全体のタイムゾーン（表示・保存の基準）。MySQL セッションも Database で合わせる。
+date_default_timezone_set(getenv('APP_TIMEZONE') ?: 'Asia/Tokyo');
+
+// 表示言語の解決：Cookie 'lang' を優先、無ければ Accept-Language、既定は日本語。
+$lang = $_COOKIE['lang'] ?? null;
+if (!is_string($lang) || !in_array($lang, Translator::SUPPORTED, true)) {
+    $accept = strtolower($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '');
+    $lang = str_starts_with($accept, 'en') ? 'en' : Translator::DEFAULT;
+}
+Translator::activate(Translator::for($lang));
+
+// 本番で危険な既定値のまま起動しないよう検証（不足なら 500 で停止・詳細は漏らさない）。
+try {
+    Environment::assertProductionReady();
+} catch (\Throwable $e) {
+    error_log('[boot] ' . $e->getMessage());
+    http_response_code(500);
+    header('Content-Type: text/html; charset=UTF-8');
+    echo '<h1>500</h1><p>設定エラーにより起動できません。管理者にお問い合わせください。</p>';
+    exit;
+}
 
 // セッションのセキュリティ強化：JS から触れない / クロスサイト送信を抑止 /
 // 未初期化IDを採用しない（セッション固定対策の土台）。HTTPS では Secure を付与。
