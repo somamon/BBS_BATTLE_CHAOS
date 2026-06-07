@@ -19,8 +19,6 @@ final class MyPageQuery
     /** 本文プレビューの最大文字数。 */
     private const EXCERPT_LEN = 40;
 
-    private const LEVEL_LABELS = ['新規', '注目', '人気', '殿堂入り'];
-
     public function __construct(
         private readonly DecayRate $decay,
         private readonly UserRepository $users,
@@ -40,13 +38,16 @@ final class MyPageQuery
 
         $multiplier = $this->decay->multiplier($now);
 
+        $holdings = $this->holdings->findByUser($userId);
+        $postMap  = $this->posts->findByIds(array_map(static fn ($h) => $h->postId, $holdings));
+
         $shareValue = 0;
         $holdingRows = [];
-        foreach ($this->holdings->findByUser($userId) as $holding) {
+        foreach ($holdings as $holding) {
             if ($holding->shares() <= 0) {
                 continue;
             }
-            $post = $this->posts->findById($holding->postId);
+            $post = $postMap[$holding->postId] ?? null;
             if ($post === null) {
                 continue;
             }
@@ -62,7 +63,7 @@ final class MyPageQuery
                 'valuation' => $valuation,
                 'cost'      => $holding->cost(),
                 'pnl'       => $valuation - $holding->cost(),
-                'level'     => self::LEVEL_LABELS[$post->level()] ?? '新規',
+                'level'     => $post->level(),
                 'status'    => $post->status(),
                 'postHp'    => $post->currentHp($now, $multiplier),
             ];

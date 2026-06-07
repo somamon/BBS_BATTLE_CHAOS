@@ -21,10 +21,18 @@ final class Database
 
         $dsn = "mysql:host={$host};dbname={$name};charset=utf8mb4";
 
-        return new PDO($dsn, $user, $pass, [
+        $pdo = new PDO($dsn, $user, $pass, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
+
+        // MySQL の NOW() 等を PHP と同じタイムゾーンに合わせる（名前付きTZ表不要のオフセット指定）。
+        $tz     = getenv('APP_TIMEZONE') ?: 'Asia/Tokyo';
+        $offset = (new \DateTimeImmutable('now', new \DateTimeZone($tz)))->format('P'); // 例 +09:00
+        $stmt = $pdo->prepare('SET time_zone = ?');
+        $stmt->execute([$offset]);
+
+        return $pdo;
     }
 }

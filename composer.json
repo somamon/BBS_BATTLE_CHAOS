@@ -2,7 +2,10 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
-        }
+        },
+        "files": [
+            "src/Presentation/I18n/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

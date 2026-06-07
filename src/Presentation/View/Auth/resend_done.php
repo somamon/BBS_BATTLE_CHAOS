@@ -5,11 +5,11 @@
  */
 use App\Presentation\View\View;
 ?>
-<h2>確認メールを再送しました</h2>
+<h2><?= t('resend_done.title') ?></h2>
 
 <div class="card">
-  <p><strong><?= View::e($email) ?></strong> が未確認のアカウントとして登録されている場合、確認メールを再送しました。</p>
-  <p class="muted">メール内のリンク（24時間有効）を開くと登録が完了します。古いリンクは無効になります。</p>
+  <p><?= t('resend_done.body', ['email' => View::e($email)]) ?></p>
+  <p class="muted"><?= t('resend_done.note') ?></p>
 </div>
 
-<p class="muted"><a href="/login">ログインへ</a></p>
+<p class="muted"><a href="/login"><?= t('common.to_login') ?></a></p>

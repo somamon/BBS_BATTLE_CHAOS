@@ -3,41 +3,42 @@
  * 終局結果 + 最終ランキング。
  * @var bool                            $over
  * @var string|null                     $reason
- * @var array<int,array<string,mixed>>  $rows  name,money,shareValue,total
+ * @var array<int,array<string,mixed>>  $rows  name,isBot,money,shareValue,total
  */
 use App\Presentation\View\View;
 
-$reasonLabels = [
-    'all_dead' => '全てのスレッドが朽ち果てました',
-    'no_money' => '市場の資金が尽きました',
-];
+$reasonKey = match ($reason) {
+    'all_dead' => 'result.reason.all_dead',
+    'no_money' => 'result.reason.no_money',
+    default    => 'result.reason.over',
+};
 ?>
 <?php if ($over): ?>
   <div class="banner">
-    <h2>世界の終わり</h2>
-    <p class="muted"><?= View::e($reasonLabels[$reason] ?? 'ゲーム終了') ?></p>
+    <h2><?= t('result.world_end') ?></h2>
+    <p class="muted"><?= t($reasonKey) ?></p>
   </div>
 <?php else: ?>
   <div class="card">
-    <strong>ゲームは進行中です。</strong>
-    <p class="muted">世界はまだ終わっていません。今のランキングはこちら。</p>
+    <strong><?= t('result.ongoing_title') ?></strong>
+    <p class="muted"><?= t('result.ongoing_note') ?></p>
   </div>
 <?php endif; ?>
 
-<h2><?= $over ? '最終ランキング' : '現在のランキング' ?></h2>
+<h2><?= $over ? t('result.final_ranking') : t('result.current_ranking') ?></h2>
 <?php if ($rows === []): ?>
-  <div class="empty">参加者がいません。</div>
+  <div class="empty"><?= t('result.no_players') ?></div>
 <?php else: ?>
   <div class="card">
     <table>
       <thead>
-        <tr><th>順位</th><th>表示名</th><th>所持金</th><th>株評価額</th><th>総資産</th></tr>
+        <tr><th><?= t('ranking.rank') ?></th><th><?= t('ranking.name') ?></th><th><?= t('ranking.cash') ?></th><th><?= t('ranking.shares') ?></th><th><?= t('ranking.total') ?></th></tr>
       </thead>
       <tbody>
         <?php foreach ($rows as $i => $r): ?>
           <tr>
             <td><?= View::e($i + 1) ?></td>
-            <td><?= View::e($r['name']) ?><?php if (!empty($r['isBot'])): ?> <span class="badge">AI</span><?php endif; ?></td>
+            <td><?= View::e($r['name']) ?><?php if (!empty($r['isBot'])): ?> <span class="badge">NPC</span><?php endif; ?></td>
             <td><?= View::e(number_format((int) $r['money'])) ?></td>
             <td><?= View::e(number_format((int) $r['shareValue'])) ?></td>
             <td style="color:#cc0000; font-weight:bold;"><?= View::e(number_format((int) $r['total'])) ?></td>

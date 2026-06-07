@@ -6,6 +6,7 @@ namespace App\Presentation\Controller;
 
 use App\Application\Exception\BoardException;
 use App\Application\UseCase\Thread\PostReply;
+use App\Domain\Exception\ValidationException;
 use App\Presentation\Http\Auth;
 use App\Presentation\Http\Request;
 use App\Presentation\Http\Response;
@@ -28,10 +29,10 @@ final class ResController
         try {
             $this->postReply->execute($threadId, $authorHash, $authorId, $content);
         } catch (BoardException $e) {
-            $status = $e->getMessage() === 'スレッドが見つかりません' ? 404 : 403;
-            return Response::error($status, $e->getMessage());
-        } catch (\InvalidArgumentException $e) {
-            return Response::error(422, $e->getMessage());
+            $status = $e->key === 'err.thread_not_found' ? 404 : 403;
+            return Response::error($status, t($e->key));
+        } catch (ValidationException $e) {
+            return Response::error(422, t($e->messageKey));
         }
 
         return Response::redirect('/thread/' . $threadId);

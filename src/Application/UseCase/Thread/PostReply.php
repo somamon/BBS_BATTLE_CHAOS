@@ -7,7 +7,9 @@ namespace App\Application\UseCase\Thread;
 use App\Application\Exception\BoardException;
 use App\Application\Port\TransactionManager;
 use App\Application\Service\DecayRate;
+use App\Config\Game;
 use App\Domain\Entity\Post;
+use App\Domain\Exception\ValidationException;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\ThreadRepository;
 use DateTimeImmutable;
@@ -44,7 +46,10 @@ final class PostReply
 
             $content = trim($content);
             if ($content === '') {
-                throw new \InvalidArgumentException('本文を入力してください');
+                throw ValidationException::field('content', 'validation.content.required', '本文を入力してください');
+            }
+            if (mb_strlen($content) > Game::POST_CONTENT_MAX) {
+                throw ValidationException::field('content', 'validation.content.too_long', '本文は' . Game::POST_CONTENT_MAX . '文字以内にしてください');
             }
 
             $post = Post::create($threadId, $authorHash, $authorId, $content, $now);

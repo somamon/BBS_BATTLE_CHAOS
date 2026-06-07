@@ -25,7 +25,7 @@ final class RankingController
     /** GET /ranking 総資産ランキング */
     public function index(Request $request): Response
     {
-        $html = $this->page($this->market, $this->auth, $this->users, 'ランキング', 'ranking', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('ranking.title'), 'ranking', [
             'rows' => $this->ranking->execute(),
         ]);
         return Response::html($html);

@@ -3,6 +3,7 @@
 use App\Presentation\Controller\AuthController;
 use App\Presentation\Controller\HomeController;
 use App\Presentation\Controller\InvestController;
+use App\Presentation\Controller\LanguageController;
 use App\Presentation\Controller\MyPageController;
 use App\Presentation\Controller\RankingController;
 use App\Presentation\Controller\ResController;
@@ -14,6 +15,9 @@ use App\Presentation\Routing\Router;
 
 // トップ（サイト概要・遊び方）
 $router->get('/', [HomeController::class, 'index']);
+
+// 言語切替（Cookieに保存して元のページへ）
+$router->get('/lang/{lang}', [LanguageController::class, 'switch']);
 
 // スレッド一覧・作成
 $router->get('/threads', [ThreadController::class, 'index']);            // 一覧

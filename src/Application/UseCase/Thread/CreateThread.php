@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Thread;
 
+use App\Config\Game;
 use App\Domain\Entity\Thread;
+use App\Domain\Exception\ValidationException;
 use App\Domain\Repository\ThreadRepository;
 use DateTimeImmutable;
 
@@ -22,7 +24,10 @@ final class CreateThread
     {
         $title = trim($title);
         if ($title === '') {
-            throw new \InvalidArgumentException('タイトルを入力してください');
+            throw ValidationException::field('title', 'validation.title.required', 'タイトルを入力してください');
+        }
+        if (mb_strlen($title) > Game::THREAD_TITLE_MAX) {
+            throw ValidationException::field('title', 'validation.title.too_long', 'タイトルは' . Game::THREAD_TITLE_MAX . '文字以内にしてください');
         }
 
         $thread = Thread::create($creatorId, $title, new DateTimeImmutable());

@@ -31,6 +31,10 @@ final class Game
     public const POST_INIT_HP       = 100;
     public const POST_DECAY_PER_MIN = 5;
 
+    // 入力長の上限（DBカラム/UIと整合）
+    public const THREAD_TITLE_MAX = 255;   // threads.title VARCHAR(255)
+    public const POST_CONTENT_MAX = 2000;  // レス本文（textarea maxlength と一致）
+
     // スレッド（板＝コンテナ）耐久。投資対象ではなく寿命のみ持つ。
     public const THREAD_INIT_HP       = 300;
     public const THREAD_MAX_HP        = 1000;
@@ -56,6 +60,7 @@ final class Game
     public const BOT_MAX_BURST    = 4;    // 1リクエストで実行する最大アクション数（暴走防止）
     public const BOT_MIN_INVEST   = 30;   // ボット1回の最小投資額（株を1株以上取れる程度）
     public const BOT_MAX_INVEST   = 150;  // ボット1回の最大投資額
+    public const BOT_REFILL_TO    = 2000; // 資金が尽きたボットを補充する残高（相場の停止防止）
 
     /** フェーズ名 → 減衰倍率（未知は平常 1.0）。 */
     public static function phaseMultiplier(string $phase): float

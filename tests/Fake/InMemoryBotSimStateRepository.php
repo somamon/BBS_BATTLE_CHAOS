@@ -11,13 +11,13 @@ final class InMemoryBotSimStateRepository implements BotSimStateRepository
 {
     public function __construct(private DateTimeImmutable $lastTick) {}
 
-    public function getLastTick(): DateTimeImmutable
+    public function tryClaim(DateTimeImmutable $now, int $minIntervalSeconds): ?DateTimeImmutable
     {
-        return $this->lastTick;
-    }
-
-    public function setLastTick(DateTimeImmutable $at): void
-    {
-        $this->lastTick = $at;
+        if ($now->getTimestamp() - $this->lastTick->getTimestamp() < $minIntervalSeconds) {
+            return null;
+        }
+        $prev = $this->lastTick;
+        $this->lastTick = $now;
+        return $prev;
     }
 }

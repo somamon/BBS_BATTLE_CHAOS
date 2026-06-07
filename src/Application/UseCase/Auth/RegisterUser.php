@@ -62,11 +62,15 @@ final class RegisterUser
             return $newUser;
         });
 
-        // コミット後にメール送信（送信失敗でユーザー作成を巻き戻さない）。
-        if ($user !== null) {
-            $this->verificationMail->send($user, $now);
-        } else {
-            $this->sendAlreadyRegisteredNotice($email->value);
+        // コミット後にメール送信。送信失敗はログに留め UX を止めない（ユーザーは再送で復旧可）。
+        try {
+            if ($user !== null) {
+                $this->verificationMail->send($user, $now);
+            } else {
+                $this->sendAlreadyRegisteredNotice($email->value);
+            }
+        } catch (\Throwable $e) {
+            error_log('[mail] 登録メール送信失敗: ' . $e->getMessage());
         }
     }
 

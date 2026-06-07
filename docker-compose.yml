@@ -1,10 +1,13 @@
 services:
   nginx:
     image: nginx:1.27-alpine
-    ports: ["${NGINX_PORT}:80"]        # ブラウザ → http://localhost:${NGINX_PORT}
+    ports:
+      - "${NGINX_PORT}:80"          # http（→httpsへリダイレクト）
+      - "${NGINX_TLS_PORT}:443"     # https（ブラウザ → https://localhost:${NGINX_TLS_PORT}）
     volumes:
       - ./:/var/www/html:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./docker/nginx/certs:/etc/nginx/certs:ro
     depends_on: [php]
 
   php:
@@ -12,13 +15,43 @@ services:
     environment:
       APP_ENV: ${APP_ENV}
       APP_URL: ${APP_URL}
+      APP_TIMEZONE: ${APP_TIMEZONE}
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MAIL_DRIVER: ${MAIL_DRIVER}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  # スキーマ適用（連番SQLを台帳管理で順次適用して終了する一回限りのサービス）
+  migrate:
+    build: ./docker/php
+    environment:
+      APP_TIMEZONE: ${APP_TIMEZONE}
       DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./:/var/www/html
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healthy
+    command: php /var/www/html/bin/migrate.php
+    restart: "no"
 
   db:
     image: mysql:8.0
@@ -30,8 +63,20 @@ services:
     ports: ["${DB_PORT}:3306"]      # 外部DBクライアント → localhost:${DB_PORT}
     volumes:
       - dbdata:/var/lib/mysql
-      # 初回起動（dbdataが空）時に連番SQLを自動適用
-      - ./database/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # 開発用メールキャッチャ（UI: http://localhost:${MAILPIT_UI_PORT}）。本番では使わない。
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${MAILPIT_UI_PORT}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
 
 volumes:
   dbdata:

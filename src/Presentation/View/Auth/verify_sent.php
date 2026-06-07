@@ -5,13 +5,13 @@
  */
 use App\Presentation\View\View;
 ?>
-<h2>確認メールを送信しました</h2>
+<h2><?= t('verify_sent.title') ?></h2>
 
 <div class="card">
-  <p><strong><?= View::e($email) ?></strong> 宛に確認メールを送信しました。</p>
-  <p class="muted">メール内のリンク（24時間有効）を開くと登録が完了し、そのままログインします。</p>
-  <p class="muted">リンクを開くまではログインできません。</p>
+  <p><?= t('verify_sent.body', ['email' => View::e($email)]) ?></p>
+  <p class="muted"><?= t('verify_sent.note1') ?></p>
+  <p class="muted"><?= t('verify_sent.note2') ?></p>
 </div>
 
-<p class="muted">メールが届かない場合は <a href="/verify/resend">確認メールを再送</a> できます。</p>
-<p><a href="/login">ログインへ</a></p>
+<p class="muted"><?= t('verify_sent.resend_pre') ?> <a href="/verify/resend"><?= t('login.resend_link') ?></a> <?= t('verify_sent.resend_post') ?></p>
+<p><a href="/login"><?= t('common.to_login') ?></a></p>

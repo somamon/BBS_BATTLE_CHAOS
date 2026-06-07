@@ -49,6 +49,24 @@ final class PdoPostRepository implements PostRepository
         return $row ? $this->hydrate($row) : null;
     }
 
+    public function findByIds(array $ids): array
+    {
+        $ids = array_values(array_unique($ids));
+        if ($ids === []) {
+            return [];
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $this->pdo->prepare("SELECT * FROM posts WHERE id IN ({$placeholders})");
+        $stmt->execute($ids);
+
+        $map = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $post = $this->hydrate($row);
+            $map[$post->id] = $post;
+        }
+        return $map;
+    }
+
     public function findByIdForUpdate(string $id): ?Post
     {
         $stmt = $this->pdo->prepare('SELECT * FROM posts WHERE id = ? FOR UPDATE');

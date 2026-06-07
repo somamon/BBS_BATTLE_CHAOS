@@ -1,0 +1,220 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    // Common / nav
+    'nav.overview' => 'Overview',
+    'nav.threads'  => 'Threads',
+    'nav.ranking'  => 'Ranking',
+    'nav.result'   => 'Result',
+    'nav.mypage'   => 'My Page',
+    'header.market' => 'Market',
+    'header.cash'  => 'Cash',
+    'auth.logout'  => 'Log out',
+    'auth.register' => 'Sign up',
+    'auth.login'   => 'Log in',
+    'lang.other'   => '日本語',
+    'common.to_login' => 'Go to login',
+    'common.back_to_threads' => '← Back to threads',
+
+    // Market phases
+    'phase.boom'  => 'Boom market',
+    'phase.calm'  => 'Calm market',
+    'phase.storm' => 'Stormy market',
+    'phase.crash' => 'Crash market',
+    'phase.unknown' => 'Unknown',
+
+    // Post level / status
+    'level.0' => 'New',
+    'level.1' => 'Notable',
+    'level.2' => 'Popular',
+    'level.3' => 'Hall of Fame',
+    'status.alive' => 'alive',
+    'status.dead'  => 'dead',
+
+    // Home
+    'home.tagline' => 'Bet money on great posts—buy their shares. The sharp-eyed who spot them early win. An anonymous BBS battle.',
+    'home.what.title' => 'What is this?',
+    'home.what.p1' => 'This is not an ordinary message board. Anyone can start threads and post anonymously, and registered users can <strong>invest in—buy shares of—replies</strong> they find interesting.',
+    'home.what.p2' => 'The more investment a reply attracts later, the higher its <strong>share price</strong> climbs. So those who <strong>spot a hidden gem early and buy in grow their wealth</strong>—a game where the sharp-eyed star.',
+    'home.layers.title' => 'Two layers',
+    'home.layers.anon.head' => 'Anonymous board (anyone)',
+    'home.layers.anon.body' => 'Start threads and reply anonymously. No money or sign-up needed. Threads and replies <strong>decay and vanish</strong> over time.',
+    'home.layers.investor.head' => 'Investor layer (sign-up required)',
+    'home.layers.investor.body' => 'Buy reply shares with a starting balance of <strong>{money}</strong>. The more people buy later, the higher the price—so early buys appreciate.',
+    'home.loop.title' => 'How to play (core loop)',
+    'home.loop.s1' => 'Post a reply anonymously (free, no reward)',
+    'home.loop.s2' => '<strong>Bet money on—buy shares of—great replies</strong> (sign-up required)',
+    'home.loop.s3' => 'The more follow-on investment, the <strong>higher the price</strong>',
+    'home.loop.s4' => 'Shares bought early appreciate and <strong>grow your wealth</strong>',
+    'home.loop.s5' => 'Cumulative investment evolves a reply (<span class="badge">New</span> → <span class="badge">Notable</span> → <span class="badge">Popular</span> → <span class="badge">Hall of Fame</span>)',
+    'home.loop.s6' => 'At the end, <strong>ranking by net worth (cash + share value)</strong>',
+    'home.loop.note' => 'The winner is the sharp eye who spotted good replies "early".',
+    'home.rules.title' => 'Rules to know',
+    'home.rules.r1' => '<strong>Early bird wins</strong>: price rises with cumulative investment (bonding curve). Buying later costs more.',
+    'home.rules.r2' => '<strong>Decay</strong>: threads and replies have HP and vanish (dead) if left alone. Dead shares are worthless.',
+    'home.rules.r3' => '<strong>Market weather</strong>: the world phase (boom/calm/storm/crash) changes how fast HP drops. The current market is shown in the header.',
+    'home.rules.r4' => '<strong>Level extends life</strong>: replies that attract investment gain durability (max HP)—great ones live longer.',
+    'home.rules.r5' => '<strong>Unrealized P&L</strong>: a holding\'s value is price × freshness (HP). Buying a decaying post can mean an instant loss.',
+    'home.npc.title' => 'About NPC investors',
+    'home.npc.p1' => 'While there are still few people, <strong>NPC investors (automated programs the operator runs)</strong> invest in posts to keep the market moving. If you spot a good reply early and buy in, NPCs buying later push the <strong>price up, giving you a gain</strong>. It lets the "sharp eye" game work even solo or with few players.',
+    'home.npc.l1' => 'NPCs join as <strong>ranking rivals</strong> (a <span class="badge">NPC</span> badge appears by their name).',
+    'home.npc.l2' => 'They only run <strong>while registered users number {limit} or fewer</strong>. The more people join, the more NPCs hold back.',
+    'home.npc.l3' => 'During quiet times, <strong>threads/replies also decay more slowly</strong>, so it stays playable when sparse.',
+    'home.npc.note' => 'NPCs are not learning AI—just programs for atmosphere and practice. The more real players, the more it becomes a true contest of insight.',
+    'home.start.title' => 'Get started',
+    'home.start.threads' => 'Browse threads',
+    'home.start.peek' => 'Take a look first (anonymous OK)',
+    'home.start.register' => 'Sign up and invest',
+
+    // Login
+    'login.title' => 'Log in',
+    'login.email' => 'Email',
+    'login.password' => 'Password',
+    'login.submit' => 'Log in',
+    'login.no_account' => "Don't have an account?",
+    'login.register_link' => 'Sign up',
+    'login.unverified_pre' => 'If your email is unverified,',
+    'login.resend_link' => 'resend the verification email',
+
+    // Register
+    'register.title' => 'Sign up',
+    'register.email' => 'Email',
+    'register.name' => 'Display name',
+    'register.password' => 'Password',
+    'register.password_hint' => 'Use at least 8 characters.',
+    'register.submit' => 'Create account',
+    'register.have_account' => 'Already have an account?',
+
+    // Verification email sent
+    'verify_sent.title' => 'Verification email sent',
+    'verify_sent.body' => 'We sent a verification email to <strong>{email}</strong>.',
+    'verify_sent.note1' => 'Open the link in the email (valid for 24h) to finish sign-up and you will be logged in.',
+    'verify_sent.note2' => 'You cannot log in until you open the link.',
+    'verify_sent.resend_pre' => "If it didn't arrive, you can",
+    'verify_sent.resend_post' => '.',
+
+    // Verification failed
+    'verify_result.title' => 'Email verification',
+    'verify_result.retry_pre' => 'Sorry, please',
+    'verify_result.retry_link' => 'sign up',
+    'verify_result.retry_post' => 'again.',
+
+    // Resend form
+    'resend.title' => 'Resend verification email',
+    'resend.intro' => "Enter the email you registered with. We'll resend only if the account is unverified.",
+    'resend.email' => 'Email',
+    'resend.submit' => 'Resend verification email',
+
+    // Resend done
+    'resend_done.title' => 'Verification email resent',
+    'resend_done.body' => "If <strong>{email}</strong> is registered as an unverified account, we've resent the verification email.",
+    'resend_done.note' => 'Open the link in the email (valid for 24h) to finish. Older links become invalid.',
+
+    // Thread create
+    'thread_create.title' => 'New thread',
+    'thread_create.label' => 'Title',
+    'thread_create.submit' => 'Create',
+
+    // Thread list
+    'threads.new' => 'Start a new thread',
+    'threads.graveyard' => 'Graveyard (decayed threads)',
+    'threads.empty' => 'No living threads yet.',
+    'threads.board_hp' => 'Board HP',
+    'threads.replies' => '{n} replies',
+
+    // Thread detail
+    'show.board_hp' => 'Board HP',
+    'show.invest_hint' => 'Bet on great replies and buy shares. The earlier you buy, the cheaper.',
+    'show.replies_heading' => 'Replies ({n})',
+    'show.no_replies' => 'No replies yet. Be the first to post.',
+    'show.name_anon' => 'Anonymous',
+    'show.price' => 'Price',
+    'show.total_invested' => 'Total invested',
+    'show.total_shares' => 'Total shares',
+    'show.holding' => 'Holding {shares} shares (value {val})',
+    'show.invest_btn' => 'Invest in this reply',
+    'show.login_to_invest_pre' => 'To invest, please',
+    'show.login_to_invest_post' => '(you can post replies anonymously).',
+    'show.write_reply' => 'Write a reply',
+    'show.content_label' => 'Message',
+    'show.content_placeholder' => 'Enter your message',
+    'show.submit_reply' => 'Post',
+
+    // Graveyard
+    'dead.title' => 'Graveyard',
+    'dead.empty' => 'No decayed threads yet.',
+    'dead.died' => 'decayed between {from} and {to}',
+
+    // Ranking
+    'ranking.title' => 'Net worth ranking',
+    'ranking.empty' => 'No ranking data yet.',
+    'ranking.rank' => 'Rank',
+    'ranking.name' => 'Name',
+    'ranking.cash' => 'Cash',
+    'ranking.shares' => 'Share value',
+    'ranking.total' => 'Net worth',
+
+    // My Page
+    'me.title' => 'My Page',
+    'me.cash' => 'Cash',
+    'me.share_value' => 'Share value',
+    'me.total' => 'Net worth',
+    'me.holdings_title' => 'Holdings (per post)',
+    'me.empty' => "You don't hold any shares yet. Invest in a reply you like.",
+    'me.col_post' => 'Post',
+    'me.col_lv' => 'Lv',
+    'me.col_shares' => 'Shares',
+    'me.col_price' => 'Price',
+    'me.col_value' => 'Value',
+    'me.col_pnl' => 'P&L',
+    'me.col_status' => 'Status',
+
+    // Result
+    'result.world_end' => 'The world has ended',
+    'result.reason.all_dead' => 'All threads have decayed',
+    'result.reason.no_money' => 'The market ran out of money',
+    'result.reason.over' => 'Game over',
+    'result.ongoing_title' => 'The game is ongoing.',
+    'result.ongoing_note' => "The world hasn't ended yet. Here's the current ranking.",
+    'result.final_ranking' => 'Final ranking',
+    'result.current_ranking' => 'Current ranking',
+    'result.no_players' => 'No participants.',
+
+    // Flash / messages
+    'flash.invest' => 'Invested {amount} → bought {shares} shares (price ¥{price}). HP +{toHp}. Post HP: {hp}{level}',
+    'flash.invest_leveled' => ' — evolved to "{label}"!',
+    'flash.invest_failed' => 'Investment failed: {msg}',
+    'flash.verified' => 'Email verified. Welcome!',
+
+    // Error (exception) messages
+    'err.invalid_credentials' => 'Email or password is incorrect',
+    'err.email_unverified' => 'Your email is not verified. Open the link in the verification email to finish sign-up',
+    'err.invalid_token' => 'The verification link is invalid or has expired',
+    'err.too_many_attempts' => 'Too many attempts. Please wait a while and try again',
+    'err.invest_not_found' => 'Post not found',
+    'err.invest_dead' => 'This post has decayed and cannot be invested in',
+    'err.insufficient_funds' => 'Insufficient funds',
+    'err.invest_invalid_amount' => 'Invalid investment amount',
+    'err.invest_too_small' => 'The amount is too small to acquire any shares',
+    'err.all_fields' => 'Please fill in all fields',
+
+    // Validation
+    'validation.email.required' => 'Please enter your email',
+    'validation.email.too_long' => 'Email is too long',
+    'validation.email.invalid' => 'Email format is invalid',
+    'validation.name.required' => 'Please enter a display name',
+    'validation.name.too_long' => 'Display name must be 50 characters or fewer',
+    'validation.name.invalid' => 'Display name contains invalid characters',
+    'validation.password.invalid' => 'Password contains invalid characters',
+    'validation.password.too_short' => 'Password must be at least 8 characters',
+    'validation.password.too_long' => 'Password is too long (72 bytes max)',
+    'validation.title.required' => 'Please enter a title',
+    'validation.title.too_long' => 'Title must be 255 characters or fewer',
+    'validation.content.required' => 'Please enter a message',
+    'validation.content.too_long' => 'Message must be 2000 characters or fewer',
+    'validation.generic' => 'Your input is invalid',
+    'err.thread_not_found' => 'Thread not found',
+    'err.thread_dead' => 'This thread has decayed and cannot accept posts',
+];

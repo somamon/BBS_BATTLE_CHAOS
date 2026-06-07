@@ -17,6 +17,7 @@ use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
 use App\Domain\Repository\WorldStateRepository;
 use App\Infrastructure\Mail\LogMailer;
+use App\Infrastructure\Mail\SmtpMailer;
 use App\Infrastructure\Persistence\Database;
 use App\Infrastructure\Persistence\PdoBotSimStateRepository;
 use App\Infrastructure\Persistence\PdoEmailVerificationRepository;
@@ -63,9 +64,21 @@ final class Container
             TransactionManager::class          => autowire(PdoTransactionManager::class),
             RateLimiter::class                 => autowire(PdoRateLimiter::class),
 
-            // 開発用メーラー（本番は SMTP 実装へ差し替え）。送信内容は var/mail.log へ。
-            Mailer::class => create(LogMailer::class)
-                ->constructor(\dirname(__DIR__, 2) . '/var/mail.log'),
+            // メーラー：MAIL_DRIVER で切替（smtp=実送信/Mailpit、log=ファイル出力）。
+            Mailer::class => function (): Mailer {
+                if ((getenv('MAIL_DRIVER') ?: 'log') === 'smtp') {
+                    return new SmtpMailer(
+                        host: getenv('MAIL_HOST') ?: 'localhost',
+                        port: (int) (getenv('MAIL_PORT') ?: 1025),
+                        username: getenv('MAIL_USERNAME') ?: '',
+                        password: getenv('MAIL_PASSWORD') ?: '',
+                        encryption: getenv('MAIL_ENCRYPTION') ?: 'none',
+                        fromAddress: getenv('MAIL_FROM') ?: 'no-reply@example.com',
+                        fromName: getenv('MAIL_FROM_NAME') ?: 'BBS BATTLE CHAOS',
+                    );
+                }
+                return new LogMailer(\dirname(__DIR__, 2) . '/var/mail.log');
+            },
 
             // 確認リンクの絶対URL生成に使うベースURL（env: APP_URL）。
             'app.url' => fn(): string => getenv('APP_URL')

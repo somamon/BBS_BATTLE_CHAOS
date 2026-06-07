@@ -47,4 +47,9 @@ final class PdoRateLimiter implements RateLimiter
         $stmt = $this->pdo->prepare('DELETE FROM rate_limits WHERE rl_key = ?');
         $stmt->execute([$key]);
     }
+
+    public function purgeExpired(): void
+    {
+        $this->pdo->exec('DELETE FROM rate_limits WHERE expires_at < NOW()');
+    }
 }

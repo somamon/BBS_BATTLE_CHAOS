@@ -60,7 +60,7 @@ final class AuthController
 
         $key = 'register:' . $request->ip();
         if ($this->rateLimiter->tooManyAttempts($key, self::REGISTER_MAX)) {
-            return Response::html($this->registerView(AuthException::tooManyAttempts()->getMessage(), $email, $name), 429);
+            return Response::html($this->registerView(t('err.too_many_attempts'), $email, $name), 429);
         }
         $this->rateLimiter->hit($key, self::REGISTER_WINDOW);
 
@@ -68,7 +68,7 @@ final class AuthController
             // 既存アドレスでも例外にせず成功と同じ応答にする（列挙対策は RegisterUser 側）。
             $this->registerUser->execute($email, $name, $pass);
         } catch (ValidationException $e) {
-            return Response::html($this->registerView($e->getMessage(), $email, $name), 422);
+            return Response::html($this->registerView(t($e->messageKey), $email, $name), 422);
         }
 
         // 確認メールを送信。リンクを踏むまで本ログインしない。
@@ -89,14 +89,14 @@ final class AuthController
 
         $key = 'login:' . $request->ip();
         if ($this->rateLimiter->tooManyAttempts($key, self::LOGIN_MAX)) {
-            return Response::html($this->loginView(AuthException::tooManyAttempts()->getMessage(), $email), 429);
+            return Response::html($this->loginView(t('err.too_many_attempts'), $email), 429);
         }
 
         try {
             $user = $this->loginUser->execute($email, $pass);
         } catch (AuthException $e) {
             $this->rateLimiter->hit($key, self::LOGIN_WINDOW); // 失敗回数を加算
-            return Response::html($this->loginView($e->getMessage(), $email), 422);
+            return Response::html($this->loginView(t($e->key), $email), 422);
         }
 
         $this->rateLimiter->clear($key); // 成功でリセット
@@ -112,15 +112,15 @@ final class AuthController
         try {
             $user = $this->verifyEmail->execute($token);
         } catch (AuthException $e) {
-            $html = $this->page($this->market, $this->auth, $this->users, 'メール確認', 'Auth/verify_result', [
-                'message' => $e->getMessage(),
+            $html = $this->page($this->market, $this->auth, $this->users, t('verify_result.title'), 'Auth/verify_result', [
+                'message' => t($e->key),
             ]);
             return Response::html($html, 422);
         }
 
         // 確認完了でそのままログイン。
         $this->auth->login($user->id);
-        Flash::set('メールアドレスを確認しました。ようこそ！');
+        Flash::set(t('flash.verified'));
         return Response::redirect('/threads');
     }
 
@@ -137,14 +137,14 @@ final class AuthController
 
         $key = 'resend:' . $request->ip();
         if ($this->rateLimiter->tooManyAttempts($key, self::RESEND_MAX)) {
-            return Response::html($this->resendView(AuthException::tooManyAttempts()->getMessage(), $email), 429);
+            return Response::html($this->resendView(t('err.too_many_attempts'), $email), 429);
         }
         $this->rateLimiter->hit($key, self::RESEND_WINDOW);
 
         // 成否・アカウントの有無に関わらず同じ応答（メールアドレス列挙を防ぐ）。
         $this->resendVerification->execute($email);
 
-        $html = $this->page($this->market, $this->auth, $this->users, '確認メール再送', 'Auth/resend_done', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('resend_done.title'), 'Auth/resend_done', [
             'email' => $email,
         ]);
         return Response::html($html);
@@ -159,7 +159,7 @@ final class AuthController
 
     private function registerView(?string $error, string $email, string $name): string
     {
-        return $this->page($this->market, $this->auth, $this->users, '新規登録', 'Auth/register', [
+        return $this->page($this->market, $this->auth, $this->users, t('register.title'), 'Auth/register', [
             'error' => $error,
             'email' => $email,
             'name'  => $name,
@@ -168,7 +168,7 @@ final class AuthController
 
     private function loginView(?string $error, string $email): string
     {
-        return $this->page($this->market, $this->auth, $this->users, 'ログイン', 'Auth/login', [
+        return $this->page($this->market, $this->auth, $this->users, t('login.title'), 'Auth/login', [
             'error' => $error,
             'email' => $email,
         ]);
@@ -176,14 +176,14 @@ final class AuthController
 
     private function verifySentView(string $email): string
     {
-        return $this->page($this->market, $this->auth, $this->users, '確認メール送信', 'Auth/verify_sent', [
+        return $this->page($this->market, $this->auth, $this->users, t('verify_sent.title'), 'Auth/verify_sent', [
             'email' => $email,
         ]);
     }
 
     private function resendView(?string $error, string $email): string
     {
-        return $this->page($this->market, $this->auth, $this->users, '確認メール再送', 'Auth/resend', [
+        return $this->page($this->market, $this->auth, $this->users, t('resend.title'), 'Auth/resend', [
             'error' => $error,
             'email' => $email,
         ]);

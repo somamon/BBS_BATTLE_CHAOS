@@ -29,4 +29,12 @@ final class InMemoryEmailVerificationRepository implements EmailVerificationRepo
             static fn (EmailVerification $v): bool => $v->userId !== $userId,
         );
     }
+
+    public function purgeExpired(\DateTimeImmutable $now): void
+    {
+        $this->byHash = array_filter(
+            $this->byHash,
+            static fn (EmailVerification $v): bool => !$v->isExpired($now),
+        );
+    }
 }

@@ -35,7 +35,7 @@ final class MyPageController
             return Response::redirect('/login');
         }
 
-        $html = $this->page($this->market, $this->auth, $this->users, 'マイページ', 'me', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('me.title'), 'me', [
             'money'      => $data['money'],
             'shareValue' => $data['shareValue'],
             'total'      => $data['total'],
