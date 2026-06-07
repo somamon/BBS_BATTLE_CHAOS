@@ -63,7 +63,6 @@ docker compose exec php php bin/round.php          # 終局時のみ
 docker compose exec php php bin/round.php --force  # 強制
 ```
 
-`bin/round.php` は投稿・スレ・株を消すので、流す先のDBを間違えないこと。
 
 ## 設定（.env）
 
@@ -71,7 +70,7 @@ docker compose exec php php bin/round.php --force  # 強制
 
 - `DB_PASSWORD` などは本番だと弱いと起動を蹴られます。
 - メールは本番だと実送信(SMTP)必須。
-- Googleログイン、ゲームバランス、法務ページの運営者名などは環境変数で切り替え。詳しくは下のドキュメント。
+- Googleログイン、ゲームバランス、法務ページの運営者名などは環境変数で切り替え。
 
 ## ディレクトリ
 
