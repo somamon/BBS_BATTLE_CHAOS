@@ -30,6 +30,16 @@ $container = Container::build();
 $router    = new Router(fn(string $class): object => $container->get($class));
 require __DIR__ . '/../src/Presentation/Routing/routes.php';
 
+// NPC投資家の遅延シミュレーション（人間50人以下のときだけ稼働。cron不要）。
+// 画面表示を妨げないよう GET のみ・例外は握りつぶす。
+if ($request->method() === 'GET') {
+    try {
+        $container->get(App\Application\Service\MarketSimulator::class)->tick(new DateTimeImmutable());
+    } catch (\Throwable $e) {
+        error_log('[sim] ' . $e);
+    }
+}
+
 try {
     $response = $router->dispatch($request);
 } catch (NotFoundException) {

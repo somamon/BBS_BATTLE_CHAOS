@@ -21,6 +21,7 @@ final class User
         private int $money,
         public readonly DateTimeImmutable $createdAt,
         private ?DateTimeImmutable $emailVerifiedAt = null,
+        public readonly bool $isBot = false,
     ) {}
 
     /** 新規登録ユーザー（初期所持金を付与。メールは未確認状態で作る）。 */

@@ -6,7 +6,7 @@ namespace App\Application\UseCase\Thread;
 
 use App\Application\Exception\BoardException;
 use App\Application\Port\TransactionManager;
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Domain\Entity\Post;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\ThreadRepository;
@@ -20,7 +20,7 @@ final class PostReply
 {
     public function __construct(
         private readonly TransactionManager $tx,
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly ThreadRepository $threads,
         private readonly PostRepository $posts,
     ) {}
@@ -35,7 +35,7 @@ final class PostReply
                 throw BoardException::threadNotFound();
             }
 
-            $multiplier = $this->market->resolve($now)->multiplier();
+            $multiplier = $this->decay->multiplier($now);
             $thread->settleDecay($now, $multiplier);
             if (!$thread->isAlive()) {
                 $this->threads->save($thread); // 朽ちた事実は確定させる

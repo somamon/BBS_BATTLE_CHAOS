@@ -20,4 +20,10 @@ interface UserRepository
 
     /** @return User[] 全ユーザー（ランキング集計用）。 */
     public function all(): array;
+
+    /** 人間ユーザー（is_bot=0）の人数。NPC稼働の可否判定に使う。 */
+    public function countHumans(): int;
+
+    /** @return User[] ボットユーザー（is_bot=1）一覧。 */
+    public function bots(): array;
 }

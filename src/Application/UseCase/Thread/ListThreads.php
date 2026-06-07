@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Thread;
 
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Domain\Repository\ThreadRepository;
 use DateTimeImmutable;
 
@@ -15,7 +15,7 @@ use DateTimeImmutable;
 final class ListThreads
 {
     public function __construct(
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly ThreadRepository $threads,
     ) {}
 
@@ -23,7 +23,7 @@ final class ListThreads
     public function execute(?DateTimeImmutable $now = null): array
     {
         $now ??= new DateTimeImmutable();
-        $multiplier = $this->market->resolve($now)->multiplier();
+        $multiplier = $this->decay->multiplier($now);
 
         $result = [];
         foreach ($this->threads->findAlive(50) as $thread) {

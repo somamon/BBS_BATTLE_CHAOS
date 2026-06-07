@@ -51,4 +51,16 @@ final class GameTest extends TestCase
     {
         self::assertSame(1.0, Game::SPLIT_SHARES + Game::SPLIT_HP);
     }
+
+    public function testPopulationDecayFactorRampsWithHumans(): void
+    {
+        // 0人で最も遅く（DECAY_MIN_FACTOR）、DECAY_FULL_AT_HUMANS 人で通常速度(1.0)に到達。
+        self::assertSame(Game::DECAY_MIN_FACTOR, Game::populationDecayFactor(0));
+        self::assertSame(1.0, Game::populationDecayFactor(Game::DECAY_FULL_AT_HUMANS));
+        self::assertSame(1.0, Game::populationDecayFactor(1000)); // 上限は1.0
+        // 中間は線形（10人 = 0.3 + 0.7*0.5 = 0.65）
+        self::assertEqualsWithDelta(0.65, Game::populationDecayFactor(10), 1e-9);
+        // 人が少ないほど遅い（単調増加）
+        self::assertLessThan(Game::populationDecayFactor(5), Game::populationDecayFactor(1));
+    }
 }

@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,                 -- password_hash() の出力
     money         INT          NOT NULL DEFAULT 500,     -- 所持金
     email_verified_at DATETIME NULL DEFAULT NULL,        -- メール確認完了時刻（NULL=未確認）
+    is_bot        TINYINT      NOT NULL DEFAULT 0,        -- NPC投資家なら1（人間は0）
     created_at    DATETIME     NOT NULL,
     PRIMARY KEY (id),
     UNIQUE KEY uniq_users_email (email)

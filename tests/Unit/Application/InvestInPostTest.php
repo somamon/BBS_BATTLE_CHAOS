@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Application;
 
 use App\Application\Exception\InvestException;
+use App\Application\Service\DecayRate;
 use App\Application\Service\MarketPhaseService;
 use App\Application\UseCase\Invest\InvestInPost;
 use App\Domain\Entity\Post;
@@ -47,7 +48,7 @@ final class InvestInPostTest extends TestCase
 
         $this->useCase = new InvestInPost(
             new ImmediateTransactionManager(),
-            $market,
+            new DecayRate($market, $this->users),
             $this->posts,
             $this->threads,
             $this->users,

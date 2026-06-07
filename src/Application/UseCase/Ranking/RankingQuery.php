@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Ranking;
 
-use App\Application\Service\MarketPhaseService;
+use App\Application\Service\DecayRate;
 use App\Domain\Repository\HoldingRepository;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\UserRepository;
@@ -17,7 +17,7 @@ use DateTimeImmutable;
 final class RankingQuery
 {
     public function __construct(
-        private readonly MarketPhaseService $market,
+        private readonly DecayRate $decay,
         private readonly UserRepository $users,
         private readonly HoldingRepository $holdings,
         private readonly PostRepository $posts,
@@ -27,7 +27,7 @@ final class RankingQuery
     public function execute(?DateTimeImmutable $now = null): array
     {
         $now ??= new DateTimeImmutable();
-        $multiplier = $this->market->resolve($now)->multiplier();
+        $multiplier = $this->decay->multiplier($now);
 
         $rows = [];
         foreach ($this->users->all() as $user) {
@@ -42,6 +42,7 @@ final class RankingQuery
 
             $rows[] = [
                 'name'       => $user->name,
+                'isBot'      => $user->isBot,
                 'money'      => $user->money(),
                 'shareValue' => $shareValue,
                 'total'      => $user->money() + $shareValue,
