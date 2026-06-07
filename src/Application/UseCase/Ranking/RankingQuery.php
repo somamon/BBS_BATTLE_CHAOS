@@ -40,6 +40,11 @@ final class RankingQuery
 
         $rows = [];
         foreach ($this->users->all() as $user) {
+            // NPC（is_bot=1）はランキング対象外。順位は人間プレイヤー同士で競う。
+            if ($user->isBot) {
+                continue;
+            }
+
             $shareValue = 0;
             foreach ($holdingsByUser[$user->id] ?? [] as $holding) {
                 $post = $postMap[$holding->postId] ?? null;
