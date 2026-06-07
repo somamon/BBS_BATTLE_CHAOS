@@ -34,6 +34,9 @@ $router->post('/register', [AuthController::class, 'register'], ['csrf']);
 $router->get('/login', [AuthController::class, 'loginForm']);
 $router->post('/login', [AuthController::class, 'login'], ['csrf']);
 $router->post('/logout', [AuthController::class, 'logout'], ['csrf']);
+$router->get('/verify', [AuthController::class, 'verify']);                          // メール確認リンク
+$router->get('/verify/resend', [AuthController::class, 'resendForm']);               // 再送フォーム
+$router->post('/verify/resend', [AuthController::class, 'resend'], ['csrf']);        // 再送実行
 
 // マイページ・ランキング・結果
 $router->get('/me', [MyPageController::class, 'index'], ['auth']);

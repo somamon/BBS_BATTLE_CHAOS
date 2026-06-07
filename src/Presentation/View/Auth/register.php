@@ -21,7 +21,8 @@ use App\Presentation\View\View;
   <label for="name">表示名</label>
   <input type="text" id="name" name="name" value="<?= View::e($name ?? '') ?>" required>
   <label for="password">パスワード</label>
-  <input type="password" id="password" name="password" required>
+  <input type="password" id="password" name="password" minlength="8" required>
+  <div class="muted">8文字以上で設定してください。</div>
   <button type="submit">登録する</button>
 </form>
 <p class="muted">すでにアカウントをお持ちですか？ <a href="/login">ログイン</a></p>
