@@ -22,6 +22,17 @@ return [
     // Footer / legal
     'footer.terms' => 'Terms of Use',
     'footer.privacy' => 'Privacy Policy',
+    'footer.contact' => 'Contact',
+
+    // Contact
+    'contact.title' => 'Contact',
+    'contact.intro' => 'Questions, bug reports, or account issues—reach us here. If you need a reply, enter an email address we can reach you at.',
+    'contact.name' => 'Name (optional)',
+    'contact.email' => 'Email',
+    'contact.message' => 'Message',
+    'contact.submit' => 'Send',
+    'contact.done.title' => 'Message sent',
+    'contact.done.body' => 'Thanks—we received your message. We will reply to the email you provided if needed.',
     'footer.disclaimer' => 'This is a game. In-game currency and shares have no monetary value and cannot be cashed out.',
     'legal.updated' => 'Last updated: {date}',
     'legal.terms.title' => 'Terms of Use',
@@ -160,12 +171,18 @@ return [
     'threads.new' => 'Start a new thread',
     'threads.graveyard' => 'Graveyard (decayed threads)',
     'threads.empty' => 'No living threads yet.',
+    'threads.lang_note' => 'Showing English threads only. Switch language from the header.',
+    'pager.prev' => '← Prev',
+    'pager.next' => 'Next →',
+    'pager.page' => 'Page {page} / {total}',
     'threads.board_hp' => 'Board HP',
     'threads.replies' => '{n} replies',
 
     // Thread detail
     'show.board_hp' => 'Board HP',
     'show.invest_hint' => 'Spot great replies and buy shares. The earlier you buy, the cheaper.',
+    'show.archived' => 'This thread has decayed (archived). It is read-only—no posting or investing.',
+    'show.archived_footer' => 'This is an archived thread, so you cannot post.',
     'show.replies_heading' => 'Replies ({n})',
     'show.no_replies' => 'No replies yet. Be the first to post.',
     'show.name_anon' => 'Anonymous',
@@ -184,6 +201,7 @@ return [
     // Graveyard
     'dead.title' => 'Graveyard',
     'dead.empty' => 'No decayed threads yet.',
+    'dead.view_hint' => 'Click a title to view the archived thread and its replies. Posting is disabled.',
     'dead.died' => 'decayed between {from} and {to}',
 
     // Ranking
@@ -237,6 +255,8 @@ return [
     'err.email_unverified' => 'Your email is not verified. Open the link in the verification email to finish sign-up',
     'err.invalid_token' => 'The verification link is invalid or has expired',
     'err.too_many_attempts' => 'Too many attempts. Please wait a while and try again',
+    'err.posting_too_fast' => 'You are posting too quickly. Please wait a moment and try again',
+    'err.duplicate_post' => 'Same as your previous post. Duplicate posts are not allowed',
     'err.google_failed' => 'Google login failed. Please try again',
     'err.google_email_unverified' => 'Your Google account email is not verified, so you cannot log in',
     'err.invest_not_found' => 'Post not found',
@@ -261,6 +281,8 @@ return [
     'validation.title.too_long' => 'Title must be 255 characters or fewer',
     'validation.content.required' => 'Please enter a message',
     'validation.content.too_long' => 'Message must be 2000 characters or fewer',
+    'validation.message.required' => 'Please enter your message',
+    'validation.message.too_long' => 'Your message must be 2000 characters or fewer',
     'validation.generic' => 'Your input is invalid',
     'err.thread_not_found' => 'Thread not found',
     'err.thread_dead' => 'This thread has decayed and cannot accept posts',

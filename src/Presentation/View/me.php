@@ -21,6 +21,7 @@ use App\Presentation\View\View;
   <div class="empty"><?= t('me.empty') ?></div>
 <?php else: ?>
   <div class="card">
+    <div class="table-wrap">
     <table>
       <thead>
         <tr><th><?= t('me.col_post') ?></th><th><?= t('me.col_lv') ?></th><th><?= t('me.col_shares') ?></th><th><?= t('me.col_price') ?></th><th><?= t('me.col_value') ?></th><th><?= t('me.col_pnl') ?></th><th><?= t('me.col_status') ?></th></tr>
@@ -42,6 +43,7 @@ use App\Presentation\View\View;
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   </div>
 <?php endif; ?>
 

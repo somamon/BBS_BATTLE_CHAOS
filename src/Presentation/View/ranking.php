@@ -11,6 +11,7 @@ use App\Presentation\View\View;
   <div class="empty"><?= t('ranking.empty') ?></div>
 <?php else: ?>
   <div class="card">
+    <div class="table-wrap">
     <table>
       <thead>
         <tr><th><?= t('ranking.rank') ?></th><th><?= t('ranking.name') ?></th><th><?= t('ranking.cash') ?></th><th><?= t('ranking.shares') ?></th><th><?= t('ranking.total') ?></th></tr>
@@ -27,5 +28,6 @@ use App\Presentation\View\View;
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   </div>
 <?php endif; ?>

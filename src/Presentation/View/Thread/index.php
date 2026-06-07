@@ -1,12 +1,17 @@
 <?php
 /**
  * スレッド（板）一覧。
- * @var array<int, array<string, mixed>> $threads
- *   各要素 id,title,hp,maxHp,postCount,createdAt
+ * @var array<int, array<string, mixed>> $threads 各要素 id,title,hp,maxHp,postCount,createdAt
+ * @var int $page       現在ページ
+ * @var int $totalPages 総ページ数
  */
 use App\Presentation\View\View;
+
+$page       = $page ?? 1;
+$totalPages = $totalPages ?? 1;
 ?>
 <p>[ <a href="/thread/create"><?= t('threads.new') ?></a> ] [ <a href="/threads/dead"><?= t('threads.graveyard') ?></a> ]</p>
+<p class="muted"><?= t('threads.lang_note') ?></p>
 
 <?php if ($threads === []): ?>
   <div class="empty"><?= t('threads.empty') ?></div>
@@ -30,4 +35,22 @@ use App\Presentation\View\View;
       </div>
     </div>
   <?php endforeach; ?>
+<?php endif; ?>
+
+<a href="/thread/create" class="fab" aria-label="<?= View::e(t('threads.new')) ?>">＋</a>
+
+<?php if ($totalPages > 1): ?>
+  <div class="card" style="text-align:center;">
+    <?php if ($page > 1): ?>
+      <a href="/threads?page=<?= View::e($page - 1) ?>"><?= t('pager.prev') ?></a>
+    <?php else: ?>
+      <span class="muted"><?= t('pager.prev') ?></span>
+    <?php endif; ?>
+    <span class="muted" style="margin:0 10px;"><?= t('pager.page', ['page' => $page, 'total' => $totalPages]) ?></span>
+    <?php if ($page < $totalPages): ?>
+      <a href="/threads?page=<?= View::e($page + 1) ?>"><?= t('pager.next') ?></a>
+    <?php else: ?>
+      <span class="muted"><?= t('pager.next') ?></span>
+    <?php endif; ?>
+  </div>
 <?php endif; ?>

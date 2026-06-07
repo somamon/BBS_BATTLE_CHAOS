@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Controller;
 
+use App\Application\Port\RateLimiter;
 use App\Application\Service\MarketPhaseService;
 use App\Application\UseCase\Thread\CreateThread;
 use App\Application\UseCase\Thread\ListDeadThreads;
@@ -20,6 +21,11 @@ final class ThreadController
 {
     use RendersLayout;
 
+    /** スレ立ての連投クールダウン（秒）と時間あたり上限。 */
+    private const COOLDOWN = 30;
+    private const MAX    = 10;
+    private const WINDOW = 3600; // 1時間
+
     public function __construct(
         private readonly MarketPhaseService $market,
         private readonly Auth $auth,
@@ -28,13 +34,19 @@ final class ThreadController
         private readonly ListDeadThreads $listDeadThreads,
         private readonly ShowThread $showThread,
         private readonly CreateThread $createThread,
+        private readonly RateLimiter $rateLimiter,
     ) {}
 
-    /** GET /threads スレッド一覧 */
+    /** GET /threads スレッド一覧（?page=N） */
     public function index(Request $request): Response
     {
+        $page = max(1, (int) $request->query('page', 1));
+        $data = $this->listThreads->execute(current_locale(), $page);
+
         $html = $this->page($this->market, $this->auth, $this->users, t('nav.threads'), 'Thread/index', [
-            'threads' => $this->listThreads->execute(),
+            'threads'    => $data['items'],
+            'page'       => $data['page'],
+            'totalPages' => $data['totalPages'],
         ]);
         return Response::html($html);
     }
@@ -43,7 +55,7 @@ final class ThreadController
     public function dead(Request $request): Response
     {
         $html = $this->page($this->market, $this->auth, $this->users, t('dead.title'), 'Thread/dead', [
-            'threads' => $this->listDeadThreads->execute(),
+            'threads' => $this->listDeadThreads->execute(current_locale()),
         ]);
         return Response::html($html);
     }
@@ -80,8 +92,25 @@ final class ThreadController
     public function create(Request $request): Response
     {
         $title = (string) $request->input('title', '');
+        $ip    = $request->ip();
+
+        // 連投規制（クールダウン）と時間あたり上限。NPCはこのコントローラを通らないので対象外。
+        if (
+            $this->rateLimiter->tooManyAttempts('thread_cd:' . $ip, 1)
+            || $this->rateLimiter->tooManyAttempts('thread:' . $ip, self::MAX)
+        ) {
+            $msg = $this->rateLimiter->tooManyAttempts('thread_cd:' . $ip, 1)
+                ? t('err.posting_too_fast')
+                : t('err.too_many_attempts');
+            $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
+                'error' => $msg,
+                'title' => $title,
+            ]);
+            return Response::html($html, 429);
+        }
+
         try {
-            $id = $this->createThread->execute($this->auth->userId(), $title);
+            $id = $this->createThread->execute($this->auth->userId(), $title, current_locale());
         } catch (ValidationException $e) {
             $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
                 'error' => t($e->messageKey),
@@ -89,6 +118,10 @@ final class ThreadController
             ]);
             return Response::html($html, 422);
         }
+
+        $this->rateLimiter->hit('thread_cd:' . $ip, self::COOLDOWN);
+        $this->rateLimiter->hit('thread:' . $ip, self::WINDOW);
+
         return Response::redirect('/thread/' . $id);
     }
 }

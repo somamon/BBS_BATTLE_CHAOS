@@ -20,7 +20,7 @@ final class CreateThread
     ) {}
 
     /** @return string 作成したスレッドの id */
-    public function execute(?string $creatorId, string $title): string
+    public function execute(?string $creatorId, string $title, string $lang = 'ja'): string
     {
         $title = trim($title);
         if ($title === '') {
@@ -30,7 +30,7 @@ final class CreateThread
             throw ValidationException::field('title', 'validation.title.too_long', 'タイトルは' . Game::THREAD_TITLE_MAX . '文字以内にしてください');
         }
 
-        $thread = Thread::create($creatorId, $title, new DateTimeImmutable());
+        $thread = Thread::create($creatorId, $title, new DateTimeImmutable(), $lang);
         $this->threads->insert($thread);
 
         return $thread->id;

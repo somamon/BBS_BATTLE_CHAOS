@@ -38,6 +38,7 @@ $reasonKey = match ($reason) {
   <div class="empty"><?= t('result.no_players') ?></div>
 <?php else: ?>
   <div class="card">
+    <div class="table-wrap">
     <table>
       <thead>
         <tr><th><?= t('ranking.rank') ?></th><th><?= t('ranking.name') ?></th><th><?= t('ranking.cash') ?></th><th><?= t('ranking.shares') ?></th><th><?= t('ranking.total') ?></th></tr>
@@ -54,5 +55,6 @@ $reasonKey = match ($reason) {
         <?php endforeach; ?>
       </tbody>
     </table>
+    </div>
   </div>
 <?php endif; ?>

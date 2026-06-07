@@ -14,6 +14,7 @@ use App\Infrastructure\Auth\GoogleOAuth;
 use App\Infrastructure\Logging\JsonLogger;
 use App\Application\Service\PasswordResetMailSender;
 use App\Application\Service\VerificationMailSender;
+use App\Application\UseCase\Contact\SubmitContact;
 use App\Domain\Repository\BotSimStateRepository;
 use App\Domain\Repository\EmailVerificationRepository;
 use App\Domain\Repository\PasswordResetRepository;
@@ -117,6 +118,10 @@ final class Container
 
             // パスワード再設定メール送信サービス（RequestPasswordReset が使う）。
             PasswordResetMailSender::class => autowire()->constructorParameter('appUrl', get('app.url')),
+
+            // お問い合わせの宛先（法務ページの連絡先と同じ。LEGAL_CONTACT で上書き可）。
+            'contact.to' => fn(): string => getenv('LEGAL_CONTACT') ?: '8556iamsmartphone0124@gmail.com',
+            SubmitContact::class => autowire()->constructorParameter('contactTo', get('contact.to')),
         ]);
 
         return $builder->build();

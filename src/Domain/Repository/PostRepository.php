@@ -12,6 +12,13 @@ interface PostRepository
     /** @return Post[] */
     public function findAliveByThread(string $threadId): array;
 
+    /** 指定スレッドの全レス（dead 含む）を古い順で返す。過去ログ閲覧用。 */
+    /** @return Post[] */
+    public function findByThread(string $threadId): array;
+
+    /** 指定スレッドの最新レス（二重カキコ判定用）。無ければ null。 */
+    public function findLatestByThread(string $threadId): ?Post;
+
     /** alive な投稿を横断的に返す（NPC投資の対象選択用）。 */
     /** @return Post[] */
     public function findAlive(int $limit = 100): array;

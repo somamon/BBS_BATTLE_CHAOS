@@ -14,9 +14,10 @@ use App\Presentation\View\View;
 <?php if ($threads === []): ?>
   <div class="empty"><?= t('dead.empty') ?></div>
 <?php else: ?>
+  <p class="muted"><?= t('dead.view_hint') ?></p>
   <?php foreach ($threads as $t): ?>
     <div class="card">
-      <div class="tombstone"><?= View::e($t['title']) ?></div>
+      <a class="tombstone" href="/thread/<?= View::e($t['id']) ?>"><?= View::e($t['title']) ?></a>
       <div class="muted"><?= t('dead.died', ['from' => View::e($t['createdAt']), 'to' => View::e($t['diedAt'])]) ?></div>
     </div>
   <?php endforeach; ?>

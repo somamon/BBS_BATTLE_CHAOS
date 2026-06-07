@@ -39,6 +39,9 @@ final class ShowThread
         $thread->settleDecay($now, $multiplier);
         $this->threads->save($thread);
 
+        // 生存スレは書き込み・投資可。朽ちたスレ（過去ログ）は閲覧のみ。
+        $writable = $thread->isAlive();
+
         // 閲覧者の保有株を投稿IDで引けるよう先に集約。
         $myShares = [];
         if ($viewerId !== null) {
@@ -47,19 +50,26 @@ final class ShowThread
             }
         }
 
+        // 生存スレは生存レスのみ。過去ログは朽ちたレスも含めて全部見せる。
+        $source = $writable
+            ? $this->posts->findAliveByThread($threadId)
+            : $this->posts->findByThread($threadId);
+
         $posts = [];
-        foreach ($this->posts->findAliveByThread($threadId) as $post) {
+        foreach ($source as $post) {
             $hp = $post->currentHp($now, $multiplier);
-            if ($hp <= 0) {
+            // 生存スレでは朽ちたレスは隠す（従来通り）。過去ログでは隠さない。
+            if ($writable && $hp <= 0) {
                 continue;
             }
+            $isDeadPost = $hp <= 0 || !$post->isAlive();
             $shares = $myShares[$post->id] ?? 0;
             $posts[] = [
                 'id'            => $post->id,
                 'authorHash'    => $post->authorHash,
                 'authorId'      => $post->authorId,
                 'content'       => $post->content,
-                'hp'            => $hp,
+                'hp'            => max(0, $hp),
                 'maxHp'         => $post->maxHp(),
                 'level'         => $post->level(),
                 'levelLabel'    => self::LEVEL_LABELS[$post->level()] ?? '新規',
@@ -68,6 +78,7 @@ final class ShowThread
                 'totalShares'   => $post->totalShares(),
                 'myShares'      => $shares,
                 'myValuation'   => $shares > 0 ? $post->valuation($shares, $now, $multiplier) : 0,
+                'dead'          => $isDeadPost,
                 'createdAt'     => $post->createdAt->format('Y-m-d H:i'),
             ];
         }
@@ -80,6 +91,7 @@ final class ShowThread
                 'maxHp'     => $thread->maxHp(),
                 'postCount' => $thread->postCount(),
                 'status'    => $thread->status(),
+                'writable'  => $writable,
                 'createdAt' => $thread->createdAt->format('Y-m-d H:i'),
             ],
             'posts' => $posts,

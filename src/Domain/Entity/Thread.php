@@ -26,10 +26,11 @@ final class Thread
         private int $postCount,
         public readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt,
+        public readonly string $lang = 'ja',
     ) {}
 
-    /** 新規スレッドを満タンHPで作る。 */
-    public static function create(?string $creatorId, string $title, DateTimeImmutable $now): self
+    /** 新規スレッドを満タンHPで作る。$lang は立てた時点の表示ロケール（ja/en）。 */
+    public static function create(?string $creatorId, string $title, DateTimeImmutable $now, string $lang = 'ja'): self
     {
         return new self(
             id: Ulid::generate(),
@@ -43,6 +44,7 @@ final class Thread
             postCount: 0,
             createdAt: $now,
             updatedAt: $now,
+            lang: $lang,
         );
     }
 

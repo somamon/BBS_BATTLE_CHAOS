@@ -16,11 +16,11 @@ final class ListDeadThreads
         private readonly ThreadRepository $threads,
     ) {}
 
-    /** @return array<int,array<string,mixed>> 朽ちた順のタイトル一覧 */
-    public function execute(int $limit = 100): array
+    /** @return array<int,array<string,mixed>> 朽ちた順のタイトル一覧（指定言語のみ） */
+    public function execute(string $lang = 'ja', int $limit = 100): array
     {
         $result = [];
-        foreach ($this->threads->findDead($limit) as $thread) {
+        foreach ($this->threads->findDeadByLang($lang, $limit) as $thread) {
             $result[] = [
                 'id'        => $thread->id,
                 'title'     => $thread->title,
