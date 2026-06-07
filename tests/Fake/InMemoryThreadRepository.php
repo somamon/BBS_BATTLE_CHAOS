@@ -24,6 +24,32 @@ final class InMemoryThreadRepository implements ThreadRepository
         return array_slice(array_values($dead), 0, $limit);
     }
 
+    public function findAliveByLang(string $lang, int $limit = 50, int $offset = 0): array
+    {
+        $alive = array_filter(
+            $this->threads,
+            static fn (Thread $t): bool => $t->isAlive() && $t->lang === $lang,
+        );
+        return array_slice(array_values($alive), $offset, $limit);
+    }
+
+    public function countAliveByLang(string $lang): int
+    {
+        return count(array_filter(
+            $this->threads,
+            static fn (Thread $t): bool => $t->isAlive() && $t->lang === $lang,
+        ));
+    }
+
+    public function findDeadByLang(string $lang, int $limit = 100): array
+    {
+        $dead = array_filter(
+            $this->threads,
+            static fn (Thread $t): bool => !$t->isAlive() && $t->lang === $lang,
+        );
+        return array_slice(array_values($dead), 0, $limit);
+    }
+
     public function findById(string $id): ?Thread
     {
         return $this->threads[$id] ?? null;

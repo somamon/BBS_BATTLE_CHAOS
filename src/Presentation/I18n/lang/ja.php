@@ -22,6 +22,17 @@ return [
     // フッター / 法務
     'footer.terms' => '利用規約',
     'footer.privacy' => 'プライバシーポリシー',
+    'footer.contact' => 'お問い合わせ',
+
+    // お問い合わせ
+    'contact.title' => 'お問い合わせ',
+    'contact.intro' => 'ご質問・不具合の報告・アカウントに関するお問い合わせはこちらから。返信が必要な場合は、届くメールアドレスをご記入ください。',
+    'contact.name' => 'お名前（任意）',
+    'contact.email' => 'メールアドレス',
+    'contact.message' => 'お問い合わせ内容',
+    'contact.submit' => '送信する',
+    'contact.done.title' => '送信しました',
+    'contact.done.body' => 'お問い合わせを受け付けました。内容を確認のうえ、必要に応じてご記入のメールアドレスへ返信します。',
     'footer.disclaimer' => '本サービスはゲームです。ゲーム内通貨・株に財産的価値はなく、換金できません。',
     'legal.updated' => '最終更新: {date}',
     'legal.terms.title' => '利用規約',
@@ -160,6 +171,10 @@ return [
     'threads.new' => '新しいスレッドを立てる',
     'threads.graveyard' => '墓場（朽ちたスレ）',
     'threads.empty' => 'まだ生存しているスレッドがありません。',
+    'threads.lang_note' => '※いま表示しているのは日本語のスレッドです。言語はヘッダーから切り替えできます。',
+    'pager.prev' => '← 前へ',
+    'pager.next' => '次へ →',
+    'pager.page' => '{page} / {total} ページ',
     'threads.board_hp' => '板HP',
     'threads.replies' => '{n}レス',
 
@@ -261,6 +276,8 @@ return [
     'validation.title.too_long' => 'タイトルは255文字以内にしてください',
     'validation.content.required' => '本文を入力してください',
     'validation.content.too_long' => '本文は2000文字以内にしてください',
+    'validation.message.required' => 'お問い合わせ内容を入力してください',
+    'validation.message.too_long' => 'お問い合わせ内容は2000文字以内にしてください',
     'validation.generic' => '入力内容が正しくありません',
     'err.thread_not_found' => 'スレッドが見つかりません',
     'err.thread_dead' => 'このスレッドは朽ちており書き込めません',

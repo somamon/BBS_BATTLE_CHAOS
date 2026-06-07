@@ -28,6 +28,9 @@ use DateTimeImmutable;
  */
 final class MarketSimulator
 {
+    /** NPC が活動する板の言語（投稿文面が日本語のため ja 固定）。 */
+    private const NPC_LANG = 'ja';
+
     private const THREAD_TITLES = [
         'この投稿、伸びると思う', '今日の相場どうよ', '名作レス発掘スレ', '雑談スレ',
         '急騰しそうな投稿まとめ', '初心者だけど質問', '底値拾いたい', '殿堂入り目指すスレ',
@@ -106,10 +109,11 @@ final class MarketSimulator
             $this->users->save($bot);
         }
 
-        $aliveThreads = $this->threads->findAlive(50);
+        // NPC の文面は日本語なので、日本語板でのみ活動する（英語板は当面人間のみ）。
+        $aliveThreads = $this->threads->findAliveByLang(self::NPC_LANG, 50);
         if ($aliveThreads === []) {
             // 板が無ければまず立てる。
-            $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES));
+            $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES), self::NPC_LANG);
             return;
         }
 
@@ -134,7 +138,7 @@ final class MarketSimulator
         }
 
         // 残りは新スレ。
-        $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES));
+        $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES), self::NPC_LANG);
     }
 
     /**

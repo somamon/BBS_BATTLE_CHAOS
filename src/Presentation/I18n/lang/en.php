@@ -22,6 +22,17 @@ return [
     // Footer / legal
     'footer.terms' => 'Terms of Use',
     'footer.privacy' => 'Privacy Policy',
+    'footer.contact' => 'Contact',
+
+    // Contact
+    'contact.title' => 'Contact',
+    'contact.intro' => 'Questions, bug reports, or account issues—reach us here. If you need a reply, enter an email address we can reach you at.',
+    'contact.name' => 'Name (optional)',
+    'contact.email' => 'Email',
+    'contact.message' => 'Message',
+    'contact.submit' => 'Send',
+    'contact.done.title' => 'Message sent',
+    'contact.done.body' => 'Thanks—we received your message. We will reply to the email you provided if needed.',
     'footer.disclaimer' => 'This is a game. In-game currency and shares have no monetary value and cannot be cashed out.',
     'legal.updated' => 'Last updated: {date}',
     'legal.terms.title' => 'Terms of Use',
@@ -160,6 +171,10 @@ return [
     'threads.new' => 'Start a new thread',
     'threads.graveyard' => 'Graveyard (decayed threads)',
     'threads.empty' => 'No living threads yet.',
+    'threads.lang_note' => 'Showing English threads only. Switch language from the header.',
+    'pager.prev' => '← Prev',
+    'pager.next' => 'Next →',
+    'pager.page' => 'Page {page} / {total}',
     'threads.board_hp' => 'Board HP',
     'threads.replies' => '{n} replies',
 
@@ -261,6 +276,8 @@ return [
     'validation.title.too_long' => 'Title must be 255 characters or fewer',
     'validation.content.required' => 'Please enter a message',
     'validation.content.too_long' => 'Message must be 2000 characters or fewer',
+    'validation.message.required' => 'Please enter your message',
+    'validation.message.too_long' => 'Your message must be 2000 characters or fewer',
     'validation.generic' => 'Your input is invalid',
     'err.thread_not_found' => 'Thread not found',
     'err.thread_dead' => 'This thread has decayed and cannot accept posts',

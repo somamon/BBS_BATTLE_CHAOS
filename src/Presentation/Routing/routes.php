@@ -2,6 +2,7 @@
 
 use App\Presentation\Controller\AccountController;
 use App\Presentation\Controller\AuthController;
+use App\Presentation\Controller\ContactController;
 use App\Presentation\Controller\GoogleAuthController;
 use App\Presentation\Controller\HomeController;
 use App\Presentation\Controller\InvestController;
@@ -67,3 +68,7 @@ $router->post('/account/delete', [AccountController::class, 'delete'], ['csrf', 
 // 法務ページ（M5）
 $router->get('/terms', [LegalController::class, 'terms']);
 $router->get('/privacy', [LegalController::class, 'privacy']);
+
+// お問い合わせ
+$router->get('/contact', [ContactController::class, 'form']);
+$router->post('/contact', [ContactController::class, 'submit'], ['csrf']);

@@ -30,11 +30,16 @@ final class ThreadController
         private readonly CreateThread $createThread,
     ) {}
 
-    /** GET /threads スレッド一覧 */
+    /** GET /threads スレッド一覧（?page=N） */
     public function index(Request $request): Response
     {
+        $page = max(1, (int) $request->query('page', 1));
+        $data = $this->listThreads->execute(current_locale(), $page);
+
         $html = $this->page($this->market, $this->auth, $this->users, t('nav.threads'), 'Thread/index', [
-            'threads' => $this->listThreads->execute(),
+            'threads'    => $data['items'],
+            'page'       => $data['page'],
+            'totalPages' => $data['totalPages'],
         ]);
         return Response::html($html);
     }
@@ -43,7 +48,7 @@ final class ThreadController
     public function dead(Request $request): Response
     {
         $html = $this->page($this->market, $this->auth, $this->users, t('dead.title'), 'Thread/dead', [
-            'threads' => $this->listDeadThreads->execute(),
+            'threads' => $this->listDeadThreads->execute(current_locale()),
         ]);
         return Response::html($html);
     }
@@ -81,7 +86,7 @@ final class ThreadController
     {
         $title = (string) $request->input('title', '');
         try {
-            $id = $this->createThread->execute($this->auth->userId(), $title);
+            $id = $this->createThread->execute($this->auth->userId(), $title, current_locale());
         } catch (ValidationException $e) {
             $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
                 'error' => t($e->messageKey),

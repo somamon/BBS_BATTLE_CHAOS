@@ -41,6 +41,46 @@ final class PdoThreadRepository implements ThreadRepository
         );
     }
 
+    public function findAliveByLang(string $lang, int $limit = 50, int $offset = 0): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM threads WHERE status = 'alive' AND lang = :lang
+             ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
+        );
+        $stmt->bindValue(':lang', $lang);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(
+            fn (array $row): Thread => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
+    public function countAliveByLang(string $lang): int
+    {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM threads WHERE status = 'alive' AND lang = ?");
+        $stmt->execute([$lang]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public function findDeadByLang(string $lang, int $limit = 100): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM threads WHERE status = 'dead' AND lang = :lang ORDER BY updated_at DESC LIMIT :limit"
+        );
+        $stmt->bindValue(':lang', $lang);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(
+            fn (array $row): Thread => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
     public function findById(string $id): ?Thread
     {
         $stmt = $this->pdo->prepare('SELECT * FROM threads WHERE id = ?');
@@ -63,15 +103,16 @@ final class PdoThreadRepository implements ThreadRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO threads
-                (id, creator_id, title, hp, max_hp, decay_per_min,
+                (id, creator_id, lang, title, hp, max_hp, decay_per_min,
                  last_decay_at, status, post_count, created_at, updated_at)
              VALUES
-                (:id, :creator_id, :title, :hp, :max_hp, :decay_per_min,
+                (:id, :creator_id, :lang, :title, :hp, :max_hp, :decay_per_min,
                  :last_decay_at, :status, :post_count, :created_at, :updated_at)'
         );
         $stmt->execute([
             ':id'            => $thread->id,
             ':creator_id'    => $thread->creatorId,
+            ':lang'          => $thread->lang,
             ':title'         => $thread->title,
             ':hp'            => $thread->hp(),
             ':max_hp'        => $thread->maxHp(),
@@ -113,6 +154,7 @@ final class PdoThreadRepository implements ThreadRepository
             id:          $row['id'],
             creatorId:   $row['creator_id'],
             title:       $row['title'],
+            lang:        $row['lang'] ?? 'ja',
             hp:          (int) $row['hp'],
             maxHp:       (int) $row['max_hp'],
             decayPerMin: (int) $row['decay_per_min'],
