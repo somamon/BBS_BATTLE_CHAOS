@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     name          VARCHAR(50)  NOT NULL,                 -- 表示名
     password_hash VARCHAR(255) NOT NULL,                 -- password_hash() の出力
     money         INT          NOT NULL DEFAULT 500,     -- 所持金
+    email_verified_at DATETIME NULL DEFAULT NULL,        -- メール確認完了時刻（NULL=未確認）
     created_at    DATETIME     NOT NULL,
     PRIMARY KEY (id),
     UNIQUE KEY uniq_users_email (email)
