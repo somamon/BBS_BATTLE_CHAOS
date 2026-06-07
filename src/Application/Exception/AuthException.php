@@ -7,11 +7,6 @@ namespace App\Application\Exception;
 /** 認証・登録に関するアプリ例外。 */
 final class AuthException extends \RuntimeException
 {
-    public static function emailTaken(): self
-    {
-        return new self('このメールアドレスは既に登録されています');
-    }
-
     public static function invalidCredentials(): self
     {
         return new self('メールアドレスまたはパスワードが正しくありません');

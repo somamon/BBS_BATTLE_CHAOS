@@ -65,8 +65,9 @@ final class AuthController
         $this->rateLimiter->hit($key, self::REGISTER_WINDOW);
 
         try {
+            // 既存アドレスでも例外にせず成功と同じ応答にする（列挙対策は RegisterUser 側）。
             $this->registerUser->execute($email, $name, $pass);
-        } catch (ValidationException | AuthException $e) {
+        } catch (ValidationException $e) {
             return Response::html($this->registerView($e->getMessage(), $email, $name), 422);
         }
 

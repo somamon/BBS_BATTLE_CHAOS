@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Application;
 
-use App\Application\Exception\AuthException;
 use App\Application\Service\VerificationMailSender;
 use App\Application\UseCase\Auth\RegisterUser;
 use App\Domain\Entity\EmailVerification;
@@ -35,16 +34,18 @@ final class RegisterUserTest extends TestCase
             new ImmediateTransactionManager(),
             $this->users,
             $sender,
+            $this->mailer,
         );
     }
 
     public function testRegistersUnverifiedUserAndSendsVerificationMail(): void
     {
-        $user = $this->useCase->execute('Alice@Example.com', '目利き', 'password1', $this->now);
+        $this->useCase->execute('Alice@Example.com', '目利き', 'password1', $this->now);
 
-        // メールは正規化して保存
+        // メールを正規化して未確認で保存
+        $user = $this->users->findByEmail('alice@example.com');
+        self::assertNotNull($user);
         self::assertSame('alice@example.com', $user->email);
-        // 未確認で作られる
         self::assertFalse($user->isEmailVerified());
         // 確認メールが1通送られ、リンクが含まれる
         self::assertCount(1, $this->mailer->sent);
@@ -75,11 +76,23 @@ final class RegisterUserTest extends TestCase
         $this->useCase->execute('a@e.com', '   ', 'password1', $this->now);
     }
 
-    public function testRejectsDuplicateEmailCaseInsensitive(): void
+    public function testDuplicateEmailIsEnumerationSafe(): void
     {
+        // 1人目：通常登録（確認メール）
         $this->useCase->execute('dup@e.com', '名前', 'password1', $this->now);
+        $first = $this->users->findByEmail('dup@e.com');
+        self::assertNotNull($first);
 
-        $this->expectException(AuthException::class);
-        $this->useCase->execute('DUP@e.com', '別名', 'password2', $this->now); // 大文字でも重複
+        // 2人目：大文字でも同一アドレス。例外を投げず、新規ユーザーも作らない。
+        $this->useCase->execute('DUP@e.com', '別名', 'password2', $this->now);
+
+        // ユーザーは増えていない（同一ID）
+        self::assertCount(1, $this->users->all());
+        self::assertSame($first->id, $this->users->findByEmail('dup@e.com')->id);
+
+        // 2通目は「登録済みのお知らせ」（確認トークンを含まない）
+        self::assertCount(2, $this->mailer->sent);
+        self::assertStringContainsString('登録済み', $this->mailer->sent[1]['subject']);
+        self::assertStringNotContainsString('token=', $this->mailer->sent[1]['body']);
     }
 }
