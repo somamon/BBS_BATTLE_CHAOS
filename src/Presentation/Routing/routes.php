@@ -17,6 +17,7 @@ $router->get('/playground', [PlaygroundController::class, 'index']);
 
 // スレッド一覧・作成
 $router->get('/threads', [ThreadController::class, 'index']);            // 一覧
+$router->get('/threads/dead', [ThreadController::class, 'dead']);        // 墓場（朽ちたスレのタイトル一覧）
 $router->get('/thread/create', [ThreadController::class, 'createForm']); // 作成フォーム
 $router->post('/threads', [ThreadController::class, 'create'], ['csrf']); // スレ作成
 

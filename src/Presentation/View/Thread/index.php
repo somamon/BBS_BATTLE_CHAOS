@@ -6,7 +6,7 @@
  */
 use App\Presentation\View\View;
 ?>
-<p><a href="/thread/create">＋ 新しいスレッドを立てる</a></p>
+<p><a href="/thread/create">＋ 新しいスレッドを立てる</a> ・ <a href="/threads/dead">🪦 墓場（朽ちたスレ）</a></p>
 
 <?php if ($threads === []): ?>
   <div class="empty">まだ生存しているスレッドがありません。</div>

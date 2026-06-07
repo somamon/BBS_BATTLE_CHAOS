@@ -6,6 +6,7 @@ namespace App\Presentation\Controller;
 
 use App\Application\Service\MarketPhaseService;
 use App\Application\UseCase\Thread\CreateThread;
+use App\Application\UseCase\Thread\ListDeadThreads;
 use App\Application\UseCase\Thread\ListThreads;
 use App\Application\UseCase\Thread\ShowThread;
 use App\Domain\Repository\UserRepository;
@@ -23,6 +24,7 @@ final class ThreadController
         private readonly Auth $auth,
         private readonly UserRepository $users,
         private readonly ListThreads $listThreads,
+        private readonly ListDeadThreads $listDeadThreads,
         private readonly ShowThread $showThread,
         private readonly CreateThread $createThread,
     ) {}
@@ -32,6 +34,15 @@ final class ThreadController
     {
         $html = $this->page($this->market, $this->auth, $this->users, 'スレッド一覧', 'Thread/index', [
             'threads' => $this->listThreads->execute(),
+        ]);
+        return Response::html($html);
+    }
+
+    /** GET /threads/dead 墓場（朽ちたスレのタイトル一覧） */
+    public function dead(Request $request): Response
+    {
+        $html = $this->page($this->market, $this->auth, $this->users, '墓場', 'Thread/dead', [
+            'threads' => $this->listDeadThreads->execute(),
         ]);
         return Response::html($html);
     }
