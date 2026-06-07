@@ -26,6 +26,20 @@ final class PdoPostRepository implements PostRepository
         );
     }
 
+    public function findAlive(int $limit = 100): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM posts WHERE status = 'alive' ORDER BY created_at DESC LIMIT :limit"
+        );
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(
+            fn (array $row): Post => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
     public function findById(string $id): ?Post
     {
         $stmt = $this->pdo->prepare('SELECT * FROM posts WHERE id = ?');

@@ -43,9 +43,9 @@ final class PdoUserRepository implements UserRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO users
-                (id, email, name, password_hash, money, email_verified_at, created_at)
+                (id, email, name, password_hash, money, email_verified_at, is_bot, created_at)
              VALUES
-                (:id, :email, :name, :password_hash, :money, :email_verified_at, :created_at)'
+                (:id, :email, :name, :password_hash, :money, :email_verified_at, :is_bot, :created_at)'
         );
         $stmt->execute([
             ':id'                => $user->id,
@@ -54,6 +54,7 @@ final class PdoUserRepository implements UserRepository
             ':password_hash'     => $user->passwordHash,
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
+            ':is_bot'            => $user->isBot ? 1 : 0,
             ':created_at'        => $user->createdAt->format('Y-m-d H:i:s'),
         ]);
     }
@@ -80,6 +81,21 @@ final class PdoUserRepository implements UserRepository
         );
     }
 
+    public function countHumans(): int
+    {
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM users WHERE is_bot = 0')->fetchColumn();
+    }
+
+    public function bots(): array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM users WHERE is_bot = 1');
+
+        return array_map(
+            fn (array $row): User => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
     private function hydrate(array $row): User
     {
         return new User(
@@ -92,6 +108,7 @@ final class PdoUserRepository implements UserRepository
             emailVerifiedAt: $row['email_verified_at'] !== null
                 ? new DateTimeImmutable($row['email_verified_at'])
                 : null,
+            isBot:           (bool) $row['is_bot'],
         );
     }
 }

@@ -8,6 +8,7 @@ use App\Application\Port\Mailer;
 use App\Application\Port\RateLimiter;
 use App\Application\Port\TransactionManager;
 use App\Application\Service\VerificationMailSender;
+use App\Domain\Repository\BotSimStateRepository;
 use App\Domain\Repository\EmailVerificationRepository;
 use App\Domain\Repository\HoldingRepository;
 use App\Domain\Repository\InvestmentRepository;
@@ -17,6 +18,7 @@ use App\Domain\Repository\UserRepository;
 use App\Domain\Repository\WorldStateRepository;
 use App\Infrastructure\Mail\LogMailer;
 use App\Infrastructure\Persistence\Database;
+use App\Infrastructure\Persistence\PdoBotSimStateRepository;
 use App\Infrastructure\Persistence\PdoEmailVerificationRepository;
 use App\Infrastructure\Persistence\PdoHoldingRepository;
 use App\Infrastructure\Persistence\PdoInvestmentRepository;
@@ -57,6 +59,7 @@ final class Container
             InvestmentRepository::class        => autowire(PdoInvestmentRepository::class),
             WorldStateRepository::class        => autowire(PdoWorldStateRepository::class),
             EmailVerificationRepository::class => autowire(PdoEmailVerificationRepository::class),
+            BotSimStateRepository::class       => autowire(PdoBotSimStateRepository::class),
             TransactionManager::class          => autowire(PdoTransactionManager::class),
             RateLimiter::class                 => autowire(PdoRateLimiter::class),
 

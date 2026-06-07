@@ -42,6 +42,7 @@ final class RankingQuery
 
             $rows[] = [
                 'name'       => $user->name,
+                'isBot'      => $user->isBot,
                 'money'      => $user->money(),
                 'shareValue' => $shareValue,
                 'total'      => $user->money() + $shareValue,

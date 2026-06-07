@@ -12,6 +12,10 @@ interface PostRepository
     /** @return Post[] */
     public function findAliveByThread(string $threadId): array;
 
+    /** alive な投稿を横断的に返す（NPC投資の対象選択用）。 */
+    /** @return Post[] */
+    public function findAlive(int $limit = 100): array;
+
     public function findById(string $id): ?Post;
 
     /** 行ロック付きで取得（投資トランザクション用）。 */

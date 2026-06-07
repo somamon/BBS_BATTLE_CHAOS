@@ -46,6 +46,13 @@ final class Game
     public const PHASE_MIN_SEC = 180;
     public const PHASE_MAX_SEC = 900;
 
+    // NPC投資家（ボット）。ソロ/少人数を成立させる擬似他人。cron不要の遅延シミュレーション。
+    public const BOT_MAX_HUMANS   = 50;   // 人間ユーザーがこの数以下のときだけ稼働
+    public const BOT_TICK_SECONDS = 30;   // 何秒の経過ごとに1アクション
+    public const BOT_MAX_BURST    = 4;    // 1リクエストで実行する最大アクション数（暴走防止）
+    public const BOT_MIN_INVEST   = 30;   // ボット1回の最小投資額（株を1株以上取れる程度）
+    public const BOT_MAX_INVEST   = 150;  // ボット1回の最大投資額
+
     /** フェーズ名 → 減衰倍率（未知は平常 1.0）。 */
     public static function phaseMultiplier(string $phase): float
     {

@@ -46,4 +46,14 @@ final class InMemoryUserRepository implements UserRepository
     {
         return array_values($this->users);
     }
+
+    public function countHumans(): int
+    {
+        return count(array_filter($this->users, static fn (User $u): bool => !$u->isBot));
+    }
+
+    public function bots(): array
+    {
+        return array_values(array_filter($this->users, static fn (User $u): bool => $u->isBot));
+    }
 }
