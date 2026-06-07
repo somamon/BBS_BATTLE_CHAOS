@@ -9,7 +9,9 @@ use App\Application\Port\RateLimiter;
 use App\Application\Service\MarketPhaseService;
 use App\Application\UseCase\Auth\LoginUser;
 use App\Application\UseCase\Auth\RegisterUser;
+use App\Application\UseCase\Auth\RequestPasswordReset;
 use App\Application\UseCase\Auth\ResendVerification;
+use App\Application\UseCase\Auth\ResetPassword;
 use App\Application\UseCase\Auth\VerifyEmail;
 use App\Domain\Exception\ValidationException;
 use App\Domain\Repository\UserRepository;
@@ -34,6 +36,10 @@ final class AuthController
     private const RESEND_MAX    = 5;
     private const RESEND_WINDOW = 3600;
 
+    /** パスワード再設定申請のレート制限：1IPあたり1時間に5回まで。 */
+    private const FORGOT_MAX    = 5;
+    private const FORGOT_WINDOW = 3600;
+
     public function __construct(
         private readonly MarketPhaseService $market,
         private readonly Auth $auth,
@@ -42,13 +48,15 @@ final class AuthController
         private readonly LoginUser $loginUser,
         private readonly VerifyEmail $verifyEmail,
         private readonly ResendVerification $resendVerification,
+        private readonly RequestPasswordReset $requestPasswordReset,
+        private readonly ResetPassword $resetPassword,
         private readonly RateLimiter $rateLimiter,
     ) {}
 
     /** GET /register 登録フォーム */
     public function registerForm(Request $request): Response
     {
-        return Response::html($this->registerView(null, '', ''));
+        return Response::html($this->registerView(null, '', '', false));
     }
 
     /** POST /register 登録実行（メール確認まではログインさせない） */
@@ -57,18 +65,24 @@ final class AuthController
         $email = trim((string) $request->input('email', ''));
         $name  = trim((string) $request->input('name', ''));
         $pass  = (string) $request->input('password', '');
+        $agree = (string) $request->input('agree', '') === '1';
 
         $key = 'register:' . $request->ip();
         if ($this->rateLimiter->tooManyAttempts($key, self::REGISTER_MAX)) {
-            return Response::html($this->registerView(t('err.too_many_attempts'), $email, $name), 429);
+            return Response::html($this->registerView(t('err.too_many_attempts'), $email, $name, $agree), 429);
         }
         $this->rateLimiter->hit($key, self::REGISTER_WINDOW);
+
+        // 年齢確認＋規約・プライバシー同意（M5）。未同意なら登録させない。
+        if (!$agree) {
+            return Response::html($this->registerView(t('err.must_agree'), $email, $name, false), 422);
+        }
 
         try {
             // 既存アドレスでも例外にせず成功と同じ応答にする（列挙対策は RegisterUser 側）。
             $this->registerUser->execute($email, $name, $pass);
         } catch (ValidationException $e) {
-            return Response::html($this->registerView(t($e->messageKey), $email, $name), 422);
+            return Response::html($this->registerView(t($e->messageKey), $email, $name, $agree), 422);
         }
 
         // 確認メールを送信。リンクを踏むまで本ログインしない。
@@ -150,6 +164,66 @@ final class AuthController
         return Response::html($html);
     }
 
+    /** GET /password/forgot パスワード再設定の申請フォーム */
+    public function forgotForm(Request $request): Response
+    {
+        return Response::html($this->forgotView(null, ''));
+    }
+
+    /** POST /password/forgot 再設定メールの送信（列挙防止のため結果は一律） */
+    public function forgot(Request $request): Response
+    {
+        $email = trim((string) $request->input('email', ''));
+
+        $key = 'forgot:' . $request->ip();
+        if ($this->rateLimiter->tooManyAttempts($key, self::FORGOT_MAX)) {
+            return Response::html($this->forgotView(t('err.too_many_attempts'), $email), 429);
+        }
+        $this->rateLimiter->hit($key, self::FORGOT_WINDOW);
+
+        // 成否・アカウントの有無に関わらず同じ応答（メールアドレス列挙を防ぐ）。
+        $this->requestPasswordReset->execute($email);
+
+        $html = $this->page($this->market, $this->auth, $this->users, t('forgot_done.title'), 'Auth/forgot_done', [
+            'email' => $email,
+        ]);
+        return Response::html($html);
+    }
+
+    /** GET /password/reset?token=... 新しいパスワードの設定フォーム */
+    public function resetForm(Request $request): Response
+    {
+        $token = (string) $request->query('token', '');
+        return Response::html($this->resetView(null, $token));
+    }
+
+    /** POST /password/reset 新しいパスワードの確定 */
+    public function reset(Request $request): Response
+    {
+        $token = (string) $request->input('token', '');
+        $pass  = (string) $request->input('password', '');
+
+        // 再設定はトークン保有が前提だが、総当たり対策として控えめにレート制限する。
+        $key = 'reset:' . $request->ip();
+        if ($this->rateLimiter->tooManyAttempts($key, self::FORGOT_MAX)) {
+            return Response::html($this->resetView(t('err.too_many_attempts'), $token), 429);
+        }
+        $this->rateLimiter->hit($key, self::FORGOT_WINDOW);
+
+        try {
+            $user = $this->resetPassword->execute($token, $pass);
+        } catch (ValidationException $e) {
+            return Response::html($this->resetView(t($e->messageKey), $token), 422);
+        } catch (AuthException $e) {
+            return Response::html($this->resetView(t($e->key), $token), 422);
+        }
+
+        // 再設定完了でそのままログイン。
+        $this->auth->login($user->id);
+        Flash::set(t('flash.password_reset'));
+        return Response::redirect('/threads');
+    }
+
     /** POST /logout ログアウト */
     public function logout(Request $request): Response
     {
@@ -157,12 +231,13 @@ final class AuthController
         return Response::redirect('/threads');
     }
 
-    private function registerView(?string $error, string $email, string $name): string
+    private function registerView(?string $error, string $email, string $name, bool $agree): string
     {
         return $this->page($this->market, $this->auth, $this->users, t('register.title'), 'Auth/register', [
             'error' => $error,
             'email' => $email,
             'name'  => $name,
+            'agree' => $agree,
         ]);
     }
 
@@ -186,6 +261,22 @@ final class AuthController
         return $this->page($this->market, $this->auth, $this->users, t('resend.title'), 'Auth/resend', [
             'error' => $error,
             'email' => $email,
+        ]);
+    }
+
+    private function forgotView(?string $error, string $email): string
+    {
+        return $this->page($this->market, $this->auth, $this->users, t('forgot.title'), 'Auth/forgot', [
+            'error' => $error,
+            'email' => $email,
+        ]);
+    }
+
+    private function resetView(?string $error, string $token): string
+    {
+        return $this->page($this->market, $this->auth, $this->users, t('reset.title'), 'Auth/reset', [
+            'error' => $error,
+            'token' => $token,
         ]);
     }
 }

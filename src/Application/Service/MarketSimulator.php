@@ -13,6 +13,7 @@ use App\Domain\Entity\Post;
 use App\Domain\Entity\User;
 use App\Domain\Repository\BotSimStateRepository;
 use App\Domain\Repository\EmailVerificationRepository;
+use App\Domain\Repository\PasswordResetRepository;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
@@ -47,6 +48,7 @@ final class MarketSimulator
         private readonly CreateThread $createThread,
         private readonly RateLimiter $rateLimiter,
         private readonly EmailVerificationRepository $verifications,
+        private readonly PasswordResetRepository $passwordResets,
     ) {}
 
     /** 経過時間に応じてボットのアクションを実行する。例外は飲み込み、画面表示を妨げない。 */
@@ -55,7 +57,7 @@ final class MarketSimulator
         $now ??= new DateTimeImmutable();
 
         // 原子的に tick を占有（同時アクセスでの二重実行を防ぎ、最短 BOT_TICK_SECONDS 間隔に抑制）。
-        $prev = $this->simState->tryClaim($now, Game::BOT_TICK_SECONDS);
+        $prev = $this->simState->tryClaim($now, Game::botTickSeconds());
         if ($prev === null) {
             return; // まだ間隔未満、または他リクエストが処理済み
         }
@@ -64,16 +66,17 @@ final class MarketSimulator
         try {
             $this->rateLimiter->purgeExpired();
             $this->verifications->purgeExpired($now);
+            $this->passwordResets->purgeExpired($now);
         } catch (\Throwable) {
         }
 
         // 人間が十分集まったらボットは休眠（クロックは占有済みなので進んでいる）。
-        if ($this->users->countHumans() > Game::BOT_MAX_HUMANS) {
+        if ($this->users->countHumans() > Game::botMaxHumans()) {
             return;
         }
 
         $elapsed = $now->getTimestamp() - $prev->getTimestamp();
-        $actions = (int) min(Game::BOT_MAX_BURST, intdiv($elapsed, Game::BOT_TICK_SECONDS));
+        $actions = (int) min(Game::botMaxBurst(), intdiv($elapsed, Game::botTickSeconds()));
         if ($actions <= 0) {
             return;
         }
@@ -98,8 +101,8 @@ final class MarketSimulator
         $bot = $bots[random_int(0, count($bots) - 1)];
 
         // 資金が尽きたボットは補充（相場が止まらないようにする＝中央銀行的な流動性供給）。
-        if (!$bot->canAfford(Game::BOT_MIN_INVEST)) {
-            $bot->credit(Game::BOT_REFILL_TO - $bot->money());
+        if (!$bot->canAfford(Game::botMinInvest())) {
+            $bot->credit(Game::botRefillTo() - $bot->money());
             $this->users->save($bot);
         }
 
@@ -114,10 +117,10 @@ final class MarketSimulator
         $roll = random_int(1, 100);
 
         // 投資対象があり、ボットに資金があれば 70% で投資。
-        if ($alivePosts !== [] && $roll <= 70 && $bot->canAfford(Game::BOT_MIN_INVEST)) {
+        if ($alivePosts !== [] && $roll <= 70 && $bot->canAfford(Game::botMinInvest())) {
             $post   = $this->pickWeighted($alivePosts);
-            $budget = min($bot->money(), Game::BOT_MAX_INVEST);
-            $amount = random_int(Game::BOT_MIN_INVEST, max(Game::BOT_MIN_INVEST, $budget));
+            $budget = min($bot->money(), Game::botMaxInvest());
+            $amount = random_int(Game::botMinInvest(), max(Game::botMinInvest(), $budget));
             $this->invest->execute($bot->id, $post->id, $amount, $now);
             return;
         }

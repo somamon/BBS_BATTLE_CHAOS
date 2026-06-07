@@ -21,6 +21,7 @@ use Tests\Fake\InMemoryBotSimStateRepository;
 use Tests\Fake\InMemoryEmailVerificationRepository;
 use Tests\Fake\InMemoryHoldingRepository;
 use Tests\Fake\InMemoryInvestmentRepository;
+use Tests\Fake\InMemoryPasswordResetRepository;
 use Tests\Fake\InMemoryPostRepository;
 use Tests\Fake\InMemoryRateLimiter;
 use Tests\Fake\InMemoryThreadRepository;
@@ -62,6 +63,7 @@ final class MarketSimulatorTest extends TestCase
             $simState, $this->users, $this->threads, $this->posts,
             $invest, $postReply, $createThread,
             new InMemoryRateLimiter(), new InMemoryEmailVerificationRepository(),
+            new InMemoryPasswordResetRepository(),
         );
     }
 

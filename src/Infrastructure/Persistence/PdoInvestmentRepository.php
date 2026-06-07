@@ -32,4 +32,10 @@ final class PdoInvestmentRepository implements InvestmentRepository
             ':created_at'  => $investment->createdAt->format('Y-m-d H:i:s'),
         ]);
     }
+
+    public function deleteForUser(string $userId): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM investments WHERE investor_id = ?');
+        $stmt->execute([$userId]);
+    }
 }

@@ -1,0 +1,123 @@
+<?php
+/**
+ * プライバシーポリシー（確定版）。
+ * @var string      $operator 運営者名（env LEGAL_OPERATOR）
+ * @var string|null $contact  連絡先メール（env LEGAL_CONTACT / MAIL_FROM。未設定なら null）
+ */
+use App\Presentation\View\View;
+
+$locale = current_locale();
+$op = View::e($operator);
+?>
+<h2><?= t('legal.privacy.title') ?></h2>
+<div class="card">
+  <p class="muted"><?= t('legal.updated', ['date' => '2026-06-07']) ?></p>
+</div>
+
+<?php if ($locale === 'en'): ?>
+<div class="card">
+  <p>This Privacy Policy explains how <?= $op ?> (the "Operator") collects and handles personal data in BBS BATTLE CHAOS (the "Service").</p>
+
+  <h3>1. Operator</h3>
+  <p>The Operator of the Service and the entity responsible for handling personal data is <?= $op ?>.</p>
+
+  <h3>2. Information we collect</h3>
+  <ul>
+    <li><strong>Email address</strong> — used as your login ID and for email verification and password reset.</li>
+    <li><strong>Display name</strong> — shown publicly within the game.</li>
+    <li><strong>Password</strong> — stored only as a one-way hash; we never store or can read the plaintext.</li>
+    <li><strong>Access information</strong> — IP address (stored as a hash for anonymous posts), request date/time, status, and error logs, for security and operation.</li>
+    <li><strong>Cookie</strong> — a strictly necessary session cookie to keep you logged in and to prevent CSRF. We do not use advertising or analytics trackers.</li>
+  </ul>
+
+  <h3>3. Purposes of use</h3>
+  <ul>
+    <li>To provide, operate, and maintain the Service;</li>
+    <li>To authenticate users and send verification and password-reset emails;</li>
+    <li>To prevent and respond to unauthorized or abusive use;</li>
+    <li>To monitor reliability and improve quality (e.g., aggregate metrics such as registrations, activity, and error rates);</li>
+    <li>To respond to inquiries.</li>
+  </ul>
+
+  <h3>4. Cookies</h3>
+  <p>We use only the session cookie necessary to operate the Service. It is set with HttpOnly and SameSite attributes (and Secure over HTTPS). Disabling it may prevent login and other functions. No third-party advertising cookies are used.</p>
+
+  <h3>5. Provision to third parties</h3>
+  <p>We do not provide personal data to third parties except: (a) to an email delivery provider as a processor, solely to send verification and reset emails; (b) where required by law; or (c) where necessary to protect a person's life, body, or property. We do not sell personal data.</p>
+
+  <h3>6. Retention period</h3>
+  <p>We retain personal data while your account exists and only as long as necessary for the purposes above. When you delete your account, we delete your account information, holdings, and investment records. Anonymous posts are retained with identifying links removed. Operational logs are kept only for a reasonable period needed for security and operation.</p>
+
+  <h3>7. Security measures</h3>
+  <p>We take reasonable organizational and technical measures to protect personal data, including password hashing, HTTPS transport encryption, session protection, and access controls.</p>
+
+  <h3>8. Your rights (disclosure, correction, deletion)</h3>
+  <p>You may request disclosure, correction, suspension of use, or deletion of your personal data. You can delete your account yourself from My Page, or contact us using the details below.</p>
+
+  <h3>9. Minors</h3>
+  <p>The Service is intended for users aged 18 or older. We do not knowingly collect personal data from those under that age; if we learn we have, we will delete it.</p>
+
+  <h3>10. Changes to this Policy</h3>
+  <p>We may update this Policy as needed. Material changes will be announced within the Service. The updated Policy takes effect when posted.</p>
+
+  <h3>11. Contact</h3>
+  <p>For privacy inquiries, please contact the Operator:
+    <?php if ($contact !== null): ?><a href="mailto:<?= View::e($contact) ?>"><?= View::e($contact) ?></a><?php else: ?>via the contact channel published within the Service<?php endif; ?>.</p>
+
+  <p class="muted">Operator: <?= $op ?></p>
+</div>
+<?php else: ?>
+<div class="card">
+  <p>本プライバシーポリシーは、<?= $op ?>（以下「運営者」）が提供する BBS BATTLE CHAOS（以下「本サービス」）における個人データの取得・取扱いについて定めます。</p>
+
+  <h3>1. 事業者</h3>
+  <p>本サービスの運営者であり、個人データの取扱責任者は <?= $op ?> です。</p>
+
+  <h3>2. 取得する情報</h3>
+  <ul>
+    <li><strong>メールアドレス</strong> — ログインIDとして、また本人確認メール・パスワード再設定に利用します。</li>
+    <li><strong>表示名</strong> — ゲーム内で公開されます。</li>
+    <li><strong>パスワード</strong> — 復元不可能なハッシュ値としてのみ保存します。平文を保存することはなく、運営者が知ることもできません。</li>
+    <li><strong>アクセス情報</strong> — IPアドレス（匿名投稿ではハッシュ化して保存）、リクエスト日時・ステータス・エラーログ等を、セキュリティと運用のために取得します。</li>
+    <li><strong>Cookie</strong> — ログイン状態の維持とCSRF対策に必要な必須セッションCookieのみを使用します。広告・解析目的のトラッカーは使用しません。</li>
+  </ul>
+
+  <h3>3. 利用目的</h3>
+  <ul>
+    <li>本サービスの提供・運営・維持のため</li>
+    <li>ユーザー認証、確認メール・再設定メールの送信のため</li>
+    <li>不正・濫用の防止および対応のため</li>
+    <li>信頼性の監視と品質向上のため（登録数・活動・エラー率等の集計指標を含む）</li>
+    <li>お問い合わせへの対応のため</li>
+  </ul>
+
+  <h3>4. Cookieの利用</h3>
+  <p>本サービスの運営に必要なセッションCookieのみを使用します。当該Cookieには HttpOnly・SameSite 属性（HTTPS では Secure 属性）を付与します。無効化するとログイン等の機能が利用できない場合があります。第三者の広告Cookieは使用しません。</p>
+
+  <h3>5. 第三者提供</h3>
+  <p>運営者は、次の場合を除き、個人データを第三者に提供しません。(a) 確認メール・再設定メールの送信のため、委託先であるメール配信事業者に取扱いを委託する場合、(b) 法令に基づく場合、(c) 人の生命・身体・財産の保護のために必要な場合。個人データを販売することはありません。</p>
+
+  <h3>6. 保存期間</h3>
+  <p>個人データは、アカウントが存在する間、かつ上記目的に必要な期間に限り保存します。退会時には、アカウント情報・保有株・投資記録を削除します。匿名で投稿された内容は、本人と紐づく情報を除去したうえで残ります。運用ログは、セキュリティと運用に必要な合理的な期間に限り保存します。</p>
+
+  <h3>7. 安全管理措置</h3>
+  <p>運営者は、パスワードのハッシュ化、HTTPS による通信の暗号化、セッション保護、アクセス制御等、個人データを保護するための合理的な組織的・技術的措置を講じます。</p>
+
+  <h3>8. 開示・訂正・削除等の請求</h3>
+  <p>ユーザーは、自己の個人データの開示・訂正・利用停止・削除を請求できます。マイページの退会機能でご自身で削除できるほか、下記の連絡先までお問い合わせください。</p>
+
+  <h3>9. 未成年者について</h3>
+  <p>本サービスは満18歳以上の利用を想定しています。当該年齢未満の方の個人データを意図的に取得することはありません。取得が判明した場合は削除します。</p>
+
+  <h3>10. ポリシーの変更</h3>
+  <p>運営者は、必要に応じて本ポリシーを変更できます。重要な変更は本サービス内で告知します。変更後のポリシーは掲示した時点で効力を生じます。</p>
+
+  <h3>11. お問い合わせ窓口</h3>
+  <p>個人情報に関するお問い合わせは、運営者まで（
+    <?php if ($contact !== null): ?><a href="mailto:<?= View::e($contact) ?>"><?= View::e($contact) ?></a><?php else: ?>本サービス内に掲示する窓口<?php endif; ?>）。</p>
+
+  <p class="muted">運営者: <?= $op ?></p>
+</div>
+<?php endif; ?>
+
+<p class="muted"><a href="/terms"><?= t('legal.terms.title') ?></a></p>

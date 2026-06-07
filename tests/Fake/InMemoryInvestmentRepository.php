@@ -16,4 +16,12 @@ final class InMemoryInvestmentRepository implements InvestmentRepository
     {
         $this->records[] = $investment;
     }
+
+    public function deleteForUser(string $userId): void
+    {
+        $this->records = array_values(array_filter(
+            $this->records,
+            static fn (Investment $i): bool => $i->investorId !== $userId,
+        ));
+    }
 }

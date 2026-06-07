@@ -111,5 +111,10 @@ $otherLang = $locale === 'ja' ? 'en' : 'ja';
   <div class="wrap">
 <?= $content ?>
   </div>
+  <footer style="border-top:1px solid #ccc; margin-top:16px; padding:10px; text-align:center; font-size:11px; color:#666;">
+    <a href="/terms"><?= View::e(t('footer.terms')) ?></a>
+    ｜ <a href="/privacy"><?= View::e(t('footer.privacy')) ?></a>
+    <div class="muted" style="margin-top:4px;"><?= View::e(t('footer.disclaimer')) ?></div>
+  </footer>
 </body>
 </html>

@@ -18,4 +18,7 @@ interface HoldingRepository
 
     /** 新規・既存どちらも保存（UPSERT）。 */
     public function save(Holding $holding): void;
+
+    /** 指定ユーザーの保有株をすべて削除する（退会時のデータ削除）。 */
+    public function deleteForUser(string $userId): void;
 }

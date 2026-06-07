@@ -39,4 +39,12 @@ final class InMemoryHoldingRepository implements HoldingRepository
     {
         $this->holdings[$this->key($holding->userId, $holding->postId)] = $holding;
     }
+
+    public function deleteForUser(string $userId): void
+    {
+        $this->holdings = array_filter(
+            $this->holdings,
+            static fn (Holding $h): bool => $h->userId !== $userId,
+        );
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCase\Auth;
 
+use App\Application\Port\Logger;
 use App\Application\Port\Mailer;
 use App\Application\Port\TransactionManager;
 use App\Application\Service\VerificationMailSender;
@@ -29,6 +30,7 @@ final class RegisterUser
         private readonly UserRepository $users,
         private readonly VerificationMailSender $verificationMail,
         private readonly Mailer $mailer,
+        private readonly ?Logger $logger = null,
     ) {}
 
     public function execute(string $emailRaw, string $nameRaw, string $passwordRaw, ?DateTimeImmutable $now = null): void
@@ -62,6 +64,11 @@ final class RegisterUser
             return $newUser;
         });
 
+        // 新規ユーザーが実際に作られたときだけ KPI を記録（列挙対策上、既存は計上しない）。
+        if ($user !== null) {
+            $this->logger?->event('user_registered', ['user_id' => $user->id]);
+        }
+
         // コミット後にメール送信。送信失敗はログに留め UX を止めない（ユーザーは再送で復旧可）。
         try {
             if ($user !== null) {
@@ -70,7 +77,7 @@ final class RegisterUser
                 $this->sendAlreadyRegisteredNotice($email->value);
             }
         } catch (\Throwable $e) {
-            error_log('[mail] 登録メール送信失敗: ' . $e->getMessage());
+            $this->logger?->error('verification_mail_failed', ['error' => $e->getMessage()]);
         }
     }
 

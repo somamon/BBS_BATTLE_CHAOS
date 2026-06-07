@@ -1,0 +1,29 @@
+# 本番用リバースプロキシ。Let's Encrypt 証明書を自動取得・自動更新する。
+# {$DOMAIN} {$ACME_EMAIL} は docker-compose.prod.yml 経由で .env から注入。
+{
+	# ACME 登録メール（証明書の期限通知先）。未設定でも動くが設定推奨。
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	root * /var/www/html/public
+
+	# 静的ファイルはそのまま、無ければ index.php に渡すフロントコントローラ方式。
+	# php_fastcgi が SCRIPT_FILENAME / HTTPS(on) / X-Forwarded-Proto を自動設定する。
+	php_fastcgi php:9000
+
+	file_server
+	encode gzip zstd
+
+	# HSTS（常時HTTPS強制）。HTTPS は Caddy が自動付与するため 80→443 も自動。
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+	}
+
+	# 機微ファイルへの直アクセス遮断（.env / .git / vendor 等は公開ルート外だが二重防御）。
+	@hidden path /.* /vendor/* /src/* /docker/* /tests/*
+	respond @hidden 404
+}

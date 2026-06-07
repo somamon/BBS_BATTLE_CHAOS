@@ -18,6 +18,9 @@ interface UserRepository
 
     public function save(User $user): void;
 
+    /** ユーザーを削除する（退会）。関連行は FK の CASCADE / SET NULL に従う。 */
+    public function delete(string $userId): void;
+
     /** @return User[] 全ユーザー（ランキング集計用）。 */
     public function all(): array;
 

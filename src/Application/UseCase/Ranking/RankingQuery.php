@@ -55,6 +55,7 @@ final class RankingQuery
             }
 
             $rows[] = [
+                'userId'     => $user->id,
                 'name'       => $user->name,
                 'isBot'      => $user->isBot,
                 'money'      => $user->money(),

@@ -26,7 +26,7 @@ final class MarketPhaseService
     {
         $state = $this->worldStates->get();
         if ($state->shouldShift($now)) {
-            $next = $now->add(new DateInterval('PT' . random_int(Game::PHASE_MIN_SEC, Game::PHASE_MAX_SEC) . 'S'));
+            $next = $now->add(new DateInterval('PT' . random_int(Game::phaseMinSec(), Game::phaseMaxSec()) . 'S'));
             $state->shiftTo($this->pickPhase(), $next, $now);
             $this->worldStates->save($state);
         }
