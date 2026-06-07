@@ -18,6 +18,12 @@ final class InMemoryThreadRepository implements ThreadRepository
         return array_slice(array_values($alive), 0, $limit);
     }
 
+    public function findDead(int $limit = 100): array
+    {
+        $dead = array_filter($this->threads, static fn (Thread $t): bool => !$t->isAlive());
+        return array_slice(array_values($dead), 0, $limit);
+    }
+
     public function findById(string $id): ?Thread
     {
         return $this->threads[$id] ?? null;

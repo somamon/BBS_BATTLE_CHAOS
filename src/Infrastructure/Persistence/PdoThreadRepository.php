@@ -27,6 +27,20 @@ final class PdoThreadRepository implements ThreadRepository
         );
     }
 
+    public function findDead(int $limit = 100): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT * FROM threads WHERE status = 'dead' ORDER BY updated_at DESC LIMIT :limit"
+        );
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(
+            fn (array $row): Thread => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
     public function findById(string $id): ?Thread
     {
         $stmt = $this->pdo->prepare('SELECT * FROM threads WHERE id = ?');
