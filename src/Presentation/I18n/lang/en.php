@@ -59,7 +59,7 @@ return [
     'home.rules.r5' => '<strong>Unrealized P&L</strong>: a holding\'s value is price × freshness (HP). Buying a decaying post can mean an instant loss.',
     'home.npc.title' => 'About NPC investors',
     'home.npc.p1' => 'While there are still few people, <strong>NPC investors (automated programs the operator runs)</strong> invest in posts to keep the market moving. If you spot a good reply early and buy in, NPCs buying later push the <strong>price up, giving you a gain</strong>. It lets the "sharp eye" game work even solo or with few players.',
-    'home.npc.l1' => 'NPCs join as <strong>ranking rivals</strong> (a <span class="badge">NPC</span> badge appears by their name).',
+    'home.npc.l1' => 'NPCs are <strong>market movers for atmosphere</strong> and <strong>do not appear in the ranking</strong>. Standings are contested among real players only.',
     'home.npc.l2' => 'They only run <strong>while registered users number {limit} or fewer</strong>. The more people join, the more NPCs hold back.',
     'home.npc.l3' => 'During quiet times, <strong>threads/replies also decay more slowly</strong>, so it stays playable when sparse.',
     'home.npc.note' => 'NPCs are not learning AI—just programs for atmosphere and practice. The more real players, the more it becomes a true contest of insight.',
