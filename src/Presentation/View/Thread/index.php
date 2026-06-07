@@ -6,10 +6,10 @@
  */
 use App\Presentation\View\View;
 ?>
-<p>[ <a href="/thread/create">新しいスレッドを立てる</a> ] [ <a href="/threads/dead">墓場（朽ちたスレ）</a> ]</p>
+<p>[ <a href="/thread/create"><?= t('threads.new') ?></a> ] [ <a href="/threads/dead"><?= t('threads.graveyard') ?></a> ]</p>
 
 <?php if ($threads === []): ?>
-  <div class="empty">まだ生存しているスレッドがありません。</div>
+  <div class="empty"><?= t('threads.empty') ?></div>
 <?php else: ?>
   <?php foreach ($threads as $i => $t): ?>
     <?php
@@ -24,8 +24,8 @@ use App\Presentation\View\View;
       </div>
       <div class="hpbar"><span style="width: <?= $pct ?>%"></span></div>
       <div class="muted">
-        板HP <?= View::e($t['hp']) ?>/<?= View::e($t['maxHp']) ?>
-        ・ <?= View::e($t['postCount']) ?>レス
+        <?= t('threads.board_hp') ?> <?= View::e($t['hp']) ?>/<?= View::e($t['maxHp']) ?>
+        ・ <?= t('threads.replies', ['n' => (int) $t['postCount']]) ?>
         ・ <?= View::e($t['createdAt']) ?>
       </div>
     </div>

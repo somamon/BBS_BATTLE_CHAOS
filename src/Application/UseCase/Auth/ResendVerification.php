@@ -36,7 +36,11 @@ final class ResendVerification
         $user = $this->users->findByEmail($email->value);
         // 存在し、かつ未確認のときだけ送る。それ以外は何もしない（同じ応答に見せる）。
         if ($user !== null && !$user->isEmailVerified()) {
-            $this->verificationMail->send($user, $now);
+            try {
+                $this->verificationMail->send($user, $now);
+            } catch (\Throwable $e) {
+                error_log('[mail] 確認メール再送失敗: ' . $e->getMessage());
+            }
         }
     }
 }

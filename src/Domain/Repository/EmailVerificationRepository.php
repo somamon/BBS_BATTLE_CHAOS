@@ -14,4 +14,7 @@ interface EmailVerificationRepository
 
     /** 指定ユーザーの未使用トークンをすべて削除（再発行・確認完了時）。 */
     public function deleteForUser(string $userId): void;
+
+    /** 失効済みトークンを削除する（テーブル肥大の防止）。 */
+    public function purgeExpired(\DateTimeImmutable $now): void;
 }

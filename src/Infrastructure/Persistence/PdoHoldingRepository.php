@@ -32,6 +32,16 @@ final class PdoHoldingRepository implements HoldingRepository
         );
     }
 
+    public function all(): array
+    {
+        $stmt = $this->pdo->query('SELECT * FROM holdings');
+
+        return array_map(
+            fn (array $row): Holding => $this->hydrate($row),
+            $stmt->fetchAll()
+        );
+    }
+
     public function save(Holding $holding): void
     {
         $stmt = $this->pdo->prepare(

@@ -30,6 +30,11 @@ final class InMemoryHoldingRepository implements HoldingRepository
         ));
     }
 
+    public function all(): array
+    {
+        return array_values($this->holdings);
+    }
+
     public function save(Holding $holding): void
     {
         $this->holdings[$this->key($holding->userId, $holding->postId)] = $holding;

@@ -21,13 +21,13 @@ final class Email
         $normalized = strtolower(trim($raw));
 
         if ($normalized === '') {
-            throw ValidationException::field('email', 'メールアドレスを入力してください');
+            throw ValidationException::field('email', 'validation.email.required', 'メールアドレスを入力してください');
         }
         if (mb_strlen($normalized) > self::MAX_LENGTH) {
-            throw ValidationException::field('email', 'メールアドレスが長すぎます');
+            throw ValidationException::field('email', 'validation.email.too_long', 'メールアドレスが長すぎます');
         }
         if (filter_var($normalized, FILTER_VALIDATE_EMAIL) === false) {
-            throw ValidationException::field('email', 'メールアドレスの形式が正しくありません');
+            throw ValidationException::field('email', 'validation.email.invalid', 'メールアドレスの形式が正しくありません');
         }
 
         return new self($normalized);

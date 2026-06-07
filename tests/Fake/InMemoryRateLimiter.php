@@ -26,4 +26,9 @@ final class InMemoryRateLimiter implements RateLimiter
     {
         unset($this->counts[$key]);
     }
+
+    public function purgeExpired(): void
+    {
+        // 失効をモデル化しないフェイクなので no-op。
+    }
 }

@@ -23,7 +23,7 @@ final class HomeController
     /** GET / トップ（サイト概要・遊び方） */
     public function index(Request $request): Response
     {
-        $html = $this->page($this->market, $this->auth, $this->users, 'BBS BATTLE CHAOS — 目利きが儲かる掲示板', 'home', [
+        $html = $this->page($this->market, $this->auth, $this->users, 'BBS BATTLE CHAOS', 'home', [
             'isLogin' => $this->auth->check(),
         ]);
         return Response::html($html);

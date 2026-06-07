@@ -18,6 +18,9 @@ interface PostRepository
 
     public function findById(string $id): ?Post;
 
+    /** @param string[] $ids @return array<string,Post> id をキーにした連想配列（N+1回避の一括取得）。 */
+    public function findByIds(array $ids): array;
+
     /** 行ロック付きで取得（投資トランザクション用）。 */
     public function findByIdForUpdate(string $id): ?Post;
 

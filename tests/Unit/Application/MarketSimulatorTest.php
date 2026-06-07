@@ -18,9 +18,11 @@ use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Tests\Fake\ImmediateTransactionManager;
 use Tests\Fake\InMemoryBotSimStateRepository;
+use Tests\Fake\InMemoryEmailVerificationRepository;
 use Tests\Fake\InMemoryHoldingRepository;
 use Tests\Fake\InMemoryInvestmentRepository;
 use Tests\Fake\InMemoryPostRepository;
+use Tests\Fake\InMemoryRateLimiter;
 use Tests\Fake\InMemoryThreadRepository;
 use Tests\Fake\InMemoryUserRepository;
 use Tests\Fake\InMemoryWorldStateRepository;
@@ -56,7 +58,11 @@ final class MarketSimulatorTest extends TestCase
         $postReply   = new PostReply($tx, $decay, $this->threads, $this->posts);
         $createThread = new CreateThread($this->threads);
 
-        return new MarketSimulator($simState, $this->users, $this->threads, $this->posts, $invest, $postReply, $createThread);
+        return new MarketSimulator(
+            $simState, $this->users, $this->threads, $this->posts,
+            $invest, $postReply, $createThread,
+            new InMemoryRateLimiter(), new InMemoryEmailVerificationRepository(),
+        );
     }
 
     private function addBot(string $id, int $money = 5000): void

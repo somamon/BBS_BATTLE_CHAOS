@@ -12,21 +12,28 @@ final class PdoBotSimStateRepository implements BotSimStateRepository
 {
     public function __construct(private PDO $pdo) {}
 
-    public function getLastTick(): DateTimeImmutable
+    public function tryClaim(DateTimeImmutable $now, int $minIntervalSeconds): ?DateTimeImmutable
     {
         $stmt = $this->pdo->query('SELECT last_tick_at FROM bot_sim_state WHERE id = 1');
         $value = $stmt->fetchColumn();
+        if ($value === false) {
+            return null; // 行が無い（マイグレーション未適用）
+        }
+        $prev = new DateTimeImmutable((string) $value);
 
-        // 行が無い場合は「今」を返す（初回は経過0でアクションなし）。
-        return $value !== false ? new DateTimeImmutable((string) $value) : new DateTimeImmutable();
-    }
+        if ($now->getTimestamp() - $prev->getTimestamp() < $minIntervalSeconds) {
+            return null; // まだ間隔未満
+        }
 
-    public function setLastTick(DateTimeImmutable $at): void
-    {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO bot_sim_state (id, last_tick_at) VALUES (1, :t)
-             ON DUPLICATE KEY UPDATE last_tick_at = VALUES(last_tick_at)'
+        // 楽観的ロック：last_tick が読んだ値のままなら now へ進める。負ければ他が占有済み。
+        $upd = $this->pdo->prepare(
+            'UPDATE bot_sim_state SET last_tick_at = :now WHERE id = 1 AND last_tick_at = :prev'
         );
-        $stmt->execute([':t' => $at->format('Y-m-d H:i:s')]);
+        $upd->execute([
+            ':now'  => $now->format('Y-m-d H:i:s'),
+            ':prev' => $prev->format('Y-m-d H:i:s'),
+        ]);
+
+        return $upd->rowCount() === 1 ? $prev : null;
     }
 }

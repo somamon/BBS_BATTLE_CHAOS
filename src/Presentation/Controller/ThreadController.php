@@ -9,6 +9,7 @@ use App\Application\UseCase\Thread\CreateThread;
 use App\Application\UseCase\Thread\ListDeadThreads;
 use App\Application\UseCase\Thread\ListThreads;
 use App\Application\UseCase\Thread\ShowThread;
+use App\Domain\Exception\ValidationException;
 use App\Domain\Repository\UserRepository;
 use App\Presentation\Http\Auth;
 use App\Presentation\Http\Flash;
@@ -32,7 +33,7 @@ final class ThreadController
     /** GET /threads スレッド一覧 */
     public function index(Request $request): Response
     {
-        $html = $this->page($this->market, $this->auth, $this->users, 'スレッド一覧', 'Thread/index', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('nav.threads'), 'Thread/index', [
             'threads' => $this->listThreads->execute(),
         ]);
         return Response::html($html);
@@ -41,7 +42,7 @@ final class ThreadController
     /** GET /threads/dead 墓場（朽ちたスレのタイトル一覧） */
     public function dead(Request $request): Response
     {
-        $html = $this->page($this->market, $this->auth, $this->users, '墓場', 'Thread/dead', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('dead.title'), 'Thread/dead', [
             'threads' => $this->listDeadThreads->execute(),
         ]);
         return Response::html($html);
@@ -50,7 +51,7 @@ final class ThreadController
     /** GET /thread/create スレッド作成フォーム */
     public function createForm(Request $request): Response
     {
-        $html = $this->page($this->market, $this->auth, $this->users, '新しいスレッド', 'Thread/create', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
             'error' => null,
             'title' => '',
         ]);
@@ -63,7 +64,7 @@ final class ThreadController
         $id   = (string) $request->param('id');
         $data = $this->showThread->execute($id, $this->auth->userId());
         if ($data === null) {
-            return Response::error(404, 'スレッドが見つかりません');
+            return Response::error(404, t('err.thread_not_found'));
         }
 
         $html = $this->page($this->market, $this->auth, $this->users, $data['thread']['title'], 'Thread/show', [
@@ -81,9 +82,9 @@ final class ThreadController
         $title = (string) $request->input('title', '');
         try {
             $id = $this->createThread->execute($this->auth->userId(), $title);
-        } catch (\InvalidArgumentException $e) {
-            $html = $this->page($this->market, $this->auth, $this->users, '新しいスレッド', 'Thread/create', [
-                'error' => $e->getMessage(),
+        } catch (ValidationException $e) {
+            $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
+                'error' => t($e->messageKey),
                 'title' => $title,
             ]);
             return Response::html($html, 422);

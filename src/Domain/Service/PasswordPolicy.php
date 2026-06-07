@@ -18,13 +18,13 @@ final class PasswordPolicy
     public static function assertValid(string $plain): void
     {
         if (str_contains($plain, "\0")) {
-            throw ValidationException::field('password', 'パスワードに使用できない文字が含まれています');
+            throw ValidationException::field('password', 'validation.password.invalid', 'パスワードに使用できない文字が含まれています');
         }
         if (mb_strlen($plain) < self::MIN_LENGTH) {
-            throw ValidationException::field('password', 'パスワードは8文字以上にしてください');
+            throw ValidationException::field('password', 'validation.password.too_short', 'パスワードは8文字以上にしてください');
         }
         if (strlen($plain) > self::MAX_BYTES) {
-            throw ValidationException::field('password', 'パスワードが長すぎます（72バイト以内）');
+            throw ValidationException::field('password', 'validation.password.too_long', 'パスワードが長すぎます（72バイト以内）');
         }
     }
 }

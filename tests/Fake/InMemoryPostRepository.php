@@ -32,6 +32,17 @@ final class InMemoryPostRepository implements PostRepository
         return $this->posts[$id] ?? null;
     }
 
+    public function findByIds(array $ids): array
+    {
+        $map = [];
+        foreach (array_unique($ids) as $id) {
+            if (isset($this->posts[$id])) {
+                $map[$id] = $this->posts[$id];
+            }
+        }
+        return $map;
+    }
+
     public function findByIdForUpdate(string $id): ?Post
     {
         return $this->findById($id);

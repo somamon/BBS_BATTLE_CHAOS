@@ -7,10 +7,12 @@ namespace App\Application\Service;
 use App\Application\UseCase\Invest\InvestInPost;
 use App\Application\UseCase\Thread\CreateThread;
 use App\Application\UseCase\Thread\PostReply;
+use App\Application\Port\RateLimiter;
 use App\Config\Game;
 use App\Domain\Entity\Post;
 use App\Domain\Entity\User;
 use App\Domain\Repository\BotSimStateRepository;
+use App\Domain\Repository\EmailVerificationRepository;
 use App\Domain\Repository\PostRepository;
 use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
@@ -43,6 +45,8 @@ final class MarketSimulator
         private readonly InvestInPost $invest,
         private readonly PostReply $postReply,
         private readonly CreateThread $createThread,
+        private readonly RateLimiter $rateLimiter,
+        private readonly EmailVerificationRepository $verifications,
     ) {}
 
     /** 経過時間に応じてボットのアクションを実行する。例外は飲み込み、画面表示を妨げない。 */
@@ -50,17 +54,25 @@ final class MarketSimulator
     {
         $now ??= new DateTimeImmutable();
 
-        // 人間が増えたら休眠。クロックは進めて復帰時の一括実行を防ぐ。
+        // 原子的に tick を占有（同時アクセスでの二重実行を防ぎ、最短 BOT_TICK_SECONDS 間隔に抑制）。
+        $prev = $this->simState->tryClaim($now, Game::BOT_TICK_SECONDS);
+        if ($prev === null) {
+            return; // まだ間隔未満、または他リクエストが処理済み
+        }
+
+        // 占有したtickのついでに期限切れ行を掃除（cron不要の定期メンテ。H6）。
+        try {
+            $this->rateLimiter->purgeExpired();
+            $this->verifications->purgeExpired($now);
+        } catch (\Throwable) {
+        }
+
+        // 人間が十分集まったらボットは休眠（クロックは占有済みなので進んでいる）。
         if ($this->users->countHumans() > Game::BOT_MAX_HUMANS) {
-            $this->simState->setLastTick($now);
             return;
         }
 
-        $elapsed = $now->getTimestamp() - $this->simState->getLastTick()->getTimestamp();
-        if ($elapsed <= 0) {
-            return;
-        }
-
+        $elapsed = $now->getTimestamp() - $prev->getTimestamp();
         $actions = (int) min(Game::BOT_MAX_BURST, intdiv($elapsed, Game::BOT_TICK_SECONDS));
         if ($actions <= 0) {
             return;
@@ -68,7 +80,6 @@ final class MarketSimulator
 
         $bots = $this->users->bots();
         if ($bots === []) {
-            $this->simState->setLastTick($now);
             return;
         }
 
@@ -79,14 +90,18 @@ final class MarketSimulator
                 // 1アクションの失敗（dead/残高不足等）は無視して次へ。
             }
         }
-
-        $this->simState->setLastTick($now);
     }
 
     /** @param User[] $bots */
     private function act(array $bots, DateTimeImmutable $now): void
     {
         $bot = $bots[random_int(0, count($bots) - 1)];
+
+        // 資金が尽きたボットは補充（相場が止まらないようにする＝中央銀行的な流動性供給）。
+        if (!$bot->canAfford(Game::BOT_MIN_INVEST)) {
+            $bot->credit(Game::BOT_REFILL_TO - $bot->money());
+            $this->users->save($bot);
+        }
 
         $aliveThreads = $this->threads->findAlive(50);
         if ($aliveThreads === []) {

@@ -29,11 +29,20 @@ final class RankingQuery
         $now ??= new DateTimeImmutable();
         $multiplier = $this->decay->multiplier($now);
 
+        // 一括取得して N+1 を回避：全保有株 → ユーザー別にまとめ、関連投稿を IN で1回取得。
+        $holdingsByUser = [];
+        $postIds = [];
+        foreach ($this->holdings->all() as $holding) {
+            $holdingsByUser[$holding->userId][] = $holding;
+            $postIds[] = $holding->postId;
+        }
+        $postMap = $this->posts->findByIds($postIds);
+
         $rows = [];
         foreach ($this->users->all() as $user) {
             $shareValue = 0;
-            foreach ($this->holdings->findByUser($user->id) as $holding) {
-                $post = $this->posts->findById($holding->postId);
+            foreach ($holdingsByUser[$user->id] ?? [] as $holding) {
+                $post = $postMap[$holding->postId] ?? null;
                 if ($post === null) {
                     continue;
                 }

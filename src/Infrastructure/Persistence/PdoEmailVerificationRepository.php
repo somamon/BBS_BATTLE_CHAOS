@@ -42,6 +42,12 @@ final class PdoEmailVerificationRepository implements EmailVerificationRepositor
         $stmt->execute([$userId]);
     }
 
+    public function purgeExpired(\DateTimeImmutable $now): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM email_verifications WHERE expires_at < ?');
+        $stmt->execute([$now->format('Y-m-d H:i:s')]);
+    }
+
     private function hydrate(array $row): EmailVerification
     {
         return new EmailVerification(

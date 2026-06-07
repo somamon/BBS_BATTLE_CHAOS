@@ -20,14 +20,14 @@ final class DisplayName
         $name = trim($raw);
 
         if ($name === '') {
-            throw ValidationException::field('name', '表示名を入力してください');
+            throw ValidationException::field('name', 'validation.name.required', '表示名を入力してください');
         }
         if (mb_strlen($name) > self::MAX_LENGTH) {
-            throw ValidationException::field('name', '表示名は50文字以内にしてください');
+            throw ValidationException::field('name', 'validation.name.too_long', '表示名は50文字以内にしてください');
         }
         // 改行やタブなどの制御文字を禁止（なりすまし・表示崩れ対策）
         if (preg_match('/[\x00-\x1F\x7F]/u', $name) === 1) {
-            throw ValidationException::field('name', '表示名に使用できない文字が含まれています');
+            throw ValidationException::field('name', 'validation.name.invalid', '表示名に使用できない文字が含まれています');
         }
 
         return new self($name);

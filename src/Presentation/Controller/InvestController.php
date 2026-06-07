@@ -13,8 +13,6 @@ use App\Presentation\Http\Response;
 
 final class InvestController
 {
-    private const LEVEL_LABELS = ['新規', '注目', '人気', '殿堂入り'];
-
     public function __construct(
         private readonly InvestInPost $invest,
         private readonly Auth $auth,
@@ -38,21 +36,21 @@ final class InvestController
         try {
             $result = $this->invest->execute($userId, $postId, $amount);
         } catch (InvestException $e) {
-            Flash::set('投資できませんでした: ' . $e->getMessage());
+            Flash::set(t('flash.invest_failed', ['msg' => t($e->key)]));
             return Response::redirect($back);
         }
 
-        $label = self::LEVEL_LABELS[$result->levelAfter] ?? '新規';
-        $msg = sprintf(
-            '%d を投資 → %d株を取得（株価¥%s）。HP回復 %d。投稿HP: %d%s',
-            $result->amount,
-            $result->shares,
-            number_format($result->price, 2),
-            $result->toHp,
-            $result->postHpAfter,
-            $result->leveledUp ? sprintf('／「%s」へ進化！', $label) : '',
-        );
-        Flash::set($msg);
+        $leveled = $result->leveledUp
+            ? t('flash.invest_leveled', ['label' => t('level.' . $result->levelAfter)])
+            : '';
+        Flash::set(t('flash.invest', [
+            'amount' => number_format($result->amount),
+            'shares' => number_format($result->shares),
+            'price'  => number_format($result->price, 2),
+            'toHp'   => number_format($result->toHp),
+            'hp'     => number_format($result->postHpAfter),
+            'level'  => $leveled,
+        ]));
 
         return Response::redirect($back);
     }

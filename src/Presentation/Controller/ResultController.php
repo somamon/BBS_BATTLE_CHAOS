@@ -29,7 +29,7 @@ final class ResultController
     {
         $status = $this->endgame->execute();
 
-        $html = $this->page($this->market, $this->auth, $this->users, '結果', 'result', [
+        $html = $this->page($this->market, $this->auth, $this->users, t('nav.result'), 'result', [
             'over'   => $status['over'],
             'reason' => $status['reason'],
             'rows'   => $this->ranking->execute(),

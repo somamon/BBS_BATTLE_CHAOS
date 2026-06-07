@@ -24,4 +24,9 @@ interface RateLimiter
      * 成功時などにカウンタを消去する。
      */
     public function clear(string $key): void;
+
+    /**
+     * 失効済みのカウンタ行を削除する（テーブル肥大の防止）。
+     */
+    public function purgeExpired(): void;
 }
