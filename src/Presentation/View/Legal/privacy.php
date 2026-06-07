@@ -26,7 +26,7 @@ $op = View::e($operator);
     <li><strong>Email address</strong> — used as your login ID and for email verification and password reset.</li>
     <li><strong>Display name</strong> — shown publicly within the game.</li>
     <li><strong>Password</strong> — stored only as a one-way hash; we never store or can read the plaintext.</li>
-    <li><strong>Access information</strong> — IP address (stored as a hash for anonymous posts), request date/time, status, and error logs, for security and operation.</li>
+    <li><strong>IP address and access information</strong> — IP address, request date/time, status, and error logs, stored to prevent unauthorized use and spam, to address violations of the Terms, and for operation.</li>
     <li><strong>Cookie</strong> — a strictly necessary session cookie to keep you logged in and to prevent CSRF, plus third-party cookies used by our advertising provider to deliver ads (see Section 4).</li>
   </ul>
 
@@ -58,7 +58,7 @@ $op = View::e($operator);
   <p>You may request disclosure, correction, suspension of use, or deletion of your personal data. You can delete your account yourself from My Page, or contact us using the details below.</p>
 
   <h3>9. Minors</h3>
-  <p>The Service is intended for users aged 18 or older. We do not knowingly collect personal data from those under that age; if we learn we have, we will delete it.</p>
+  <p>The Service is open to all ages. Minors should use the Service with the consent of a parent or other legal guardian, and we collect and use minors' personal data on the basis of such consent.</p>
 
   <h3>10. Changes to this Policy</h3>
   <p>We may update this Policy as needed. Material changes will be announced within the Service. The updated Policy takes effect when posted.</p>
@@ -81,7 +81,7 @@ $op = View::e($operator);
     <li><strong>メールアドレス</strong> — ログインIDとして、また本人確認メール・パスワード再設定に利用します。</li>
     <li><strong>表示名</strong> — ゲーム内で公開されます。</li>
     <li><strong>パスワード</strong> — 復元不可能なハッシュ値としてのみ保存します。平文を保存することはなく、運営者が知ることもできません。</li>
-    <li><strong>アクセス情報</strong> — IPアドレス（匿名投稿ではハッシュ化して保存）、リクエスト日時・ステータス・エラーログ等を、セキュリティと運用のために取得します。</li>
+    <li><strong>IPアドレス・アクセス情報</strong> — IPアドレス、リクエスト日時・ステータス・エラーログ等を、不正利用防止・スパム対策・利用規約違反への対応および運用のために保存します。</li>
     <li><strong>Cookie</strong> — ログイン状態の維持とCSRF対策に必要な必須セッションCookieに加え、広告配信のために第三者配信事業者のCookie等を使用します（詳細は第4条）。</li>
   </ul>
 
@@ -113,7 +113,7 @@ $op = View::e($operator);
   <p>ユーザーは、自己の個人データの開示・訂正・利用停止・削除を請求できます。マイページの退会機能でご自身で削除できるほか、下記の連絡先までお問い合わせください。</p>
 
   <h3>9. 未成年者について</h3>
-  <p>本サービスは満18歳以上の利用を想定しています。当該年齢未満の方の個人データを意図的に取得することはありません。取得が判明した場合は削除します。</p>
+  <p>本サービスは全年齢を対象としています。未成年者が利用する場合は、親権者その他の法定代理人の同意を得たうえでご利用ください。未成年者の個人データは、当該同意のもとで取得・利用します。</p>
 
   <h3>10. ポリシーの変更</h3>
   <p>運営者は、必要に応じて本ポリシーを変更できます。重要な変更は本サービス内で告知します。変更後のポリシーは掲示した時点で効力を生じます。</p>

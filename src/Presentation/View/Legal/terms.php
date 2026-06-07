@@ -31,7 +31,7 @@ $op = View::e($operator);
 
   <h3>Article 3 (Registration and eligibility)</h3>
   <ul>
-    <li>You must be at least 18 years old (or the age of majority in your jurisdiction, whichever is higher) to register. By registering you represent and warrant that you meet this requirement.</li>
+    <li>The Service is open to all ages. Minors must use the Service with the consent of a parent or other legal guardian.</li>
     <li>You must provide true and accurate information and keep it up to date.</li>
     <li>Each person may hold only one account. Creating multiple accounts to manipulate rankings or the market is prohibited.</li>
     <li>You are responsible for managing your credentials and for all activity under your account. The Operator is not liable for loss arising from inadequate management, misuse, or third-party use of your credentials.</li>
@@ -55,6 +55,7 @@ $op = View::e($operator);
     <li>post defamatory, discriminatory, obscene, violent, or otherwise harmful content;</li>
     <li>post content that promotes crime or harms public order and morals;</li>
     <li>gain unauthorized access, or use bots, scraping, or other automated means to abuse the Service;</li>
+    <li>use AI or other automated generation to post in bulk, or repeatedly post/operate by mechanical means;</li>
     <li>impose excessive load on, or interfere with, the Service or its servers/networks;</li>
     <li>create multiple or fraudulent accounts, or manipulate rankings or the market;</li>
     <li>impersonate others or use the Service for commercial solicitation without permission;</li>
@@ -64,19 +65,22 @@ $op = View::e($operator);
 
   <h3>Article 7 (Content)</h3>
   <ul>
-    <li>You are solely responsible for the Content you post. The Operator does not, in principle, monitor Content in advance.</li>
+    <li>You are solely responsible for the Content you post.</li>
     <li>You grant the Operator a non-exclusive, royalty-free license to use (store, display, reproduce, and distribute) your Content to the extent necessary to operate and improve the Service.</li>
+    <li>The Operator does not, in principle, monitor Content in advance, but may review it where a violation is suspected through a report or otherwise.</li>
     <li>The Operator may remove or hide Content, or restrict its handling, without prior notice if it reasonably determines the Content violates these Terms or operational needs require it. The Service is also designed so that threads and posts decay and disappear over time.</li>
   </ul>
 
-  <h3>Article 8 (Suspension and deletion of accounts)</h3>
+  <h3>Article 8 (Refusal of registration; suspension and deletion of accounts)</h3>
   <p>The Operator may, without prior notice, suspend or delete an account or restrict use if a User violates these Terms, if registration information is found to be false, or if the Operator otherwise reasonably deems it necessary. The Operator is not liable for resulting disadvantage to the User.</p>
+  <p>The Operator may also refuse a registration, or suspend or restrict use of the Service, without any obligation to disclose its reasons.</p>
 
   <h3>Article 9 (Withdrawal)</h3>
   <p>You may delete your account at any time from My Page. On deletion, your personal data is handled as described in the Privacy Policy.</p>
 
   <h3>Article 10 (Changes, suspension, and termination of the Service)</h3>
   <p>The Operator may change, add to, suspend, or terminate all or part of the Service, and may reset data, at any time without prior notice. The Operator is not liable for resulting damage to Users.</p>
+  <p>For the purpose of maintaining and adjusting game balance, the Operator may change, without prior notice, the share-price formula, rewards, the ranking calculation method, the specifications of in-game assets, and other aspects of the game.</p>
 
   <h3>Article 10-2 (Advertising)</h3>
   <ul>
@@ -99,7 +103,7 @@ $op = View::e($operator);
   <p>The Operator may amend these Terms when necessary. Material changes will be announced within the Service in advance. Continued use after the effective date constitutes acceptance of the amended Terms.</p>
 
   <h3>Article 14 (Governing law and jurisdiction)</h3>
-  <p>These Terms are governed by the laws of Japan. Any dispute relating to the Service shall be subject to the exclusive jurisdiction of the district court having jurisdiction over the Operator's location as the court of first instance.</p>
+  <p>These Terms are governed by the laws of Japan. Any dispute relating to the Service shall be subject to the exclusive jurisdiction of the Tokyo District Court as the court of first instance.</p>
 
   <h3>Article 15 (Contact)</h3>
   <p>For inquiries regarding the Service, please contact the Operator:
@@ -124,7 +128,7 @@ $op = View::e($operator);
 
   <h3>第3条（登録・利用資格）</h3>
   <ul>
-    <li>登録には満18歳以上（またはお住まいの地域で定める成年年齢のいずれか高い方）であることが必要です。登録をもって、この要件を満たすことを表明・保証したものとみなします。</li>
+    <li>本サービスは全年齢を対象とします。未成年者が利用する場合は、親権者その他の法定代理人の同意を得たうえで利用するものとします。</li>
     <li>登録情報は真実かつ正確なものを提供し、常に最新の状態に保つものとします。</li>
     <li>アカウントは1人につき1つのみ保有できます。ランキングや相場を操作する目的での複数アカウントの作成を禁止します。</li>
     <li>ユーザーは自己の認証情報を適切に管理する責任を負い、アカウントでの一切の行為について責任を負います。管理不十分・第三者による使用等によって生じた損害について、運営者は責任を負いません。</li>
@@ -148,6 +152,7 @@ $op = View::e($operator);
     <li>誹謗中傷・差別・わいせつ・暴力的その他有害なコンテンツの投稿</li>
     <li>犯罪を助長し、または公序良俗に反するコンテンツの投稿</li>
     <li>不正アクセス、ボット・スクレイピング等の自動的手段による濫用</li>
+    <li>AIその他の自動生成手段を利用して大量に投稿する行為、または機械的に投稿・操作を繰り返す行為</li>
     <li>本サービスやサーバー・ネットワークに過度の負荷をかけ、または運営を妨害する行為</li>
     <li>複数アカウントや不正なアカウントの作成、ランキング・相場の操作</li>
     <li>他者へのなりすまし、許可のない営業・勧誘行為</li>
@@ -157,19 +162,22 @@ $op = View::e($operator);
 
   <h3>第7条（投稿コンテンツ）</h3>
   <ul>
-    <li>投稿コンテンツについては、投稿したユーザーが一切の責任を負います。運営者は原則として事前に内容を監視しません。</li>
+    <li>投稿コンテンツについては、投稿したユーザーが一切の責任を負います。</li>
     <li>ユーザーは運営者に対し、本サービスの提供・改善に必要な範囲で投稿コンテンツを利用（保存・表示・複製・配信）する、無償・非独占的な権利を許諾するものとします。</li>
+    <li>運営者は原則として投稿内容を事前に監視しませんが、通報その他の方法により本規約への違反が疑われる場合は、内容を確認することがあります。</li>
     <li>運営者は、投稿コンテンツが本規約に違反すると合理的に判断した場合、または運営上必要な場合、事前の通知なく削除・非表示・取扱いの制限を行うことができます。なお本サービスは、スレッド・投稿が時間経過で朽ちて消滅する設計です。</li>
   </ul>
 
-  <h3>第8条（アカウントの停止・削除）</h3>
+  <h3>第8条（登録拒否・アカウントの停止・削除）</h3>
   <p>運営者は、ユーザーが本規約に違反した場合、登録情報に虚偽が判明した場合、その他必要と合理的に判断した場合、事前の通知なくアカウントの利用停止・削除または利用制限を行うことができます。これによりユーザーに生じた不利益について、運営者は責任を負いません。</p>
+  <p>また運営者は、理由を開示する義務を負うことなく、ユーザーの登録を拒否し、または本サービスの利用を停止・制限することができます。</p>
 
   <h3>第9条（退会）</h3>
   <p>ユーザーはマイページからいつでも退会できます。退会時の個人データの取扱いは、プライバシーポリシーの定めによります。</p>
 
   <h3>第10条（本サービスの変更・中断・終了）</h3>
   <p>運営者は、本サービスの全部または一部を、事前の通知なくいつでも変更・追加・中断・終了し、またデータを初期化することができます。これによりユーザーに生じた損害について、運営者は責任を負いません。</p>
+  <p>運営者は、ゲームバランスの維持・調整のため、株価の計算式、報酬、ランキングの算定方法、ゲーム内資産の仕様その他のゲーム内容を、事前の通知なく変更することができます。</p>
 
   <h3>第10条の2（広告の掲載）</h3>
   <ul>
@@ -192,7 +200,7 @@ $op = View::e($operator);
   <p>運営者は、必要に応じて本規約を変更できます。重要な変更は、あらかじめ本サービス内で告知します。効力発生日以降に本サービスを利用した場合、変更後の規約に同意したものとみなします。</p>
 
   <h3>第14条（準拠法・管轄）</h3>
-  <p>本規約は日本法に準拠します。本サービスに関して紛争が生じた場合は、運営者の所在地を管轄する地方裁判所を第一審の専属的合意管轄裁判所とします。</p>
+  <p>本規約は日本法に準拠します。本サービスに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。</p>
 
   <h3>第15条（お問い合わせ）</h3>
   <p>本サービスに関するお問い合わせは、運営者まで（
