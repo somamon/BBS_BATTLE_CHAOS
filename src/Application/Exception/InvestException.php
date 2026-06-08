@@ -43,4 +43,9 @@ final class InvestException extends \RuntimeException
     {
         return new self('err.invest_too_small', '投資額が小さすぎて株を取得できません');
     }
+
+    public static function notEnoughShares(): self
+    {
+        return new self('err.sell_not_enough', '保有株が足りません');
+    }
 }
