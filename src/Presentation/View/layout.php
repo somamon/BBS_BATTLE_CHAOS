@@ -201,6 +201,10 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
     <?php endif; ?>
   </header>
   <div class="wrap">
+<?php $announcement = \App\Infrastructure\Runtime\SiteState::announcement(); ?>
+<?php if ($announcement !== null): ?>
+    <div class="card" style="background:#fffbe0; border-color:#cc0000;">📢 <?= View::e($announcement) ?></div>
+<?php endif; ?>
 <?= $content ?>
   </div>
   <footer style="border-top:1px solid #ccc; margin-top:16px; padding:10px; text-align:center; font-size:11px; color:#666;">

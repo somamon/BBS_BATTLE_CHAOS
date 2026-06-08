@@ -46,6 +46,10 @@ final class LoginUser
             throw AuthException::invalidCredentials();
         }
 
+        if (!$user->isActive()) {
+            throw AuthException::accountSuspended();
+        }
+
         if (!$user->isEmailVerified()) {
             throw AuthException::emailUnverified();
         }

@@ -16,7 +16,7 @@ final class PdoThreadRepository implements ThreadRepository
     public function findAlive(int $limit = 50): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM threads WHERE status = 'alive' ORDER BY created_at DESC LIMIT :limit"
+            "SELECT * FROM threads WHERE status = 'alive' AND hidden_at IS NULL ORDER BY created_at DESC LIMIT :limit"
         );
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -30,7 +30,7 @@ final class PdoThreadRepository implements ThreadRepository
     public function findDead(int $limit = 100): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM threads WHERE status = 'dead' ORDER BY updated_at DESC LIMIT :limit"
+            "SELECT * FROM threads WHERE status = 'dead' AND hidden_at IS NULL ORDER BY updated_at DESC LIMIT :limit"
         );
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -44,7 +44,7 @@ final class PdoThreadRepository implements ThreadRepository
     public function findAliveByLang(string $lang, int $limit = 50, int $offset = 0): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM threads WHERE status = 'alive' AND lang = :lang
+            "SELECT * FROM threads WHERE status = 'alive' AND hidden_at IS NULL AND lang = :lang
              ORDER BY created_at DESC LIMIT :limit OFFSET :offset"
         );
         $stmt->bindValue(':lang', $lang);
@@ -60,16 +60,21 @@ final class PdoThreadRepository implements ThreadRepository
 
     public function countAliveByLang(string $lang): int
     {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM threads WHERE status = 'alive' AND lang = ?");
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM threads WHERE status = 'alive' AND hidden_at IS NULL AND lang = ?");
         $stmt->execute([$lang]);
 
         return (int) $stmt->fetchColumn();
     }
 
+    public function countAlive(): int
+    {
+        return (int) $this->pdo->query("SELECT COUNT(*) FROM threads WHERE status = 'alive' AND hidden_at IS NULL")->fetchColumn();
+    }
+
     public function findDeadByLang(string $lang, int $limit = 100): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM threads WHERE status = 'dead' AND lang = :lang ORDER BY updated_at DESC LIMIT :limit"
+            "SELECT * FROM threads WHERE status = 'dead' AND hidden_at IS NULL AND lang = :lang ORDER BY updated_at DESC LIMIT :limit"
         );
         $stmt->bindValue(':lang', $lang);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -104,10 +109,10 @@ final class PdoThreadRepository implements ThreadRepository
         $stmt = $this->pdo->prepare(
             'INSERT INTO threads
                 (id, creator_id, lang, title, hp, max_hp, decay_per_min,
-                 last_decay_at, status, post_count, created_at, updated_at)
+                 last_decay_at, status, post_count, created_at, updated_at, hidden_at, hidden_by)
              VALUES
                 (:id, :creator_id, :lang, :title, :hp, :max_hp, :decay_per_min,
-                 :last_decay_at, :status, :post_count, :created_at, :updated_at)'
+                 :last_decay_at, :status, :post_count, :created_at, :updated_at, :hidden_at, :hidden_by)'
         );
         $stmt->execute([
             ':id'            => $thread->id,
@@ -122,6 +127,8 @@ final class PdoThreadRepository implements ThreadRepository
             ':post_count'    => $thread->postCount(),
             ':created_at'    => $thread->createdAt->format('Y-m-d H:i:s'),
             ':updated_at'    => $thread->updatedAt()->format('Y-m-d H:i:s'),
+            ':hidden_at'     => $thread->hiddenAt()?->format('Y-m-d H:i:s'),
+            ':hidden_by'     => $thread->hiddenBy(),
         ]);
     }
 
@@ -134,7 +141,9 @@ final class PdoThreadRepository implements ThreadRepository
                 last_decay_at = :last_decay_at,
                 status = :status,
                 post_count = :post_count,
-                updated_at = :updated_at
+                updated_at = :updated_at,
+                hidden_at = :hidden_at,
+                hidden_by = :hidden_by
              WHERE id = :id'
         );
         $stmt->execute([
@@ -144,6 +153,8 @@ final class PdoThreadRepository implements ThreadRepository
             ':status'        => $thread->status(),
             ':post_count'    => $thread->postCount(),
             ':updated_at'    => $thread->updatedAt()->format('Y-m-d H:i:s'),
+            ':hidden_at'     => $thread->hiddenAt()?->format('Y-m-d H:i:s'),
+            ':hidden_by'     => $thread->hiddenBy(),
             ':id'            => $thread->id,
         ]);
     }
@@ -163,6 +174,19 @@ final class PdoThreadRepository implements ThreadRepository
             postCount:   (int) $row['post_count'],
             createdAt:   new DateTimeImmutable($row['created_at']),
             updatedAt:   new DateTimeImmutable($row['updated_at']),
+            hiddenAt:    isset($row['hidden_at']) && $row['hidden_at'] !== null
+                ? new DateTimeImmutable($row['hidden_at'])
+                : null,
+            hiddenBy:    $row['hidden_by'] ?? null,
         );
+    }
+
+    public function recentForAdmin(int $limit = 50): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM threads ORDER BY created_at DESC LIMIT :limit');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(fn (array $row): Thread => $this->hydrate($row), $stmt->fetchAll());
     }
 }

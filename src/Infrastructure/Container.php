@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Infrastructure;
 
+use App\Application\Port\AuditLogger;
 use App\Application\Port\GameStateResetter;
 use App\Application\Port\Logger;
 use App\Application\Port\Mailer;
 use App\Application\Port\RateLimiter;
 use App\Application\Port\TransactionManager;
 use App\Config\Environment;
+use App\Infrastructure\Audit\PdoAuditLogger;
 use App\Infrastructure\Auth\GoogleOAuth;
 use App\Infrastructure\Logging\JsonLogger;
 use App\Application\Service\PasswordResetMailSender;
@@ -21,6 +23,11 @@ use App\Domain\Repository\PasswordResetRepository;
 use App\Domain\Repository\HoldingRepository;
 use App\Domain\Repository\InvestmentRepository;
 use App\Domain\Repository\PostRepository;
+use App\Domain\Repository\AuditLogRepository;
+use App\Domain\Repository\BanRepository;
+use App\Domain\Repository\ContactMessageRepository;
+use App\Domain\Repository\ReportRepository;
+use App\Domain\Repository\SettingRepository;
 use App\Domain\Repository\RoundRepository;
 use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
@@ -35,6 +42,11 @@ use App\Infrastructure\Persistence\PdoInvestmentRepository;
 use App\Infrastructure\Persistence\PdoGameStateResetter;
 use App\Infrastructure\Persistence\PdoPasswordResetRepository;
 use App\Infrastructure\Persistence\PdoPostRepository;
+use App\Infrastructure\Persistence\PdoAuditLogRepository;
+use App\Infrastructure\Persistence\PdoBanRepository;
+use App\Infrastructure\Persistence\PdoContactMessageRepository;
+use App\Infrastructure\Persistence\PdoReportRepository;
+use App\Infrastructure\Persistence\PdoSettingRepository;
 use App\Infrastructure\Persistence\PdoRoundRepository;
 use App\Infrastructure\Persistence\PdoThreadRepository;
 use App\Infrastructure\Persistence\PdoTransactionManager;
@@ -67,6 +79,9 @@ final class Container
             // 構造化ログ（M4）。相関IDは RequestContext から自動付与される。
             Logger::class => fn(): Logger => new JsonLogger(Environment::appEnv()),
 
+            // 監査ログ（管理操作の記録）。
+            AuditLogger::class => autowire(PdoAuditLogger::class),
+
             // interface → 実装（autowire で PDO が注入される）
             UserRepository::class              => autowire(PdoUserRepository::class),
             ThreadRepository::class            => autowire(PdoThreadRepository::class),
@@ -77,6 +92,11 @@ final class Container
             EmailVerificationRepository::class => autowire(PdoEmailVerificationRepository::class),
             PasswordResetRepository::class     => autowire(PdoPasswordResetRepository::class),
             RoundRepository::class             => autowire(PdoRoundRepository::class),
+            ReportRepository::class            => autowire(PdoReportRepository::class),
+            BanRepository::class               => autowire(PdoBanRepository::class),
+            ContactMessageRepository::class    => autowire(PdoContactMessageRepository::class),
+            SettingRepository::class           => autowire(PdoSettingRepository::class),
+            AuditLogRepository::class          => autowire(PdoAuditLogRepository::class),
             BotSimStateRepository::class       => autowire(PdoBotSimStateRepository::class),
             TransactionManager::class          => autowire(PdoTransactionManager::class),
             RateLimiter::class                 => autowire(PdoRateLimiter::class),

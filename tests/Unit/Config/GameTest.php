@@ -61,6 +61,19 @@ final class GameTest extends TestCase
             putenv($key); // 値を消す
         }
         $this->envKeys = [];
+        Game::applyOverrides([]); // DB上書きをクリア
+    }
+
+    public function testDbOverrideBeatsEnvAndConst(): void
+    {
+        $this->setEnv('GAME_BOT_REFILL_TO', '1500'); // env
+        Game::applyOverrides(['GAME_BOT_REFILL_TO' => '800']); // DB上書きが最優先
+
+        self::assertSame(800, Game::botRefillTo());
+
+        // 上書きを外すと env が効く
+        Game::applyOverrides([]);
+        self::assertSame(1500, Game::botRefillTo());
     }
 
     private function setEnv(string $key, string $value): void

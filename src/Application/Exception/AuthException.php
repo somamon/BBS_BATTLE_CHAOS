@@ -24,6 +24,11 @@ final class AuthException extends \RuntimeException
         return new self('err.email_unverified', 'メールアドレスが未確認です。確認メールのリンクから登録を完了してください');
     }
 
+    public static function accountSuspended(): self
+    {
+        return new self('err.account_suspended', 'このアカウントは利用停止中です');
+    }
+
     public static function invalidToken(): self
     {
         return new self('err.invalid_token', '確認リンクが無効か、有効期限が切れています');

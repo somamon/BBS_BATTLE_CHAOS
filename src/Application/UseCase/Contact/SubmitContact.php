@@ -6,7 +6,9 @@ namespace App\Application\UseCase\Contact;
 
 use App\Application\Port\Logger;
 use App\Application\Port\Mailer;
+use App\Domain\Entity\ContactMessage;
 use App\Domain\Exception\ValidationException;
+use App\Domain\Repository\ContactMessageRepository;
 use App\Domain\ValueObject\Email;
 use DateTimeImmutable;
 
@@ -23,6 +25,7 @@ final class SubmitContact
         private readonly Mailer $mailer,
         private readonly string $contactTo,
         private readonly ?Logger $logger = null,
+        private readonly ?ContactMessageRepository $messages = null,
     ) {}
 
     /**
@@ -70,9 +73,19 @@ final class SubmitContact
         IP: {$ip}
         TXT;
 
-        $this->mailer->send($this->contactTo, '【BBS BATTLE CHAOS】お問い合わせ', $body);
-
         $userId = $meta['userId'] ?? null;
+
+        // メール送信に加えてDBにも控えを残す（管理画面で一覧・対応するため）。
+        $this->messages?->insert(ContactMessage::create(
+            $name !== '' ? $name : null,
+            $email->value,
+            $message,
+            $userId,
+            $meta['ip'] ?? null,
+            $now,
+        ));
+
+        $this->mailer->send($this->contactTo, '【BBS BATTLE CHAOS】お問い合わせ', $body);
 
         $this->logger?->event('contact_submitted', [
             'has_user' => $userId !== null,

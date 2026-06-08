@@ -155,18 +155,37 @@ final class Game
         return self::envIntList('GAME_POST_LEVEL_MAX_HP', self::POST_LEVEL_MAX_HP);
     }
 
-    // ===== env 読み取りヘルパ =====
+    // ===== 値の解決：DB上書き（settings）→ 環境変数 → const 既定 =====
+
+    /** @var array<string,string> 管理画面（settings）からの上書き。起動時に applyOverrides で注入。 */
+    private static array $overrides = [];
+
+    /** @param array<string,string> $map settings テーブルの全行（GAME_* を含む）。 */
+    public static function applyOverrides(array $map): void
+    {
+        self::$overrides = $map;
+    }
+
+    /** DB上書き → env の順で生値を取り出す（無ければ null）。 */
+    private static function raw(string $key): ?string
+    {
+        if (isset(self::$overrides[$key]) && self::$overrides[$key] !== '') {
+            return self::$overrides[$key];
+        }
+        $v = getenv($key);
+        return ($v === false || $v === '') ? null : $v;
+    }
 
     private static function envInt(string $key, int $default): int
     {
-        $v = getenv($key);
-        return ($v === false || $v === '') ? $default : (int) $v;
+        $v = self::raw($key);
+        return $v === null ? $default : (int) $v;
     }
 
     private static function envFloat(string $key, float $default): float
     {
-        $v = getenv($key);
-        return ($v === false || $v === '') ? $default : (float) $v;
+        $v = self::raw($key);
+        return $v === null ? $default : (float) $v;
     }
 
     /**
@@ -176,8 +195,8 @@ final class Game
      */
     private static function envIntList(string $key, array $default): array
     {
-        $v = getenv($key);
-        if ($v === false || $v === '') {
+        $v = self::raw($key);
+        if ($v === null) {
             return $default;
         }
         $out = [];

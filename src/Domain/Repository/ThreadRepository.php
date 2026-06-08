@@ -23,6 +23,12 @@ interface ThreadRepository
     /** 指定言語の alive スレッド数（ページ総数の算出用。lazy減衰のため概算）。 */
     public function countAliveByLang(string $lang): int;
 
+    /** alive スレッド総数（全言語。管理ダッシュボード用）。 */
+    public function countAlive(): int;
+
+    /** @return Thread[] 新しい順の最近のスレッド（非表示も含む。管理モデレーション用）。 */
+    public function recentForAdmin(int $limit = 50): array;
+
     /** 指定言語の dead スレッドを朽ちた順で返す（墓場表示用）。 */
     /** @return Thread[] */
     public function findDeadByLang(string $lang, int $limit = 100): array;

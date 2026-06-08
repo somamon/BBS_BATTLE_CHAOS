@@ -115,7 +115,7 @@ final class Router
         $pipeline = array_reduce(
             array_reverse($match->route->middlewares),
             function (callable $next, string $mwName): callable {
-                $middleware = MiddlewareFactory::make($mwName);   // 名前 → インスタンス
+                $middleware = MiddlewareFactory::make($mwName, $this->resolver); // 名前 → インスタンス（DI解決を渡す）
                 return fn(Request $req) => $middleware->handle($req, $next);
             },
             $core

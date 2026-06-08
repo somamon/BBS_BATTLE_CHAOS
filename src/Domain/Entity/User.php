@@ -23,6 +23,9 @@ final class User
         private ?DateTimeImmutable $emailVerifiedAt = null,
         public readonly bool $isBot = false,
         private ?string $googleSub = null,
+        private string $role = 'user',
+        private string $status = 'active',
+        private ?DateTimeImmutable $suspendedUntil = null,
     ) {}
 
     /** 新規登録ユーザー（初期所持金を付与。メールは未確認状態で作る）。 */
@@ -118,6 +121,38 @@ final class User
     public function googleSub(): ?string
     {
         return $this->googleSub;
+    }
+
+    // --- 管理（ロール・凍結） ---
+
+    public function role(): string { return $this->role; }
+
+    public function isAdmin(): bool { return $this->role === 'admin'; }
+
+    /** ロールを設定する（管理CLIから昇格/降格に使う）。 */
+    public function setRole(string $role): void
+    {
+        $this->role = $role;
+    }
+
+    public function status(): string { return $this->status; }
+
+    public function isActive(): bool { return $this->status === 'active'; }
+
+    public function suspendedUntil(): ?DateTimeImmutable { return $this->suspendedUntil; }
+
+    /** 凍結する。$until が null なら無期限。 */
+    public function suspend(?DateTimeImmutable $until = null): void
+    {
+        $this->status = 'suspended';
+        $this->suspendedUntil = $until;
+    }
+
+    /** 凍結を解除する。 */
+    public function unsuspend(): void
+    {
+        $this->status = 'active';
+        $this->suspendedUntil = null;
     }
 
     /** このアカウントを Google 連携する（生成済みアカウントへ sub を結びつけ、メールを確認済みにする）。 */

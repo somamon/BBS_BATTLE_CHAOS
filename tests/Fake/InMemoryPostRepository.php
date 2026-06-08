@@ -16,7 +16,7 @@ final class InMemoryPostRepository implements PostRepository
     {
         $alive = array_filter(
             $this->posts,
-            static fn (Post $p): bool => $p->threadId === $threadId && $p->isAlive(),
+            static fn (Post $p): bool => $p->threadId === $threadId && $p->isAlive() && !$p->isHidden(),
         );
         return array_values($alive);
     }
@@ -25,7 +25,7 @@ final class InMemoryPostRepository implements PostRepository
     {
         $byThread = array_filter(
             $this->posts,
-            static fn (Post $p): bool => $p->threadId === $threadId,
+            static fn (Post $p): bool => $p->threadId === $threadId && !$p->isHidden(),
         );
         return array_values($byThread);
     }
@@ -41,10 +41,22 @@ final class InMemoryPostRepository implements PostRepository
         return $latest;
     }
 
+    public function countAlive(): int
+    {
+        return count(array_filter($this->posts, static fn (Post $p): bool => $p->isAlive()));
+    }
+
     public function findAlive(int $limit = 100): array
     {
-        $alive = array_filter($this->posts, static fn (Post $p): bool => $p->isAlive());
+        $alive = array_filter($this->posts, static fn (Post $p): bool => $p->isAlive() && !$p->isHidden());
         return array_slice(array_values($alive), 0, $limit);
+    }
+
+    public function recentForAdmin(int $limit = 50): array
+    {
+        $all = array_values($this->posts);
+        usort($all, static fn (Post $a, Post $b): int => $b->createdAt <=> $a->createdAt);
+        return array_slice($all, 0, $limit);
     }
 
     public function findById(string $id): ?Post

@@ -30,6 +30,8 @@ final class Post
         private string $status,
         public readonly DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt,
+        private ?DateTimeImmutable $hiddenAt = null,
+        private ?string $hiddenBy = null,
     ) {}
 
     public static function create(
@@ -148,5 +150,22 @@ final class Post
     public function level(): int { return $this->level; }
     public function lastDecayAt(): DateTimeImmutable { return $this->lastDecayAt; }
     public function status(): string { return $this->status; }
+
+    // --- 運営による非表示（モデレーション） ---
+    public function isHidden(): bool { return $this->hiddenAt !== null; }
+    public function hiddenAt(): ?DateTimeImmutable { return $this->hiddenAt; }
+    public function hiddenBy(): ?string { return $this->hiddenBy; }
+
+    public function hide(string $adminId, DateTimeImmutable $now): void
+    {
+        $this->hiddenAt = $now;
+        $this->hiddenBy = $adminId;
+    }
+
+    public function unhide(): void
+    {
+        $this->hiddenAt = null;
+        $this->hiddenBy = null;
+    }
     public function updatedAt(): DateTimeImmutable { return $this->updatedAt; }
 }

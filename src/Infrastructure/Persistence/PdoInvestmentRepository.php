@@ -38,4 +38,9 @@ final class PdoInvestmentRepository implements InvestmentRepository
         $stmt = $this->pdo->prepare('DELETE FROM investments WHERE investor_id = ?');
         $stmt->execute([$userId]);
     }
+
+    public function count(): int
+    {
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM investments')->fetchColumn();
+    }
 }

@@ -16,7 +16,7 @@ final class PdoPostRepository implements PostRepository
     public function findAliveByThread(string $threadId): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM posts WHERE thread_id = ? AND status = 'alive' ORDER BY created_at ASC"
+            "SELECT * FROM posts WHERE thread_id = ? AND status = 'alive' AND hidden_at IS NULL ORDER BY created_at ASC"
         );
         $stmt->execute([$threadId]);
 
@@ -29,7 +29,7 @@ final class PdoPostRepository implements PostRepository
     public function findByThread(string $threadId): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM posts WHERE thread_id = ? ORDER BY created_at ASC'
+            'SELECT * FROM posts WHERE thread_id = ? AND hidden_at IS NULL ORDER BY created_at ASC'
         );
         $stmt->execute([$threadId]);
 
@@ -50,10 +50,15 @@ final class PdoPostRepository implements PostRepository
         return $row ? $this->hydrate($row) : null;
     }
 
+    public function countAlive(): int
+    {
+        return (int) $this->pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'alive'")->fetchColumn();
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT * FROM posts WHERE status = 'alive' ORDER BY created_at DESC LIMIT :limit"
+            "SELECT * FROM posts WHERE status = 'alive' AND hidden_at IS NULL ORDER BY created_at DESC LIMIT :limit"
         );
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -105,10 +110,12 @@ final class PdoPostRepository implements PostRepository
         $stmt = $this->pdo->prepare(
             'INSERT INTO posts
                 (id, thread_id, author_hash, author_id, content, hp, max_hp, decay_per_min,
-                 total_invested, total_shares, level, last_decay_at, status, created_at, updated_at)
+                 total_invested, total_shares, level, last_decay_at, status, created_at, updated_at,
+                 hidden_at, hidden_by)
              VALUES
                 (:id, :thread_id, :author_hash, :author_id, :content, :hp, :max_hp, :decay_per_min,
-                 :total_invested, :total_shares, :level, :last_decay_at, :status, :created_at, :updated_at)'
+                 :total_invested, :total_shares, :level, :last_decay_at, :status, :created_at, :updated_at,
+                 :hidden_at, :hidden_by)'
         );
         $stmt->execute([
             ':id'             => $post->id,
@@ -126,6 +133,8 @@ final class PdoPostRepository implements PostRepository
             ':status'         => $post->status(),
             ':created_at'     => $post->createdAt->format('Y-m-d H:i:s'),
             ':updated_at'     => $post->updatedAt()->format('Y-m-d H:i:s'),
+            ':hidden_at'      => $post->hiddenAt()?->format('Y-m-d H:i:s'),
+            ':hidden_by'      => $post->hiddenBy(),
         ]);
     }
 
@@ -140,7 +149,9 @@ final class PdoPostRepository implements PostRepository
                 level = :level,
                 last_decay_at = :last_decay_at,
                 status = :status,
-                updated_at = :updated_at
+                updated_at = :updated_at,
+                hidden_at = :hidden_at,
+                hidden_by = :hidden_by
              WHERE id = :id'
         );
         $stmt->execute([
@@ -152,6 +163,8 @@ final class PdoPostRepository implements PostRepository
             ':last_decay_at'  => $post->lastDecayAt()->format('Y-m-d H:i:s'),
             ':status'         => $post->status(),
             ':updated_at'     => $post->updatedAt()->format('Y-m-d H:i:s'),
+            ':hidden_at'      => $post->hiddenAt()?->format('Y-m-d H:i:s'),
+            ':hidden_by'      => $post->hiddenBy(),
             ':id'             => $post->id,
         ]);
     }
@@ -174,6 +187,19 @@ final class PdoPostRepository implements PostRepository
             status:        $row['status'],
             createdAt:     new DateTimeImmutable($row['created_at']),
             updatedAt:     new DateTimeImmutable($row['updated_at']),
+            hiddenAt:      isset($row['hidden_at']) && $row['hidden_at'] !== null
+                ? new DateTimeImmutable($row['hidden_at'])
+                : null,
+            hiddenBy:      $row['hidden_by'] ?? null,
         );
+    }
+
+    public function recentForAdmin(int $limit = 50): array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM posts ORDER BY created_at DESC LIMIT :limit');
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(fn (array $row): Post => $this->hydrate($row), $stmt->fetchAll());
     }
 }

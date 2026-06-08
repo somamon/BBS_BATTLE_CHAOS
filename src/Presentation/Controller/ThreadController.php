@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Controller;
 
 use App\Application\Port\RateLimiter;
+use App\Domain\Repository\BanRepository;
 use App\Application\Service\MarketPhaseService;
 use App\Application\UseCase\Thread\CreateThread;
 use App\Application\UseCase\Thread\ListDeadThreads;
@@ -35,6 +36,7 @@ final class ThreadController
         private readonly ShowThread $showThread,
         private readonly CreateThread $createThread,
         private readonly RateLimiter $rateLimiter,
+        private readonly BanRepository $bans,
     ) {}
 
     /** GET /threads スレッド一覧（?page=N） */
@@ -93,6 +95,15 @@ final class ThreadController
     {
         $title = (string) $request->input('title', '');
         $ip    = $request->ip();
+
+        // IP BAN チェック。
+        if ($this->bans->isBanned('ip', hash('sha256', $ip))) {
+            $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
+                'error' => t('err.banned'),
+                'title' => $title,
+            ]);
+            return Response::html($html, 403);
+        }
 
         // 連投規制（クールダウン）と時間あたり上限。NPCはこのコントローラを通らないので対象外。
         if (

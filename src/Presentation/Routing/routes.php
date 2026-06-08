@@ -1,5 +1,6 @@
 <?php
 
+use App\Presentation\Controller\Admin;
 use App\Presentation\Controller\AccountController;
 use App\Presentation\Controller\AuthController;
 use App\Presentation\Controller\ContactController;
@@ -9,6 +10,7 @@ use App\Presentation\Controller\InvestController;
 use App\Presentation\Controller\LanguageController;
 use App\Presentation\Controller\LegalController;
 use App\Presentation\Controller\MyPageController;
+use App\Presentation\Controller\ReportController;
 use App\Presentation\Controller\RankingController;
 use App\Presentation\Controller\ResController;
 use App\Presentation\Controller\ResultController;
@@ -72,3 +74,38 @@ $router->get('/privacy', [LegalController::class, 'privacy']);
 // お問い合わせ
 $router->get('/contact', [ContactController::class, 'form']);
 $router->post('/contact', [ContactController::class, 'submit'], ['csrf']);
+
+// 通報（公開側）
+$router->get('/report', [ReportController::class, 'form']);
+$router->post('/report', [ReportController::class, 'submit'], ['csrf']);
+
+// 管理画面（admin ミドルウェアで role=admin に限定。変更系は csrf 併用）
+$router->get('/admin', [Admin\DashboardController::class, 'index'], ['admin']);
+$router->get('/admin/users', [Admin\UserController::class, 'index'], ['admin']);
+$router->post('/admin/users/{id}/suspend', [Admin\UserController::class, 'suspend'], ['csrf', 'admin']);
+$router->post('/admin/users/{id}/unsuspend', [Admin\UserController::class, 'unsuspend'], ['csrf', 'admin']);
+// コンテンツモデレーション（非表示・復帰）
+$router->get('/admin/content', [Admin\ContentController::class, 'index'], ['admin']);
+$router->post('/admin/threads/{id}/hide', [Admin\ContentController::class, 'hideThread'], ['csrf', 'admin']);
+$router->post('/admin/threads/{id}/unhide', [Admin\ContentController::class, 'unhideThread'], ['csrf', 'admin']);
+$router->post('/admin/posts/{id}/hide', [Admin\ContentController::class, 'hidePost'], ['csrf', 'admin']);
+$router->post('/admin/posts/{id}/unhide', [Admin\ContentController::class, 'unhidePost'], ['csrf', 'admin']);
+// 通報対応
+$router->get('/admin/reports', [Admin\ReportController::class, 'index'], ['admin']);
+$router->post('/admin/reports/{id}/resolve', [Admin\ReportController::class, 'resolve'], ['csrf', 'admin']);
+$router->post('/admin/reports/{id}/reject', [Admin\ReportController::class, 'reject'], ['csrf', 'admin']);
+// BAN
+$router->post('/admin/posts/{id}/ban', [Admin\ContentController::class, 'banPost'], ['csrf', 'admin']);
+$router->get('/admin/bans', [Admin\BanController::class, 'index'], ['admin']);
+$router->post('/admin/bans/{id}/remove', [Admin\BanController::class, 'remove'], ['csrf', 'admin']);
+// お問い合わせ
+$router->get('/admin/contact', [Admin\ContactController::class, 'index'], ['admin']);
+$router->post('/admin/contact/{id}/done', [Admin\ContactController::class, 'done'], ['csrf', 'admin']);
+// ラウンド管理（強制リセットは再認証つき）
+$router->get('/admin/rounds', [Admin\RoundController::class, 'index'], ['admin']);
+$router->post('/admin/rounds/reset', [Admin\RoundController::class, 'reset'], ['csrf', 'admin']);
+// 設定（バランス・メンテ・アナウンス）
+$router->get('/admin/settings', [Admin\SettingController::class, 'index'], ['admin']);
+$router->post('/admin/settings', [Admin\SettingController::class, 'update'], ['csrf', 'admin']);
+// 監査ログ
+$router->get('/admin/audit', [Admin\AuditController::class, 'index'], ['admin']);
