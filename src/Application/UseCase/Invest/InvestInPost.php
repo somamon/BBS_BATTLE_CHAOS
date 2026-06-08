@@ -81,7 +81,7 @@ final class InvestInPost
                     $this->threads->save($thread);
                     throw InvestException::dead();
                 }
-                $this->threads->save($thread);
+                // 生存スレは applyInvestment 後にHP回復してまとめて保存する（下記）。
             }
 
             $levelBefore = $post->level();
@@ -90,6 +90,11 @@ final class InvestInPost
             $applied = $post->applyInvestment($amount, $now);
             if ($applied['shares'] <= 0) {
                 throw InvestException::tooSmall(); // ロールバックされる
+            }
+
+            // 投資で親スレも延命：レス回復分(toHp)の一定割合をスレHPへ。お金は減らさず寿命のみ延ばす。
+            if ($thread !== null) {
+                $thread->heal((int) floor($applied['toHp'] * Game::threadHealInvestRatio()));
             }
 
             // 出金・持ち分加算
@@ -101,6 +106,9 @@ final class InvestInPost
             $this->users->save($investor);
             $this->holdings->save($holding);
             $this->posts->save($post);
+            if ($thread !== null) {
+                $this->threads->save($thread);
+            }
             $this->investments->insert(Investment::record(
                 $investorId,
                 $postId,

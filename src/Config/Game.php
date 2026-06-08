@@ -47,6 +47,9 @@ final class Game
     public const THREAD_INIT_HP       = 300;
     public const THREAD_MAX_HP        = 1000;
     public const THREAD_DECAY_PER_MIN = 5;
+    // 板（スレ）HPの回復。活動に応じて延命する（投稿＋投資の両方で回復）。
+    public const THREAD_HEAL_PER_POST     = 20;   // レス1件で回復するスレHP
+    public const THREAD_HEAL_INVEST_RATIO = 0.5;  // 投資のレス回復分(toHp)のうちスレHPへ回す割合
 
     // 世界フェーズ（相場天候）→ 減衰倍率
     public const PHASES = [
@@ -89,6 +92,8 @@ final class Game
     public static function threadInitHp(): int     { return self::envInt('GAME_THREAD_INIT_HP', self::THREAD_INIT_HP); }
     public static function threadMaxHp(): int      { return self::envInt('GAME_THREAD_MAX_HP', self::THREAD_MAX_HP); }
     public static function threadDecayPerMin(): int{ return self::envInt('GAME_THREAD_DECAY_PER_MIN', self::THREAD_DECAY_PER_MIN); }
+    public static function threadHealPerPost(): int      { return self::envInt('GAME_THREAD_HEAL_PER_POST', self::THREAD_HEAL_PER_POST); }
+    public static function threadHealInvestRatio(): float { return self::envFloat('GAME_THREAD_HEAL_INVEST_RATIO', self::THREAD_HEAL_INVEST_RATIO); }
 
     public static function phaseMinSec(): int      { return self::envInt('GAME_PHASE_MIN_SEC', self::PHASE_MIN_SEC); }
     public static function phaseMaxSec(): int      { return self::envInt('GAME_PHASE_MAX_SEC', self::PHASE_MAX_SEC); }

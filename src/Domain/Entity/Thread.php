@@ -80,6 +80,15 @@ final class Thread
         $this->updatedAt = $now;
     }
 
+    /** HPを回復する（上限 max_hp、死亡後は回復しない）。レス投稿・投資で板の寿命を延ばす。 */
+    public function heal(int $amount): void
+    {
+        if ($amount <= 0 || !$this->isAlive()) {
+            return;
+        }
+        $this->hp = min($this->maxHp, $this->hp + $amount);
+    }
+
     // --- getters（永続化・表示用） ---
     public function hp(): int { return $this->hp; }
     public function maxHp(): int { return $this->maxHp; }
