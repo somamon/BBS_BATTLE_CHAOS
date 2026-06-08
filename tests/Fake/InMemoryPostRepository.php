@@ -46,6 +46,15 @@ final class InMemoryPostRepository implements PostRepository
         return count(array_filter($this->posts, static fn (Post $p): bool => $p->isAlive()));
     }
 
+    public function totalReserve(): int
+    {
+        $sum = 0;
+        foreach ($this->posts as $p) {
+            $sum += $p->reserve();
+        }
+        return $sum;
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $alive = array_filter($this->posts, static fn (Post $p): bool => $p->isAlive() && !$p->isHidden());

@@ -54,15 +54,18 @@ final class MarketSimulator
         private readonly PasswordResetRepository $passwordResets,
     ) {}
 
-    /** 経過時間に応じてボットのアクションを実行する。例外は飲み込み、画面表示を妨げない。 */
-    public function tick(?DateTimeImmutable $now = null): void
+    /**
+     * 経過時間に応じてボットのアクションを実行する。例外は飲み込み、画面表示を妨げない。
+     * @return bool この呼び出しで tick を占有した（=この周期の処理を担当した）か。false は間隔未満でスキップ。
+     */
+    public function tick(?DateTimeImmutable $now = null): bool
     {
         $now ??= new DateTimeImmutable();
 
         // 原子的に tick を占有（同時アクセスでの二重実行を防ぎ、最短 BOT_TICK_SECONDS 間隔に抑制）。
         $prev = $this->simState->tryClaim($now, Game::botTickSeconds());
         if ($prev === null) {
-            return; // まだ間隔未満、または他リクエストが処理済み
+            return false; // まだ間隔未満、または他リクエストが処理済み
         }
 
         // 占有したtickのついでに期限切れ行を掃除（cron不要の定期メンテ。H6）。
@@ -75,18 +78,18 @@ final class MarketSimulator
 
         // 人間が十分集まったらボットは休眠（クロックは占有済みなので進んでいる）。
         if ($this->users->countHumans() > Game::botMaxHumans()) {
-            return;
+            return true;
         }
 
         $elapsed = $now->getTimestamp() - $prev->getTimestamp();
         $actions = (int) min(Game::botMaxBurst(), intdiv($elapsed, Game::botTickSeconds()));
         if ($actions <= 0) {
-            return;
+            return true;
         }
 
         $bots = $this->users->bots();
         if ($bots === []) {
-            return;
+            return true;
         }
 
         for ($i = 0; $i < $actions; $i++) {
@@ -96,6 +99,8 @@ final class MarketSimulator
                 // 1アクションの失敗（dead/残高不足等）は無視して次へ。
             }
         }
+
+        return true;
     }
 
     /** @param User[] $bots */
@@ -103,10 +108,14 @@ final class MarketSimulator
     {
         $bot = $bots[random_int(0, count($bots) - 1)];
 
-        // 資金が尽きたボットは補充（相場が止まらないようにする＝中央銀行的な流動性供給）。
+        // 資金が尽きたボットは補充（流動性供給）。ただし通貨総量が天井未満のときだけ＝印刷の上限。
+        // 天井に達したら補充せず、その回は投稿に回る（NPCが控えめになり総額が膨張しない）。
         if (!$bot->canAfford(Game::botMinInvest())) {
-            $bot->credit(Game::botRefillTo() - $bot->money());
-            $this->users->save($bot);
+            $totalMoney = $this->users->totalMoney() + $this->posts->totalReserve();
+            if ($totalMoney < Game::moneyCeiling()) {
+                $bot->credit(Game::botRefillTo() - $bot->money());
+                $this->users->save($bot);
+            }
         }
 
         // NPC の文面は日本語なので、日本語板でのみ活動する（英語板は当面人間のみ）。

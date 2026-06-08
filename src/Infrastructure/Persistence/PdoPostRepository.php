@@ -55,6 +55,11 @@ final class PdoPostRepository implements PostRepository
         return (int) $this->pdo->query("SELECT COUNT(*) FROM posts WHERE status = 'alive'")->fetchColumn();
     }
 
+    public function totalReserve(): int
+    {
+        return (int) $this->pdo->query('SELECT COALESCE(SUM(reserve),0) FROM posts')->fetchColumn();
+    }
+
     public function findAlive(int $limit = 100): array
     {
         $stmt = $this->pdo->prepare(

@@ -27,6 +27,7 @@ final class SettingController
         'GAME_DECAY_MIN_FACTOR', 'GAME_DECAY_FULL_AT_HUMANS',
         'GAME_BOT_MAX_HUMANS', 'GAME_BOT_REFILL_TO',
         'GAME_BOT_MIN_INVEST', 'GAME_BOT_MAX_INVEST',
+        'GAME_MONEY_CEILING',
     ];
 
     public function __construct(

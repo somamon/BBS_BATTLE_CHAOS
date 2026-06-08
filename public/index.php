@@ -85,14 +85,11 @@ if (
     exit;
 }
 
-// NPC投資家の遅延シミュレーション（人間50人以下のときだけ稼働。cron不要）。
-// 画面表示を妨げないよう GET のみ・例外は握りつぶす。
-if ($request->method() === 'GET') {
-    try {
-        $container->get(App\Application\Service\MarketSimulator::class)->tick(new DateTimeImmutable());
-    } catch (\Throwable $e) {
-        $logger->error('market_sim_failed', ['error' => $e->getMessage()]);
-    }
+// ゲーム進行（NPCシミュレーション＋終局時の自動リセット）。
+// 既定は Web フォールバック方式（公開GETに相乗り、cron不要）。GAME_TICK_DRIVER=cron なら
+// 進行は bin/cron.php に任せ、ここでは回さない。画面表示を妨げないよう GET のみ・例外は内部で握りつぶす。
+if ($request->method() === 'GET' && (getenv('GAME_TICK_DRIVER') ?: 'web') !== 'cron') {
+    $container->get(App\Application\Service\GameTick::class)->run(new DateTimeImmutable());
 }
 
 try {

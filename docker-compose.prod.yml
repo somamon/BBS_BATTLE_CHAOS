@@ -31,6 +31,7 @@ services:
       APP_URL: ${APP_URL}
       APP_TIMEZONE: ${APP_TIMEZONE}
       APP_SECRET: ${APP_SECRET}
+      GAME_TICK_DRIVER: ${GAME_TICK_DRIVER}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES}
       DB_HOST: db
       DB_NAME: ${DB_NAME}
@@ -59,6 +60,7 @@ services:
     environment:
       APP_TIMEZONE: ${APP_TIMEZONE}
       APP_SECRET: ${APP_SECRET}
+      GAME_TICK_DRIVER: ${GAME_TICK_DRIVER}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES}
       DB_HOST: db
       DB_NAME: ${DB_NAME}

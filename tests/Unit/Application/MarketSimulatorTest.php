@@ -147,4 +147,28 @@ final class MarketSimulatorTest extends TestCase
         }
         self::assertTrue($raised, '投資で株価が上がった投稿が無い');
     }
+
+    public function testDoesNotRefillBotWhenOverMoneyCeiling(): void
+    {
+        putenv('GAME_MONEY_CEILING=0'); // 天井0＝常に上限超過扱い→補充しない
+        try {
+            $sim = $this->makeSimulator($this->now->modify('-1 hour'));
+            $this->addHumans(1);
+            $this->addBot('b1', money: 0); // 資金切れボット
+            $thread = Thread::create(null, 'seed', $this->now);
+            $this->threads->insert($thread);
+            $this->posts->insert(Post::create($thread->id, 'h', null, 'p', $this->now));
+
+            $t = $this->now;
+            for ($k = 0; $k < 6; $k++) {
+                $t = $t->modify('+5 minutes');
+                $sim->tick($t);
+            }
+
+            self::assertSame(0, $this->users->findById('b1')->money(), '天井超過なのに補充された');
+            self::assertSame([], $this->investments->records, '資金0なのに投資が成立した');
+        } finally {
+            putenv('GAME_MONEY_CEILING');
+        }
+    }
 }
