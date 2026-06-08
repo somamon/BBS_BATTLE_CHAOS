@@ -68,4 +68,16 @@ final class SubmitContactTest extends TestCase
         }
         self::assertCount(0, $this->mailer->sent);
     }
+
+    public function testStoresToDbWhenRepositoryProvided(): void
+    {
+        $repo = new \Tests\Fake\InMemoryContactMessageRepository();
+        $useCase = new SubmitContact($this->mailer, 'ops@example.com', null, $repo);
+
+        $useCase->execute('太郎', 'taro@example.com', '保存される本文', ['ip' => 'iphash'], $this->now);
+
+        self::assertCount(1, $repo->messages);
+        self::assertSame(1, $repo->countOpen());
+        self::assertCount(1, $this->mailer->sent); // メールも送る
+    }
 }

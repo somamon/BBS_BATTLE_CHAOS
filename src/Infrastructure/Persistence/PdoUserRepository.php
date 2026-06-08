@@ -52,9 +52,9 @@ final class PdoUserRepository implements UserRepository
     {
         $stmt = $this->pdo->prepare(
             'INSERT INTO users
-                (id, email, name, password_hash, google_sub, money, email_verified_at, is_bot, created_at)
+                (id, email, name, password_hash, google_sub, money, email_verified_at, is_bot, role, status, suspended_until, created_at)
              VALUES
-                (:id, :email, :name, :password_hash, :google_sub, :money, :email_verified_at, :is_bot, :created_at)'
+                (:id, :email, :name, :password_hash, :google_sub, :money, :email_verified_at, :is_bot, :role, :status, :suspended_until, :created_at)'
         );
         $stmt->execute([
             ':id'                => $user->id,
@@ -65,6 +65,9 @@ final class PdoUserRepository implements UserRepository
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':is_bot'            => $user->isBot ? 1 : 0,
+            ':role'              => $user->role(),
+            ':status'            => $user->status(),
+            ':suspended_until'   => $user->suspendedUntil()?->format('Y-m-d H:i:s'),
             ':created_at'        => $user->createdAt->format('Y-m-d H:i:s'),
         ]);
     }
@@ -76,7 +79,10 @@ final class PdoUserRepository implements UserRepository
                 SET money = :money,
                     email_verified_at = :email_verified_at,
                     password_hash = :password_hash,
-                    google_sub = :google_sub
+                    google_sub = :google_sub,
+                    role = :role,
+                    status = :status,
+                    suspended_until = :suspended_until
              WHERE id = :id'
         );
         $stmt->execute([
@@ -84,6 +90,9 @@ final class PdoUserRepository implements UserRepository
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':password_hash'     => $user->passwordHash(),
             ':google_sub'        => $user->googleSub(),
+            ':role'              => $user->role(),
+            ':status'            => $user->status(),
+            ':suspended_until'   => $user->suspendedUntil()?->format('Y-m-d H:i:s'),
             ':id'                => $user->id,
         ]);
     }
@@ -107,6 +116,18 @@ final class PdoUserRepository implements UserRepository
     public function countHumans(): int
     {
         return (int) $this->pdo->query('SELECT COUNT(*) FROM users WHERE is_bot = 0')->fetchColumn();
+    }
+
+    public function recentHumans(int $limit = 50, int $offset = 0): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM users WHERE is_bot = 0 ORDER BY created_at DESC LIMIT :limit OFFSET :offset'
+        );
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return array_map(fn (array $row): User => $this->hydrate($row), $stmt->fetchAll());
     }
 
     public function bots(): array
@@ -133,6 +154,11 @@ final class PdoUserRepository implements UserRepository
                 : null,
             isBot:           (bool) $row['is_bot'],
             googleSub:       $row['google_sub'] ?? null,
+            role:            $row['role'] ?? 'user',
+            status:          $row['status'] ?? 'active',
+            suspendedUntil:  isset($row['suspended_until']) && $row['suspended_until'] !== null
+                ? new DateTimeImmutable($row['suspended_until'])
+                : null,
         );
     }
 }

@@ -14,13 +14,13 @@ final class InMemoryThreadRepository implements ThreadRepository
 
     public function findAlive(int $limit = 50): array
     {
-        $alive = array_filter($this->threads, static fn (Thread $t): bool => $t->isAlive());
+        $alive = array_filter($this->threads, static fn (Thread $t): bool => $t->isAlive() && !$t->isHidden());
         return array_slice(array_values($alive), 0, $limit);
     }
 
     public function findDead(int $limit = 100): array
     {
-        $dead = array_filter($this->threads, static fn (Thread $t): bool => !$t->isAlive());
+        $dead = array_filter($this->threads, static fn (Thread $t): bool => !$t->isAlive() && !$t->isHidden());
         return array_slice(array_values($dead), 0, $limit);
     }
 
@@ -28,7 +28,7 @@ final class InMemoryThreadRepository implements ThreadRepository
     {
         $alive = array_filter(
             $this->threads,
-            static fn (Thread $t): bool => $t->isAlive() && $t->lang === $lang,
+            static fn (Thread $t): bool => $t->isAlive() && !$t->isHidden() && $t->lang === $lang,
         );
         return array_slice(array_values($alive), $offset, $limit);
     }
@@ -37,17 +37,29 @@ final class InMemoryThreadRepository implements ThreadRepository
     {
         return count(array_filter(
             $this->threads,
-            static fn (Thread $t): bool => $t->isAlive() && $t->lang === $lang,
+            static fn (Thread $t): bool => $t->isAlive() && !$t->isHidden() && $t->lang === $lang,
         ));
+    }
+
+    public function countAlive(): int
+    {
+        return count(array_filter($this->threads, static fn (Thread $t): bool => $t->isAlive() && !$t->isHidden()));
     }
 
     public function findDeadByLang(string $lang, int $limit = 100): array
     {
         $dead = array_filter(
             $this->threads,
-            static fn (Thread $t): bool => !$t->isAlive() && $t->lang === $lang,
+            static fn (Thread $t): bool => !$t->isAlive() && !$t->isHidden() && $t->lang === $lang,
         );
         return array_slice(array_values($dead), 0, $limit);
+    }
+
+    public function recentForAdmin(int $limit = 50): array
+    {
+        $all = array_values($this->threads);
+        usort($all, static fn (Thread $a, Thread $b): int => $b->createdAt <=> $a->createdAt);
+        return array_slice($all, 0, $limit);
     }
 
     public function findById(string $id): ?Thread

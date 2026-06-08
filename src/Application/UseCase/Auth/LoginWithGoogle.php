@@ -48,6 +48,9 @@ final class LoginWithGoogle
         // 1. 連携済みアカウント。
         $linked = $this->users->findByGoogleSub($googleSub);
         if ($linked !== null) {
+            if (!$linked->isActive()) {
+                throw AuthException::accountSuspended();
+            }
             return $linked;
         }
 

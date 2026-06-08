@@ -60,6 +60,31 @@ $container = Container::build();
 $router    = new Router(fn(string $class): object => $container->get($class));
 require __DIR__ . '/../src/Presentation/Routing/routes.php';
 
+// ランタイム設定（管理画面の settings）を読み込み、ゲームバランス上書きとサイト状態へ反映。
+// 取得失敗（マイグレーション前など）は既定値で続行する。
+try {
+    $settings = $container->get(App\Domain\Repository\SettingRepository::class)->all();
+    App\Config\Game::applyOverrides($settings);
+    App\Infrastructure\Runtime\SiteState::boot($settings);
+} catch (\Throwable $e) {
+    $logger->warning('settings_load_failed', ['error' => $e->getMessage()]);
+}
+
+// メンテモード：管理画面・ログイン以外は 503 で停止（運営は /admin で操作継続）。
+if (
+    App\Infrastructure\Runtime\SiteState::isMaintenance()
+    && !str_starts_with($request->path(), '/admin')
+    && !in_array($request->path(), ['/login', '/logout'], true)
+) {
+    http_response_code(503);
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Retry-After: 3600');
+    echo '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>メンテナンス中</title></head>'
+        . '<body style="font-family:sans-serif; text-align:center; padding:40px; color:#333;">'
+        . '<h1>メンテナンス中</h1><p>ただいまメンテナンス中です。しばらくお待ちください。</p></body></html>';
+    exit;
+}
+
 // NPC投資家の遅延シミュレーション（人間50人以下のときだけ稼働。cron不要）。
 // 画面表示を妨げないよう GET のみ・例外は握りつぶす。
 if ($request->method() === 'GET') {

@@ -31,8 +31,8 @@ final class ShowThread
         $now ??= new DateTimeImmutable();
 
         $thread = $this->threads->findById($threadId);
-        if ($thread === null) {
-            return null;
+        if ($thread === null || $thread->isHidden()) {
+            return null; // 運営が非表示にしたスレは公開側からは存在しない扱い
         }
 
         $multiplier = $this->decay->multiplier($now);

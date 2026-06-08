@@ -30,6 +30,9 @@ interface UserRepository
     /** 人間ユーザー（is_bot=0）の人数。NPC稼働の可否判定に使う。 */
     public function countHumans(): int;
 
+    /** @return User[] 人間ユーザーを新しい順に返す（管理画面の一覧用）。 */
+    public function recentHumans(int $limit = 50, int $offset = 0): array;
+
     /** @return User[] ボットユーザー（is_bot=1）一覧。 */
     public function bots(): array;
 }

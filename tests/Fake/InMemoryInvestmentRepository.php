@@ -24,4 +24,9 @@ final class InMemoryInvestmentRepository implements InvestmentRepository
             static fn (Investment $i): bool => $i->investorId !== $userId,
         ));
     }
+
+    public function count(): int
+    {
+        return count($this->records);
+    }
 }

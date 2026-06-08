@@ -52,8 +52,8 @@ final class InvestInPost
             }
 
             $post = $this->posts->findByIdForUpdate($postId);
-            if ($post === null) {
-                throw InvestException::notFound();
+            if ($post === null || $post->isHidden()) {
+                throw InvestException::notFound(); // 非表示の投稿には投資できない
             }
 
             $multiplier = $this->decay->multiplier($now);

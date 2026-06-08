@@ -69,4 +69,15 @@ final class LoginUserTest extends TestCase
         $this->expectException(AuthException::class);
         $this->useCase->execute('not-an-email', 'password1');
     }
+
+    public function testSuspendedUserIsBlocked(): void
+    {
+        $this->addUser('a@e.com', 'password1', verified: true);
+        $user = $this->users->findByEmail('a@e.com');
+        $user->suspend();
+        $this->users->save($user);
+
+        $this->expectException(AuthException::class);
+        $this->useCase->execute('a@e.com', 'password1');
+    }
 }

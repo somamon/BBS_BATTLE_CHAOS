@@ -68,6 +68,9 @@ $writable = !empty($thread['writable']);
           ｜ <span style="color:#cc0000;"><?= t('show.holding', ['shares' => number_format((int) $p['myShares']), 'val' => number_format((int) $p['myValuation'])]) ?></span>
         <?php endif; ?>
       </div>
+      <div class="muted" style="margin-top:4px; font-size:11px;">
+        <a href="/report?type=post&id=<?= View::e($p['id']) ?>"><?= t('show.report') ?></a>
+      </div>
       <?php if ($isLogin && $writable && empty($p['dead'])): ?>
         <form method="post" action="/post/<?= View::e($p['id']) ?>/invest" style="margin-top:6px;">
           <?= Csrf::field() ?>
