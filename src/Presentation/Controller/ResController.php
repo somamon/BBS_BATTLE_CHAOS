@@ -7,6 +7,7 @@ namespace App\Presentation\Controller;
 use App\Application\Exception\BoardException;
 use App\Application\Port\RateLimiter;
 use App\Domain\Repository\BanRepository;
+use App\Domain\Repository\UserRepository;
 use App\Application\UseCase\Thread\PostReply;
 use App\Domain\Exception\ValidationException;
 use App\Presentation\Http\Auth;
@@ -26,6 +27,7 @@ final class ResController
         private readonly Auth $auth,
         private readonly RateLimiter $rateLimiter,
         private readonly BanRepository $bans,
+        private readonly UserRepository $users,
     ) {}
 
     /** POST /thread/{id}/posts レス投稿 */
@@ -40,6 +42,15 @@ final class ResController
         // IP BAN チェック（匿名投稿の遮断）。
         if ($this->bans->isBanned('ip', $authorHash)) {
             return Response::error(403, t('err.banned'));
+        }
+
+        // 凍結(suspend/ban)中のログインユーザーは投稿不可。
+        // IP-BANだけでは別IPからの投稿を防げないため、ユーザー状態でも遮断する。
+        if ($authorId !== null) {
+            $user = $this->users->findById($authorId);
+            if ($user !== null && !$user->isActive()) {
+                return Response::error(403, t('err.banned'));
+            }
         }
 
         // 連投規制（クールダウン）と流量上限。成功した投稿だけを数える。

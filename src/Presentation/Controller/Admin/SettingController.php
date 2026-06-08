@@ -30,6 +30,28 @@ final class SettingController
         'GAME_MONEY_CEILING',
     ];
 
+    /**
+     * キー別の許容範囲 [最小, 最大]（境界含む）。汎用の「0以上」では防げない経済破壊を弾く:
+     *  - GAME_SHARE_PRICE_BASE が 0 だと株価が0になり、投資時に floor(shares / 0) でゼロ除算（全投資が500）。
+     *  - GAME_SPLIT_SHARES が 1 超だと延命HP配分が負になり、投資のたびにレスHPが減る（経済破壊）。
+     */
+    private const BALANCE_BOUNDS = [
+        'GAME_INITIAL_MONEY'        => [0, 1000000000],
+        'GAME_MIN_INVEST'           => [1, 1000000000],
+        'GAME_SPLIT_SHARES'         => [0.0001, 1],            // 0<v<=1
+        'GAME_SHARE_PRICE_BASE'     => [0.01, 1000000000],     // >0（ゼロ除算防止）
+        'GAME_SHARE_PRICE_SLOPE'    => [0, 1000000],
+        'GAME_POST_DECAY_PER_MIN'   => [0, 1000000],
+        'GAME_THREAD_DECAY_PER_MIN' => [0, 1000000],
+        'GAME_DECAY_MIN_FACTOR'     => [0, 1],
+        'GAME_DECAY_FULL_AT_HUMANS' => [0, 1000000],
+        'GAME_BOT_MAX_HUMANS'       => [0, 1000000],
+        'GAME_BOT_REFILL_TO'        => [0, 1000000000],
+        'GAME_BOT_MIN_INVEST'       => [0, 1000000000],
+        'GAME_BOT_MAX_INVEST'       => [0, 1000000000],
+        'GAME_MONEY_CEILING'        => [0, 1000000000000],
+    ];
+
     public function __construct(
         private readonly SettingRepository $settings,
         private readonly AuditLogger $audit,
@@ -64,8 +86,14 @@ final class SettingController
                 $toDelete[] = $k;
                 continue;
             }
-            if (!is_numeric($v) || (float) $v < 0 || strlen($v) > 32) {
-                Flash::set("「{$k}」は0以上の数値で入力してください。保存していません。");
+            if (!is_numeric($v) || strlen($v) > 32) {
+                Flash::set("「{$k}」は数値で入力してください。保存していません。");
+                return Response::redirect('/admin/settings');
+            }
+            [$min, $max] = self::BALANCE_BOUNDS[$k];
+            $f = (float) $v;
+            if ($f < $min || $f > $max) {
+                Flash::set("「{$k}」は {$min}〜{$max} の範囲で入力してください（経済破壊の防止）。保存していません。");
                 return Response::redirect('/admin/settings');
             }
             $toSet[$k] = $v;
