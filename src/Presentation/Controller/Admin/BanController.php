@@ -34,6 +34,7 @@ final class BanController
                 'kind'      => $b->kind,
                 'value'     => mb_substr($b->value, 0, 16) . '…',
                 'reason'    => $b->reason,
+                'expiresAt' => $b->expiresAt?->format('Y-m-d H:i') ?? '無期限',
                 'createdAt' => $b->createdAt->format('Y-m-d H:i'),
             ];
         }
@@ -41,6 +42,19 @@ final class BanController
             'bans'  => $rows,
             'flash' => Flash::pull(),
         ]);
+    }
+
+    /** POST /admin/bans IPアドレスを直接指定してBAN（days=0で無期限） */
+    public function add(Request $request): Response
+    {
+        $ip     = (string) $request->input('ip', '');
+        $reason = trim((string) $request->input('reason', ''));
+        $days   = (int) $request->input('days', 0);
+        $expiresAt = $days > 0 ? new \DateTimeImmutable('+' . $days . ' days') : null;
+
+        $ok = $this->banIp->banAddress((string) $this->auth->userId(), $ip, $reason !== '' ? $reason : null, $request->ip(), $expiresAt);
+        Flash::set($ok ? 'IPをBANしました。' : 'IPアドレスを入力してください。');
+        return Response::redirect('/admin/bans');
     }
 
     /** POST /admin/bans/{id}/remove */

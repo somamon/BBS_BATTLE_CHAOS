@@ -84,6 +84,19 @@ final class InvestInPostTest extends TestCase
         $this->users->insert(new User($id, $id . '@e.com', $id, 'x', $money, $this->now));
     }
 
+    public function testSuspendedUserCannotInvest(): void
+    {
+        $this->makeThread();
+        $this->makePost();
+        $this->makeUser('banned', 500);
+        $u = $this->users->findById('banned');
+        $u->suspend();
+        $this->users->save($u);
+
+        $this->expectException(InvestException::class);
+        $this->useCase->execute('banned', 'p1', 100, $this->now);
+    }
+
     public function testBuysSharesOnBondingCurveAndHealsAndLevelsUp(): void
     {
         $this->makeThread();

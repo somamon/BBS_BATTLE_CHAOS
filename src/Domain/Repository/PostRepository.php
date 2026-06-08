@@ -22,8 +22,11 @@ interface PostRepository
     /** alive レス総数（管理ダッシュボード用）。 */
     public function countAlive(): int;
 
-    /** @return Post[] 新しい順の最近の投稿（非表示も含む。管理モデレーション用）。 */
-    public function recentForAdmin(int $limit = 50): array;
+    /** @return Post[] 新しい順の最近の投稿（非表示も含む。管理モデレーション用。ページング対応）。 */
+    public function recentForAdmin(int $limit = 50, int $offset = 0): array;
+
+    /** 全投稿数（管理一覧のページ総数算出用）。 */
+    public function countForAdmin(): int;
 
     /** alive な投稿を横断的に返す（NPC投資の対象選択用）。 */
     /** @return Post[] */

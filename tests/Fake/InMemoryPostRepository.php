@@ -52,11 +52,16 @@ final class InMemoryPostRepository implements PostRepository
         return array_slice(array_values($alive), 0, $limit);
     }
 
-    public function recentForAdmin(int $limit = 50): array
+    public function recentForAdmin(int $limit = 50, int $offset = 0): array
     {
         $all = array_values($this->posts);
         usort($all, static fn (Post $a, Post $b): int => $b->createdAt <=> $a->createdAt);
-        return array_slice($all, 0, $limit);
+        return array_slice($all, $offset, $limit);
+    }
+
+    public function countForAdmin(): int
+    {
+        return count($this->posts);
     }
 
     public function findById(string $id): ?Post

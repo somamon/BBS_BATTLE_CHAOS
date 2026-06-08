@@ -56,9 +56,15 @@ $nav = [
 <body>
   <header>
     <span class="brand">BBS BATTLE CHAOS 管理</span>
+    <?php
+      $badges = [
+          'reports' => \App\Infrastructure\Runtime\AdminBadges::reports(),
+          'contact' => \App\Infrastructure\Runtime\AdminBadges::contact(),
+      ];
+    ?>
     <nav>
       <?php foreach ($nav as $key => [$href, $label]): ?>
-        <a href="<?= View::e($href) ?>" class="<?= $active === $key ? 'on' : '' ?>"><?= View::e($label) ?></a>
+        <a href="<?= View::e($href) ?>" class="<?= $active === $key ? 'on' : '' ?>"><?= View::e($label) ?><?php if (!empty($badges[$key])): ?> <span style="background:#cc0000; color:#fff; border-radius:999px; padding:0 6px; font-size:11px;"><?= View::e($badges[$key]) ?></span><?php endif; ?></a>
       <?php endforeach; ?>
     </nav>
     <span class="spacer"></span>

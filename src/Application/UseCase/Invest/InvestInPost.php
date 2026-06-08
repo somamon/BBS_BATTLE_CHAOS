@@ -47,7 +47,14 @@ final class InvestInPost
 
         return $this->tx->run(function () use ($investorId, $postId, $amount, $now): InvestResult {
             $investor = $this->users->findById($investorId);
-            if ($investor === null || !$investor->canAfford($amount)) {
+            if ($investor === null) {
+                throw InvestException::insufficientFunds();
+            }
+            // 凍結/BAN中のアカウントは投資不可（アクティブセッションでの操作も塞ぐ）。
+            if (!$investor->isActive()) {
+                throw InvestException::accountInactive();
+            }
+            if (!$investor->canAfford($amount)) {
                 throw InvestException::insufficientFunds();
             }
 

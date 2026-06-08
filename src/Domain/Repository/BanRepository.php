@@ -18,4 +18,7 @@ interface BanRepository
     public function listActive(int $limit = 100, ?DateTimeImmutable $now = null): array;
 
     public function removeById(int $id): void;
+
+    /** 種別＋値でBANを解除する（ユーザーBANの解除など）。 */
+    public function removeByKindValue(string $kind, string $value): void;
 }

@@ -26,8 +26,11 @@ interface ThreadRepository
     /** alive スレッド総数（全言語。管理ダッシュボード用）。 */
     public function countAlive(): int;
 
-    /** @return Thread[] 新しい順の最近のスレッド（非表示も含む。管理モデレーション用）。 */
-    public function recentForAdmin(int $limit = 50): array;
+    /** @return Thread[] 新しい順の最近のスレッド（非表示も含む。管理モデレーション用。ページング対応）。 */
+    public function recentForAdmin(int $limit = 50, int $offset = 0): array;
+
+    /** 全スレッド数（管理一覧のページ総数算出用）。 */
+    public function countForAdmin(): int;
 
     /** 指定言語の dead スレッドを朽ちた順で返す（墓場表示用）。 */
     /** @return Thread[] */

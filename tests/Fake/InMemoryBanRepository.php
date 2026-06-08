@@ -44,4 +44,13 @@ final class InMemoryBanRepository implements BanRepository
     {
         unset($this->bans[$id]);
     }
+
+    public function removeByKindValue(string $kind, string $value): void
+    {
+        foreach ($this->bans as $id => $b) {
+            if ($b->kind === $kind && $b->value === $value) {
+                unset($this->bans[$id]);
+            }
+        }
+    }
 }

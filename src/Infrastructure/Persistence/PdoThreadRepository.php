@@ -181,12 +181,18 @@ final class PdoThreadRepository implements ThreadRepository
         );
     }
 
-    public function recentForAdmin(int $limit = 50): array
+    public function recentForAdmin(int $limit = 50, int $offset = 0): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM threads ORDER BY created_at DESC LIMIT :limit');
+        $stmt = $this->pdo->prepare('SELECT * FROM threads ORDER BY created_at DESC LIMIT :limit OFFSET :offset');
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
         return array_map(fn (array $row): Thread => $this->hydrate($row), $stmt->fetchAll());
+    }
+
+    public function countForAdmin(): int
+    {
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM threads')->fetchColumn();
     }
 }

@@ -84,6 +84,8 @@ $router->get('/admin', [Admin\DashboardController::class, 'index'], ['admin']);
 $router->get('/admin/users', [Admin\UserController::class, 'index'], ['admin']);
 $router->post('/admin/users/{id}/suspend', [Admin\UserController::class, 'suspend'], ['csrf', 'admin']);
 $router->post('/admin/users/{id}/unsuspend', [Admin\UserController::class, 'unsuspend'], ['csrf', 'admin']);
+$router->post('/admin/users/{id}/ban', [Admin\UserController::class, 'ban'], ['csrf', 'admin']);
+$router->post('/admin/users/{id}/unban', [Admin\UserController::class, 'unban'], ['csrf', 'admin']);
 // コンテンツモデレーション（非表示・復帰）
 $router->get('/admin/content', [Admin\ContentController::class, 'index'], ['admin']);
 $router->post('/admin/threads/{id}/hide', [Admin\ContentController::class, 'hideThread'], ['csrf', 'admin']);
@@ -97,6 +99,7 @@ $router->post('/admin/reports/{id}/reject', [Admin\ReportController::class, 'rej
 // BAN
 $router->post('/admin/posts/{id}/ban', [Admin\ContentController::class, 'banPost'], ['csrf', 'admin']);
 $router->get('/admin/bans', [Admin\BanController::class, 'index'], ['admin']);
+$router->post('/admin/bans', [Admin\BanController::class, 'add'], ['csrf', 'admin']);
 $router->post('/admin/bans/{id}/remove', [Admin\BanController::class, 'remove'], ['csrf', 'admin']);
 // お問い合わせ
 $router->get('/admin/contact', [Admin\ContactController::class, 'index'], ['admin']);

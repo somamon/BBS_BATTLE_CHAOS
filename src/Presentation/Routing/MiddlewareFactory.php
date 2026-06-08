@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Routing;
 
+use App\Application\Port\RateLimiter;
+use App\Domain\Repository\ContactMessageRepository;
+use App\Domain\Repository\ReportRepository;
 use App\Domain\Repository\UserRepository;
 use App\Presentation\Http\Auth;
 use App\Presentation\Routing\Middleware\AdminMiddleware;
@@ -41,6 +44,12 @@ final class MiddlewareFactory
         $auth = $resolver(Auth::class);
         /** @var UserRepository $users */
         $users = $resolver(UserRepository::class);
-        return new AdminMiddleware($auth, $users);
+        /** @var RateLimiter $rl */
+        $rl = $resolver(RateLimiter::class);
+        /** @var ReportRepository $reports */
+        $reports = $resolver(ReportRepository::class);
+        /** @var ContactMessageRepository $contact */
+        $contact = $resolver(ContactMessageRepository::class);
+        return new AdminMiddleware($auth, $users, $rl, $reports, $contact);
     }
 }

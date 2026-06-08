@@ -11,8 +11,8 @@ use App\Domain\Repository\PostRepository;
 use DateTimeImmutable;
 
 /**
- * IP BAN（匿名投稿の遮断）。投稿の author_hash（=IPハッシュ）を対象に登録する。
- * ユーザー単位の遮断は凍結（SuspendUser）が担う。操作は監査ログに残す。
+ * IP BAN（匿名投稿の遮断）。投稿の author_hash（=IPハッシュ）またはIP直接入力を対象に登録する。
+ * 期限（expiresAt）が null なら無期限。ユーザー単位の遮断は SuspendUser / BanUser が担う。
  */
 final class BanIp
 {
@@ -23,20 +23,33 @@ final class BanIp
     ) {}
 
     /** 指定投稿の投稿者IP（author_hash）をBANする。 */
-    public function banByPost(string $adminId, string $postId, ?string $ip = null): bool
+    public function banByPost(string $adminId, string $postId, ?string $opIp = null, ?DateTimeImmutable $expiresAt = null): bool
     {
         $post = $this->posts->findById($postId);
         if ($post === null) {
             return false;
         }
-        $this->bans->insert(Ban::create('ip', $post->authorHash, 'post:' . $postId, $adminId, new DateTimeImmutable()));
-        $this->audit->record($adminId, 'ban.ip', 'ip', $post->authorHash, 'post:' . $postId, $ip);
+        $this->bans->insert(Ban::create('ip', $post->authorHash, 'post:' . $postId, $adminId, new DateTimeImmutable(), $expiresAt));
+        $this->audit->record($adminId, 'ban.ip', 'ip', $post->authorHash, 'post:' . $postId, $opIp);
         return true;
     }
 
-    public function remove(string $adminId, int $banId, ?string $ip = null): void
+    /** IPアドレスを直接指定してBANする（author_hash と同じ sha256 でハッシュ化）。 */
+    public function banAddress(string $adminId, string $ipAddress, ?string $reason, ?string $opIp = null, ?DateTimeImmutable $expiresAt = null): bool
+    {
+        $ipAddress = trim($ipAddress);
+        if ($ipAddress === '') {
+            return false;
+        }
+        $hash = hash('sha256', $ipAddress);
+        $this->bans->insert(Ban::create('ip', $hash, $reason, $adminId, new DateTimeImmutable(), $expiresAt));
+        $this->audit->record($adminId, 'ban.ip', 'ip', $hash, $reason, $opIp);
+        return true;
+    }
+
+    public function remove(string $adminId, int $banId, ?string $opIp = null): void
     {
         $this->bans->removeById($banId);
-        $this->audit->record($adminId, 'ban.remove', 'ban', (string) $banId, null, $ip);
+        $this->audit->record($adminId, 'ban.remove', 'ban', (string) $banId, null, $opIp);
     }
 }
