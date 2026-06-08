@@ -77,4 +77,34 @@ final class ThreadTest extends TestCase
         $t->incrementPostCount($this->t0);
         self::assertSame(2, $t->postCount());
     }
+
+    public function testHealRecoversHp(): void
+    {
+        $t = $this->thread(hp: 300, maxHp: 1000);
+        $t->heal(50);
+        self::assertSame(350, $t->hp());
+    }
+
+    public function testHealClampsToMaxHp(): void
+    {
+        $t = $this->thread(hp: 980, maxHp: 1000);
+        $t->heal(50);
+        self::assertSame(1000, $t->hp());
+    }
+
+    public function testHealIgnoresNonPositive(): void
+    {
+        $t = $this->thread(hp: 300);
+        $t->heal(0);
+        $t->heal(-100);
+        self::assertSame(300, $t->hp());
+    }
+
+    public function testHealDoesNothingWhenDead(): void
+    {
+        $t = $this->thread(hp: 0, status: 'dead');
+        $t->heal(100);
+        self::assertSame(0, $t->hp());
+        self::assertFalse($t->isAlive());
+    }
 }

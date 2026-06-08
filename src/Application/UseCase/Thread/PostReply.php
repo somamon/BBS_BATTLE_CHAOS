@@ -62,6 +62,7 @@ final class PostReply
             $this->posts->insert($post);
 
             $thread->incrementPostCount($now);
+            $thread->heal(Game::threadHealPerPost()); // 書き込みで板（スレ）の寿命を少し延ばす
             $this->threads->save($thread);
         });
     }
