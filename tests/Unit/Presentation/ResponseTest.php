@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Presentation;
 
+use App\Presentation\Http\Csp;
 use App\Presentation\Http\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -19,6 +20,14 @@ final class ResponseTest extends TestCase
         self::assertArrayHasKey('Content-Security-Policy', $headers);
         self::assertStringContainsString("frame-ancestors 'none'", $headers['Content-Security-Policy']);
         self::assertSame('text/html; charset=UTF-8', $headers['Content-Type']);
+    }
+
+    public function testCspAllowsTheRequestNonceForInlineScript(): void
+    {
+        // レイアウトのカウントダウン等のインラインJSが nonce で許可されること。
+        $csp = Response::html('<p>hi</p>')->headers()['Content-Security-Policy'];
+
+        self::assertStringContainsString("script-src 'self' 'nonce-" . Csp::nonce() . "'", $csp);
     }
 
     public function testRedirectAlsoCarriesSecurityHeaders(): void

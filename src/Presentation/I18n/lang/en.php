@@ -98,7 +98,7 @@ return [
     'home.loop.s3' => 'The more follow-on investment, the <strong>higher the price</strong>',
     'home.loop.s4' => 'Once it rises, <strong>sell to take profit (cash out)</strong> → recycle into the next gem',
     'home.loop.s5' => 'Cumulative investment evolves a reply (<span class="badge">New</span> → <span class="badge">Notable</span> → <span class="badge">Popular</span> → <span class="badge">Hall of Fame</span>)',
-    'home.loop.s6' => 'When the world ends, <strong>the ranking is locked by net worth</strong> → a new round starts automatically',
+    'home.loop.s6' => '<strong>Each season ends on a timer</strong>; the ranking is locked by net worth → a new season starts automatically (time left shown in the header)',
     'home.loop.note' => 'The winner is the sharp eye who spotted good replies "early"—and sold in time.',
     'home.rules.title' => 'Rules to know',
     'home.rules.r1' => '<strong>Early bird wins</strong>: price rises with cumulative investment (bonding curve). Buying later costs more.',
