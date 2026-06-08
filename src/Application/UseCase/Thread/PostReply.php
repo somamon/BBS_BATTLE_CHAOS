@@ -27,9 +27,9 @@ final class PostReply
         private readonly PostRepository $posts,
     ) {}
 
-    public function execute(string $threadId, string $authorHash, ?string $authorId, string $content): void
+    public function execute(string $threadId, string $authorHash, ?string $authorId, string $content, ?DateTimeImmutable $now = null): void
     {
-        $now = new DateTimeImmutable();
+        $now ??= new DateTimeImmutable();
 
         $this->tx->run(function () use ($threadId, $authorHash, $authorId, $content, $now): void {
             $thread = $this->threads->findByIdForUpdate($threadId);

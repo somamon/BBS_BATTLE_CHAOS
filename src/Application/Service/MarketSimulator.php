@@ -122,7 +122,7 @@ final class MarketSimulator
         $aliveThreads = $this->threads->findAliveByLang(self::NPC_LANG, 50);
         if ($aliveThreads === []) {
             // 板が無ければまず立てる。
-            $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES), self::NPC_LANG);
+            $this->createThread->execute($bot->id, $this->pick(self::THREAD_TITLES), self::NPC_LANG, $now);
             return;
         }
 
@@ -142,7 +142,7 @@ final class MarketSimulator
         if ($roll <= 95 || $alivePosts === []) {
             $thread = $aliveThreads[random_int(0, count($aliveThreads) - 1)];
             $hash   = hash('sha256', 'bot:' . $bot->id);
-            $this->postReply->execute($thread->id, $hash, $bot->id, $this->pick(self::REPLY_LINES));
+            $this->postReply->execute($thread->id, $hash, $bot->id, $this->pick(self::REPLY_LINES), $now);
             return;
         }
 
