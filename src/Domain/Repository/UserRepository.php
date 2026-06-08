@@ -10,6 +10,9 @@ interface UserRepository
 {
     public function findById(string $id): ?User;
 
+    /** 行ロック付きで取得（投資トランザクションでの残高更新の競合防止）。 */
+    public function findByIdForUpdate(string $id): ?User;
+
     public function findByEmail(string $email): ?User;
 
     /** Google の sub（OIDCの一意ID）でユーザーを引く。連携済みでなければ null。 */

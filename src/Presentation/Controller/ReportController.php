@@ -57,7 +57,7 @@ final class ReportController
         $this->rateLimiter->hit($key, self::WINDOW);
 
         try {
-            $this->submitReport->execute($type, $id, $reason, $detail, $this->auth->userId(), hash('sha256', $request->ip()));
+            $this->submitReport->execute($type, $id, $reason, $detail, $this->auth->userId(), \App\Infrastructure\Security\IpHash::of($request->ip()));
         } catch (ValidationException $e) {
             return Response::html($this->view(t($e->messageKey), $type, $id), 422);
         }

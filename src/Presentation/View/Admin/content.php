@@ -3,10 +3,24 @@
  * コンテンツモデレーション。
  * @var array<int,array<string,mixed>> $threads
  * @var array<int,array<string,mixed>> $posts
+ * @var int $tp @var int $tPages @var int $pp @var int $pPages
  * @var string|null $flash
  */
-use App\Presentation\Http\Csrf;
 use App\Presentation\View\View;
+use App\Presentation\Http\Csrf;
+
+/** 各セクションのページャ（相手側のページ番号を保持）。 */
+$pager = static function (string $param, int $cur, int $pages, int $tp, int $pp): string {
+    if ($pages <= 1) {
+        return '';
+    }
+    $url = static fn (int $n): string => '/admin/content?tp=' . ($param === 'tp' ? $n : $tp) . '&pp=' . ($param === 'pp' ? $n : $pp);
+    $h = '<div style="margin:8px 0;">';
+    $h .= $cur > 1 ? '<a class="btn" href="' . View::e($url($cur - 1)) . '">← 前</a> ' : '';
+    $h .= '<span class="muted">' . $cur . ' / ' . $pages . '</span>';
+    $h .= $cur < $pages ? ' <a class="btn" href="' . View::e($url($cur + 1)) . '">次 →</a>' : '';
+    return $h . '</div>';
+};
 
 $hideBtn = static function (string $action, string $id, bool $hidden): string {
     $verb = $hidden ? 'unhide' : 'hide';
@@ -22,7 +36,8 @@ $hideBtn = static function (string $action, string $id, bool $hidden): string {
   <div class="flash"><?= View::e($flash) ?></div>
 <?php endif; ?>
 
-<h3>スレッド（最近50件）</h3>
+<h3>スレッド</h3>
+<?= $pager('tp', $tp, $tPages, $tp, $pp) ?>
 <table>
   <thead><tr><th>タイトル</th><th>言語</th><th>状態</th><th>表示</th><th>操作</th></tr></thead>
   <tbody>
@@ -38,7 +53,10 @@ $hideBtn = static function (string $action, string $id, bool $hidden): string {
   </tbody>
 </table>
 
-<h3 style="margin-top:20px;">レス（最近50件）</h3>
+<?= $pager('tp', $tp, $tPages, $tp, $pp) ?>
+
+<h3 style="margin-top:20px;">レス</h3>
+<?= $pager('pp', $pp, $pPages, $tp, $pp) ?>
 <table>
   <thead><tr><th>本文（抜粋）</th><th>状態</th><th>表示</th><th>操作</th></tr></thead>
   <tbody>
@@ -49,9 +67,13 @@ $hideBtn = static function (string $action, string $id, bool $hidden): string {
       <td><?= $p['hidden'] ? '<span class="badge suspended">非表示</span>' : '<span class="badge active">表示</span>' ?></td>
       <td style="display:flex; gap:6px;">
         <?= $hideBtn('posts', (string) $p['id'], (bool) $p['hidden']) ?>
-        <form method="post" action="/admin/posts/<?= View::e($p['id']) ?>/ban" style="margin:0;" onsubmit="return confirm('この投稿者のIPをBANしますか？');"><?= Csrf::field() ?><button class="btn danger">IP BAN</button></form>
+        <form method="post" action="/admin/posts/<?= View::e($p['id']) ?>/ban" style="margin:0; display:flex; gap:4px;" onsubmit="return confirm('この投稿者のIPをBANしますか？');"><?= Csrf::field() ?>
+          <select name="days" style="font-size:11px;"><option value="0">無期限</option><option value="1">1日</option><option value="7">7日</option><option value="30">30日</option></select>
+          <button class="btn danger">IP BAN</button>
+        </form>
       </td>
     </tr>
   <?php endforeach; ?>
   </tbody>
 </table>
+<?= $pager('pp', $pp, $pPages, $tp, $pp) ?>

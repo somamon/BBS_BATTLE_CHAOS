@@ -21,7 +21,7 @@ final class ContentController
 {
     use RendersAdmin;
 
-    private const LIMIT = 50;
+    private const PER = 20;
 
     public function __construct(
         private readonly ThreadRepository $threads,
@@ -32,11 +32,18 @@ final class ContentController
         private readonly Auth $auth,
     ) {}
 
-    /** GET /admin/content */
+    /** GET /admin/content?tp=&pp= （スレ・レスを個別にページング） */
     public function index(Request $request): Response
     {
+        $tTotal = $this->threads->countForAdmin();
+        $pTotal = $this->posts->countForAdmin();
+        $tPages = max(1, (int) ceil($tTotal / self::PER));
+        $pPages = max(1, (int) ceil($pTotal / self::PER));
+        $tp = max(1, min((int) $request->query('tp', 1), $tPages));
+        $pp = max(1, min((int) $request->query('pp', 1), $pPages));
+
         $threads = [];
-        foreach ($this->threads->recentForAdmin(self::LIMIT) as $t) {
+        foreach ($this->threads->recentForAdmin(self::PER, ($tp - 1) * self::PER) as $t) {
             $threads[] = [
                 'id'     => $t->id,
                 'title'  => $t->title,
@@ -46,7 +53,7 @@ final class ContentController
             ];
         }
         $posts = [];
-        foreach ($this->posts->recentForAdmin(self::LIMIT) as $p) {
+        foreach ($this->posts->recentForAdmin(self::PER, ($pp - 1) * self::PER) as $p) {
             $posts[] = [
                 'id'       => $p->id,
                 'threadId' => $p->threadId,
@@ -59,6 +66,10 @@ final class ContentController
         return $this->adminPage('content', 'コンテンツ', 'Admin/content', [
             'threads' => $threads,
             'posts'   => $posts,
+            'tp'      => $tp,
+            'tPages'  => $tPages,
+            'pp'      => $pp,
+            'pPages'  => $pPages,
             'flash'   => Flash::pull(),
         ]);
     }
@@ -95,11 +106,18 @@ final class ContentController
         return Response::redirect('/admin/content');
     }
 
-    /** POST /admin/posts/{id}/ban レスの投稿者IPをBAN */
+    /** POST /admin/posts/{id}/ban レスの投稿者IPをBAN（days=0で無期限） */
     public function banPost(Request $request): Response
     {
-        $ok = $this->banIp->banByPost((string) $this->auth->userId(), (string) $request->param('id'), $request->ip());
+        $expiresAt = self::expiryFromDays((int) $request->input('days', 0));
+        $ok = $this->banIp->banByPost((string) $this->auth->userId(), (string) $request->param('id'), $request->ip(), $expiresAt);
         Flash::set($ok ? '投稿者IPをBANしました。' : '対象が見つかりませんでした。');
         return Response::redirect('/admin/content');
+    }
+
+    /** days>0 なら現在＋日数の期限、0以下なら無期限(null)。 */
+    private static function expiryFromDays(int $days): ?\DateTimeImmutable
+    {
+        return $days > 0 ? new \DateTimeImmutable('+' . $days . ' days') : null;
     }
 }

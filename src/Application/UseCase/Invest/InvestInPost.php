@@ -46,8 +46,16 @@ final class InvestInPost
         }
 
         return $this->tx->run(function () use ($investorId, $postId, $amount, $now): InvestResult {
-            $investor = $this->users->findById($investorId);
-            if ($investor === null || !$investor->canAfford($amount)) {
+            // 残高の read-modify-write 競合（別投稿への同時投資での二重支払い）を防ぐため行ロック。
+            $investor = $this->users->findByIdForUpdate($investorId);
+            if ($investor === null) {
+                throw InvestException::insufficientFunds();
+            }
+            // 凍結/BAN中のアカウントは投資不可（アクティブセッションでの操作も塞ぐ）。
+            if (!$investor->isActive()) {
+                throw InvestException::accountInactive();
+            }
+            if (!$investor->canAfford($amount)) {
                 throw InvestException::insufficientFunds();
             }
 

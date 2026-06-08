@@ -59,6 +59,12 @@ final class PdoBanRepository implements BanRepository
         $stmt->execute([$id]);
     }
 
+    public function removeByKindValue(string $kind, string $value): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM bans WHERE kind = ? AND value = ?');
+        $stmt->execute([$kind, $value]);
+    }
+
     private function hydrate(array $row): Ban
     {
         return new Ban(

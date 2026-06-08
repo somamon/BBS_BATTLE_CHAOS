@@ -17,6 +17,11 @@ final class InMemoryUserRepository implements UserRepository
         return $this->users[$id] ?? null;
     }
 
+    public function findByIdForUpdate(string $id): ?User
+    {
+        return $this->findById($id); // インメモリではロック不要
+    }
+
     public function findByEmail(string $email): ?User
     {
         foreach ($this->users as $user) {

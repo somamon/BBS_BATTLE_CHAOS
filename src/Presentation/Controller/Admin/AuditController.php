@@ -19,11 +19,16 @@ final class AuditController
         private readonly AuditLogRepository $logs,
     ) {}
 
-    /** GET /admin/audit */
+    /** GET /admin/audit?admin=&action= */
     public function index(Request $request): Response
     {
+        $admin  = trim((string) $request->query('admin', ''));
+        $action = trim((string) $request->query('action', ''));
+
         return $this->adminPage('audit', '監査ログ', 'Admin/audit', [
-            'logs' => $this->logs->recent(200),
+            'logs'         => $this->logs->search($admin !== '' ? $admin : null, $action !== '' ? $action : null, 200),
+            'filterAdmin'  => $admin,
+            'filterAction' => $action,
         ]);
     }
 }

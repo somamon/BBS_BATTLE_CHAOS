@@ -49,6 +49,7 @@ final class EnvironmentTest extends TestCase
             'DB_PASSWORD' => 'a-strong-secret-123',
             'APP_URL'     => 'https://bbschaos.example',
             'MAIL_DRIVER' => 'smtp',
+            'APP_SECRET'  => 'a-strong-app-secret-key',
         ]);
         Environment::assertProductionReady();
         $this->expectNotToPerformAssertions();

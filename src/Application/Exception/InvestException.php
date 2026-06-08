@@ -29,6 +29,11 @@ final class InvestException extends \RuntimeException
         return new self('err.insufficient_funds', '所持金が足りません');
     }
 
+    public static function accountInactive(): self
+    {
+        return new self('err.account_suspended', 'このアカウントは利用停止中です');
+    }
+
     public static function invalidAmount(): self
     {
         return new self('err.invest_invalid_amount', '投資額が不正です');

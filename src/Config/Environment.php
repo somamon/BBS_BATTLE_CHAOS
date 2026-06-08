@@ -42,6 +42,9 @@ final class Environment
         if ((getenv('MAIL_DRIVER') ?: 'log') !== 'smtp') {
             $errors[] = 'MAIL_DRIVER=smtp を設定してください（メールが実送信されません）';
         }
+        if (strlen((string) (getenv('APP_SECRET') ?: '')) < 16) {
+            $errors[] = 'APP_SECRET を16文字以上で設定してください（IPハッシュの匿名化に使用）';
+        }
 
         if ($errors !== []) {
             throw new \RuntimeException('本番設定が不十分です: ' . implode(' / ', $errors));

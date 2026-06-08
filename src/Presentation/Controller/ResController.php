@@ -34,7 +34,7 @@ final class ResController
         $threadId   = (string) $request->param('id');
         $content    = (string) $request->input('content', '');
         $ip         = $request->ip();
-        $authorHash = hash('sha256', $ip);
+        $authorHash = \App\Infrastructure\Security\IpHash::of($ip);
         $authorId   = $this->auth->userId();
 
         // IP BAN チェック（匿名投稿の遮断）。
