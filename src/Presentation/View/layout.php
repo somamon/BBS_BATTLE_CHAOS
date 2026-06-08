@@ -28,6 +28,14 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
     }
     return false;
 };
+
+// 広告(忍者admax)を出すページの判定。
+// ログイン/登録/法務/管理/通報/退会/問い合わせには出さない。
+$showAd = (
+    $path === '/'                                  // トップ
+    || $isTab('/threads', '/ranking', '/result')  // 一覧・墓場・ランキング・結果
+    || str_starts_with($path, '/thread/')          // スレ詳細(レス書き込み) ＆ スレ作成フォーム
+);
 ?>
 <!DOCTYPE html>
 <html lang="<?= View::e($locale) ?>">
@@ -94,6 +102,11 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
   .resname { color: #008800; font-weight: bold; }
   .resbody { margin: 4px 0 4px 1.5em; white-space: pre-wrap; }
 
+  /* 広告枠（中身は同一オリジンの /ads/*.html を iframe 埋め込み） */
+  .ad-slot { text-align: center; margin: 14px 0; min-height: 90px; }
+  .ad-slot iframe { border: 0; display: inline-block; max-width: 100%; }
+  .ad-slot .ad-label { display: block; font-size: 10px; color: #999; margin-bottom: 2px; }
+
   /* スマホ専用パーツ（PCでは隠す） */
   .tabbar { display: none; }
   .fab { display: none; }
@@ -141,6 +154,9 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
 
     /* 列の多い表は横スクロール */
     .table-wrap table { white-space: nowrap; }
+
+    /* スマホ広告は 300x50 なので予約高さを詰める（余白防止） */
+    .ad-slot { min-height: 50px; }
 
     h2 { font-size: 19px; }
     h3 { font-size: 15px; }
@@ -213,6 +229,29 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
     <div class="card" style="background:#fffbe0; border-color:#cc0000;">📢 <?= View::e($announcement) ?></div>
 <?php endif; ?>
 <?= $content ?>
+<?php if ($showAd): ?>
+    <?php /* 広告（忍者admax）。端末ごとに片方だけ iframe を挿入＝見えない広告の二重表示を避ける。 */ ?>
+    <div class="ad-slot">
+      <span class="ad-label">広告</span>
+      <div id="ad-slot-main"></div>
+    </div>
+    <script nonce="<?= View::e(\App\Presentation\Http\Csp::nonce()) ?>">
+    (function () {
+      var slot = document.getElementById('ad-slot-main');
+      if (!slot) { return; }
+      // 忍者admaxで登録した枠サイズに合わせる。違うサイズで登録したらここを直す。
+      var sp = window.matchMedia('(max-width: 600px)').matches;
+      var f  = document.createElement('iframe');
+      f.src    = sp ? '/ads/sp.html' : '/ads/pc.html';
+      f.width  = sp ? 320 : 728;   // スマホ:320x50 / PC:728x90
+      f.height = sp ? 50 : 90;
+      f.scrolling = 'no';
+      f.loading   = 'lazy';
+      f.title     = '広告';
+      slot.appendChild(f);
+    })();
+    </script>
+<?php endif; ?>
   </div>
   <footer style="border-top:1px solid #ccc; margin-top:16px; padding:10px; text-align:center; font-size:11px; color:#666;">
     <a href="/terms"><?= View::e(t('footer.terms')) ?></a>
