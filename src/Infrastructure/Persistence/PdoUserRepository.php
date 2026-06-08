@@ -127,6 +127,11 @@ final class PdoUserRepository implements UserRepository
         return (int) $this->pdo->query('SELECT COUNT(*) FROM users WHERE is_bot = 0')->fetchColumn();
     }
 
+    public function totalMoney(): int
+    {
+        return (int) $this->pdo->query('SELECT COALESCE(SUM(money),0) FROM users')->fetchColumn();
+    }
+
     public function recentHumans(int $limit = 50, int $offset = 0): array
     {
         $stmt = $this->pdo->prepare(

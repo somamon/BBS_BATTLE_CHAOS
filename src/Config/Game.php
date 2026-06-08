@@ -70,6 +70,13 @@ final class Game
     public const BOT_MAX_INVEST   = 150;  // ボット1回の最大投資額
     public const BOT_REFILL_TO    = 2000; // 資金が尽きたボットを補充する残高（相場の停止防止）
 
+    // 通貨総量の天井。市場全体のお金（全所持金＋全リザーブ）がこれ以上ならNPC補充を止める＝印刷上限。
+    public const MONEY_CEILING    = 100000;
+
+    // シーズン（時間制終局）。ラウンド開始(rounds.started_at)からこの秒数が経つと time_up で終局し、
+    // ランキングを確定して次シーズンへ。0 以下なら時間制オフ（time_up しない／カウントダウン非表示）。
+    public const SEASON_DURATION_SEC = 604800; // 既定 1 週間
+
     // ===== アクセサ（GAME_* 環境変数で上書き可。未設定なら const を返す） =====
 
     public static function initialMoney(): int    { return self::envInt('GAME_INITIAL_MONEY', self::INITIAL_MONEY); }
@@ -92,6 +99,8 @@ final class Game
     public static function botMinInvest(): int     { return self::envInt('GAME_BOT_MIN_INVEST', self::BOT_MIN_INVEST); }
     public static function botMaxInvest(): int     { return self::envInt('GAME_BOT_MAX_INVEST', self::BOT_MAX_INVEST); }
     public static function botRefillTo(): int      { return self::envInt('GAME_BOT_REFILL_TO', self::BOT_REFILL_TO); }
+    public static function moneyCeiling(): int     { return self::envInt('GAME_MONEY_CEILING', self::MONEY_CEILING); }
+    public static function seasonDurationSec(): int { return self::envInt('GAME_SEASON_DURATION_SEC', self::SEASON_DURATION_SEC); }
 
     /** フェーズ名 → 減衰倍率（未知は平常 1.0）。GAME_PHASE_{BOOM|CALM|STORM|CRASH} で上書き可。 */
     public static function phaseMultiplier(string $phase): float

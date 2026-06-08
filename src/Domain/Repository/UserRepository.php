@@ -33,6 +33,9 @@ interface UserRepository
     /** 人間ユーザー（is_bot=0）の人数。NPC稼働の可否判定に使う。 */
     public function countHumans(): int;
 
+    /** 全ユーザーの所持金合計（通貨総量の天井判定に使う）。 */
+    public function totalMoney(): int;
+
     /** @return User[] 人間ユーザーを新しい順に返す（管理画面の一覧用）。 */
     public function recentHumans(int $limit = 50, int $offset = 0): array;
 

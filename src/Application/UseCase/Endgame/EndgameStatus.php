@@ -6,13 +6,19 @@ namespace App\Application\UseCase\Endgame;
 
 use App\Application\Service\DecayRate;
 use App\Config\Game;
+use App\Domain\Repository\RoundRepository;
 use App\Domain\Repository\ThreadRepository;
 use App\Domain\Repository\UserRepository;
 use DateTimeImmutable;
 
 /**
- * 終局判定。生存スレッドが尽きた（all_dead）、または市場の総所持金が
- * 最低投資額を下回った（no_money）場合に世界の終わりとみなす。
+ * 終局判定。シーズン期間が満了した（time_up）、または生存スレッドが尽きた（all_dead）
+ * 場合に世界の終わりとみなす。
+ *
+ * time_up は時間制シーズンの締め：ラウンド開始(started_at)から Game::seasonDurationSec() 秒が
+ * 経過したら終局し、ランキングを確定して次シーズンへ。期間設定が 0 以下なら時間制はオフ。
+ * all_dead は退化状態（投資対象が無くなり場が枯れた）の安全弁として残す。
+ * 無人（人間0人）のときは終局判定しない（無人ワールドでのリセット連発を防ぐ）。
  */
 final class EndgameStatus
 {
@@ -20,6 +26,7 @@ final class EndgameStatus
         private readonly DecayRate $decay,
         private readonly ThreadRepository $threads,
         private readonly UserRepository $users,
+        private readonly RoundRepository $rounds,
     ) {}
 
     /** @return array{over:bool,reason:?string} */
@@ -28,7 +35,24 @@ final class EndgameStatus
         $now ??= new DateTimeImmutable();
         $multiplier = $this->decay->multiplier($now);
 
-        // 生存スレッド（現在HP > 0 のもの）が1件もないか。
+        // 無人（人間0人）なら終局判定しない（無人ワールドでのリセット連発を防ぐ）。
+        if ($this->users->countHumans() === 0) {
+            return ['over' => false, 'reason' => null];
+        }
+
+        // シーズン期間が満了したか（時間制）。started_at + 期間 <= now で終局。
+        $duration = Game::seasonDurationSec();
+        if ($duration > 0) {
+            $current = $this->rounds->current();
+            if ($current !== null) {
+                $endsAt = $current->startedAt->modify("+{$duration} seconds");
+                if ($now >= $endsAt) {
+                    return ['over' => true, 'reason' => 'time_up'];
+                }
+            }
+        }
+
+        // 生存スレッド（現在HP > 0 のもの）が1件もないか（退化状態の安全弁）。
         $aliveCount = 0;
         foreach ($this->threads->findAlive(50) as $thread) {
             if ($thread->currentHp($now, $multiplier) > 0) {
@@ -37,15 +61,6 @@ final class EndgameStatus
         }
         if ($aliveCount === 0) {
             return ['over' => true, 'reason' => 'all_dead'];
-        }
-
-        // 市場全体の所持金合計が最低投資額を下回ったか。
-        $totalMoney = 0;
-        foreach ($this->users->all() as $user) {
-            $totalMoney += $user->money();
-        }
-        if ($totalMoney < Game::minInvest()) {
-            return ['over' => true, 'reason' => 'no_money'];
         }
 
         return ['over' => false, 'reason' => null];

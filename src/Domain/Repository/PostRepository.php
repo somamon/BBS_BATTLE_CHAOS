@@ -22,6 +22,9 @@ interface PostRepository
     /** alive レス総数（管理ダッシュボード用）。 */
     public function countAlive(): int;
 
+    /** 全投稿のリザーブ合計（通貨総量の天井判定に使う）。 */
+    public function totalReserve(): int;
+
     /** @return Post[] 新しい順の最近の投稿（非表示も含む。管理モデレーション用。ページング対応）。 */
     public function recentForAdmin(int $limit = 50, int $offset = 0): array;
 
