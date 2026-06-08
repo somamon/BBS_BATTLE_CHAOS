@@ -92,7 +92,7 @@ return [
     'home.layers.anon.body' => '匿名でスレ立て・レス。お金も登録も不要。スレもレスも時間で<strong>朽ちて消える</strong>。',
     'home.layers.investor.head' => '投資家層（要登録）',
     'home.layers.investor.body' => '初期資金 <strong>{money}</strong> でレスの株を<strong>売買</strong>。後から買う人が増えるほど株価が上がり、早く仕込んだ株を<strong>高く売って現金化</strong>できる。',
-    'home.loop.title' => '遊び方（中核ループ）',
+    'home.loop.title' => '遊び方',
     'home.loop.s1' => '匿名でレスを書く（無料・無報酬）',
     'home.loop.s2' => '面白いレスに<strong>投資する＝株を買う</strong>（要登録）',
     'home.loop.s3' => '後続の投資が増えるほど<strong>株価が上がる</strong>',

@@ -45,6 +45,15 @@ services:
       MAIL_ENCRYPTION: ${MAIL_ENCRYPTION}
       MAIL_FROM: ${MAIL_FROM}
       MAIL_FROM_NAME: ${MAIL_FROM_NAME}
+      # 法務ページの運営者・連絡先（未設定だと連絡先は /contact 窓口表示へフォールバック）
+      LEGAL_OPERATOR: ${LEGAL_OPERATOR}
+      LEGAL_CONTACT: ${LEGAL_CONTACT}
+      # Google ログイン（未設定だとボタン非表示で無効）
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL}
+      # シーズン長（秒）。未設定だとコード既定 604800＝1週間
+      GAME_SEASON_DURATION_SEC: ${GAME_SEASON_DURATION_SEC}
     volumes:
       - ./:/var/www/html
     depends_on:
