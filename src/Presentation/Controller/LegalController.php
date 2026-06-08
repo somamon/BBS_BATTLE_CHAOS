@@ -44,9 +44,10 @@ final class LegalController
      */
     private function legalParams(): array
     {
-        // 連絡先は実在アドレスを既定にする（MAIL_FROM の no-reply 等にフォールバックしない）。
+        // 連絡先は env (LEGAL_CONTACT) を渡したときだけ掲示する。未設定なら個人アドレス等へ
+        // フォールバックせず null＝「本サービス内に掲示する窓口（/contact）」表示に委ねる。
         $operator = (string) (getenv('LEGAL_OPERATOR') ?: 'BBS BATTLE CHAOS 運営チーム');
-        $contact  = (string) (getenv('LEGAL_CONTACT') ?: '8556iamsmartphone0124@gmail.com');
+        $contact  = (string) getenv('LEGAL_CONTACT');
 
         return [
             'operator' => $operator,

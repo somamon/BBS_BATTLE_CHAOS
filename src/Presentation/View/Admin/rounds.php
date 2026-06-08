@@ -24,7 +24,7 @@ use App\Presentation\View\View;
 <div class="card" style="border:1px solid #e0a3a3; margin-top:14px;">
   <h3 style="margin-top:0; color:#b42318;">強制リセット</h3>
   <p class="muted">現在の順位を確定し、スレ・レス・株・所持金を初期化して新ラウンドを開始します。<strong>取り消せません。</strong></p>
-  <form method="post" action="/admin/rounds/reset" onsubmit="return confirm('本当にリセットしますか？取り消せません。');">
+  <form method="post" action="/admin/rounds/reset" data-confirm="本当にリセットしますか？取り消せません。">
     <?= Csrf::field() ?>
     <label for="password">確認のためパスワードを入力</label>
     <input type="password" id="password" name="password" required style="max-width:280px;">

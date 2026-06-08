@@ -67,7 +67,7 @@ $hideBtn = static function (string $action, string $id, bool $hidden): string {
       <td><?= $p['hidden'] ? '<span class="badge suspended">非表示</span>' : '<span class="badge active">表示</span>' ?></td>
       <td style="display:flex; gap:6px;">
         <?= $hideBtn('posts', (string) $p['id'], (bool) $p['hidden']) ?>
-        <form method="post" action="/admin/posts/<?= View::e($p['id']) ?>/ban" style="margin:0; display:flex; gap:4px;" onsubmit="return confirm('この投稿者のIPをBANしますか？');"><?= Csrf::field() ?>
+        <form method="post" action="/admin/posts/<?= View::e($p['id']) ?>/ban" style="margin:0; display:flex; gap:4px;" data-confirm="この投稿者のIPをBANしますか？"><?= Csrf::field() ?>
           <select name="days" style="font-size:11px;"><option value="0">無期限</option><option value="1">1日</option><option value="7">7日</option><option value="30">30日</option></select>
           <button class="btn danger">IP BAN</button>
         </form>

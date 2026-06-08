@@ -46,7 +46,7 @@ use App\Presentation\View\View;
           </form>
         <?php else: ?>
           <?php if ($u['status'] === 'active'): ?>
-            <form method="post" action="/admin/users/<?= View::e($u['id']) ?>/suspend" style="margin:0;" onsubmit="return confirm('このユーザーを凍結しますか？');">
+            <form method="post" action="/admin/users/<?= View::e($u['id']) ?>/suspend" style="margin:0;" data-confirm="このユーザーを凍結しますか？">
               <?= Csrf::field() ?><button type="submit" class="btn">凍結</button>
             </form>
           <?php else: ?>
@@ -54,7 +54,7 @@ use App\Presentation\View\View;
               <?= Csrf::field() ?><button type="submit" class="btn">凍結解除</button>
             </form>
           <?php endif; ?>
-          <form method="post" action="/admin/users/<?= View::e($u['id']) ?>/ban" style="margin:0; display:flex; gap:4px;" onsubmit="return confirm('このユーザーをBANしますか？（ログイン・投資を禁止）');">
+          <form method="post" action="/admin/users/<?= View::e($u['id']) ?>/ban" style="margin:0; display:flex; gap:4px;" data-confirm="このユーザーをBANしますか？（ログイン・投資を禁止）">
             <?= Csrf::field() ?>
             <select name="days" style="font-size:11px;"><option value="0">無期限</option><option value="1">1日</option><option value="7">7日</option><option value="30">30日</option></select>
             <button type="submit" class="btn danger">BAN</button>

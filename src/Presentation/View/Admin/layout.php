@@ -77,5 +77,14 @@ $nav = [
   <div class="wrap">
 <?= $content ?>
   </div>
+  <script nonce="<?= View::e(\App\Presentation\Http\Csp::nonce()) ?>">
+    // 取り消せない操作の確認。CSP(script-src 'self' 'nonce')でインラインonsubmitは不可のため、
+    // data-confirm を持つフォームにここで submit ハンドラを付ける。
+    document.querySelectorAll('form[data-confirm]').forEach(function (f) {
+      f.addEventListener('submit', function (e) {
+        if (!window.confirm(f.getAttribute('data-confirm'))) { e.preventDefault(); }
+      });
+    });
+  </script>
 </body>
 </html>
