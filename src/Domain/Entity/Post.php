@@ -32,6 +32,7 @@ final class Post
         private DateTimeImmutable $updatedAt,
         private ?DateTimeImmutable $hiddenAt = null,
         private ?string $hiddenBy = null,
+        private int $reserve = 0,
     ) {}
 
     public static function create(
@@ -109,10 +110,37 @@ final class Post
         return min(1.0, $this->currentHp($now, $phaseMultiplier) / $this->maxHp);
     }
 
-    /** 保有株の評価額 = 株数 × スポット株価 × 鮮度（マークトゥマーケット）。 */
+    /**
+     * 保有株の評価額＝いま売ったら得られる額（実現可能価値）。
+     * リザーブの持ち分按分 × 鮮度。売却ロジック {@see sell()} と一致させる。
+     */
     public function valuation(int $shares, DateTimeImmutable $now, float $phaseMultiplier): int
     {
-        return (int) floor($shares * $this->spotPrice() * $this->freshness($now, $phaseMultiplier));
+        if ($this->totalShares <= 0 || $shares <= 0) {
+            return 0;
+        }
+        $base = $this->reserve * min($shares, $this->totalShares) / $this->totalShares;
+        return (int) floor($base * $this->freshness($now, $phaseMultiplier));
+    }
+
+    /**
+     * 株を売却し、払い戻し額を返す（リザーブから現金化）。settleDecay 済み前提。
+     * 払い戻し＝リザーブの持ち分按分 × 鮮度（朽ちるほど・dead で 0）。
+     * リザーブは払い戻した分だけ減らし、株数も減らす（リザーブは非負を保つ）。
+     */
+    public function sell(int $shares, DateTimeImmutable $now, float $phaseMultiplier): int
+    {
+        if ($shares <= 0 || $shares > $this->totalShares || $this->totalShares <= 0) {
+            return 0;
+        }
+        $base   = $this->reserve * $shares / $this->totalShares;
+        $payout = (int) floor($base * $this->freshness($now, $phaseMultiplier));
+
+        $this->reserve     -= $payout;
+        $this->totalShares -= $shares;
+        $this->updatedAt    = $now;
+
+        return $payout;
     }
 
     /**
@@ -131,6 +159,7 @@ final class Post
         $this->heal($toHp, $now);                              // 超過分は捨てる＝sink
         $this->totalInvested += $amount;
         $this->totalShares   += $shares;
+        $this->reserve       += $toShares;                     // 株購入分はリザーブへ（売却の原資）
 
         $newLevel = Game::postLevelFor($this->totalInvested);
         if ($newLevel > $this->level) {
@@ -145,6 +174,7 @@ final class Post
     // --- getters（永続化・表示用） ---
     public function hp(): int { return $this->hp; }
     public function maxHp(): int { return $this->maxHp; }
+    public function reserve(): int { return $this->reserve; }
     public function totalInvested(): int { return $this->totalInvested; }
     public function totalShares(): int { return $this->totalShares; }
     public function level(): int { return $this->level; }

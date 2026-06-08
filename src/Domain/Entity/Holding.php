@@ -29,6 +29,17 @@ final class Holding
         $this->cost   += $cost;
     }
 
+    /** 株を売却して減らす。取得原価も株数比で減らす（含み損益を保つ）。 */
+    public function removeShares(int $shares): void
+    {
+        if ($shares <= 0 || $shares > $this->shares) {
+            throw new \DomainException('保有株が足りません');
+        }
+        $costReduction = $this->shares > 0 ? (int) floor($this->cost * $shares / $this->shares) : 0;
+        $this->shares -= $shares;
+        $this->cost   -= $costReduction;
+    }
+
     public function shares(): int { return $this->shares; }
     public function cost(): int { return $this->cost; }
 }

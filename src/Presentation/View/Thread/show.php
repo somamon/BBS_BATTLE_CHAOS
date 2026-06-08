@@ -79,6 +79,14 @@ $writable = !empty($thread['writable']);
           <button type="submit"><?= t('show.invest_btn') ?></button>
         </form>
       <?php endif; ?>
+      <?php if ($isLogin && (int) $p['myShares'] > 0): ?>
+        <form method="post" action="/post/<?= View::e($p['id']) ?>/sell" style="margin-top:6px;">
+          <?= Csrf::field() ?>
+          <input type="hidden" name="thread_id" value="<?= View::e($thread['id']) ?>">
+          <input type="number" name="shares" min="1" max="<?= View::e((int) $p['myShares']) ?>" value="<?= View::e((int) $p['myShares']) ?>" style="width:90px;">
+          <button type="submit"><?= t('show.sell_btn') ?></button>
+        </form>
+      <?php endif; ?>
     </div>
   <?php endforeach; ?>
 <?php endif; ?>

@@ -110,11 +110,11 @@ final class PdoPostRepository implements PostRepository
         $stmt = $this->pdo->prepare(
             'INSERT INTO posts
                 (id, thread_id, author_hash, author_id, content, hp, max_hp, decay_per_min,
-                 total_invested, total_shares, level, last_decay_at, status, created_at, updated_at,
+                 total_invested, total_shares, reserve, level, last_decay_at, status, created_at, updated_at,
                  hidden_at, hidden_by)
              VALUES
                 (:id, :thread_id, :author_hash, :author_id, :content, :hp, :max_hp, :decay_per_min,
-                 :total_invested, :total_shares, :level, :last_decay_at, :status, :created_at, :updated_at,
+                 :total_invested, :total_shares, :reserve, :level, :last_decay_at, :status, :created_at, :updated_at,
                  :hidden_at, :hidden_by)'
         );
         $stmt->execute([
@@ -128,6 +128,7 @@ final class PdoPostRepository implements PostRepository
             ':decay_per_min'  => $post->decayPerMin,
             ':total_invested' => $post->totalInvested(),
             ':total_shares'   => $post->totalShares(),
+            ':reserve'        => $post->reserve(),
             ':level'          => $post->level(),
             ':last_decay_at'  => $post->lastDecayAt()->format('Y-m-d H:i:s'),
             ':status'         => $post->status(),
@@ -146,6 +147,7 @@ final class PdoPostRepository implements PostRepository
                 max_hp = :max_hp,
                 total_invested = :total_invested,
                 total_shares = :total_shares,
+                reserve = :reserve,
                 level = :level,
                 last_decay_at = :last_decay_at,
                 status = :status,
@@ -159,6 +161,7 @@ final class PdoPostRepository implements PostRepository
             ':max_hp'         => $post->maxHp(),
             ':total_invested' => $post->totalInvested(),
             ':total_shares'   => $post->totalShares(),
+            ':reserve'        => $post->reserve(),
             ':level'          => $post->level(),
             ':last_decay_at'  => $post->lastDecayAt()->format('Y-m-d H:i:s'),
             ':status'         => $post->status(),
@@ -183,6 +186,7 @@ final class PdoPostRepository implements PostRepository
             totalInvested: (int) $row['total_invested'],
             totalShares:   (int) $row['total_shares'],
             level:         (int) $row['level'],
+            reserve:       (int) ($row['reserve'] ?? 0),
             lastDecayAt:   new DateTimeImmutable($row['last_decay_at']),
             status:        $row['status'],
             createdAt:     new DateTimeImmutable($row['created_at']),
