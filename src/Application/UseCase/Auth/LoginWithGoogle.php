@@ -73,6 +73,11 @@ final class LoginWithGoogle
                 if ($existing->isBot) {
                     throw AuthException::googleFailed(); // NPC は乗っ取らせない
                 }
+                if (!$existing->isActive()) {
+                    // 凍結/BAN中のアカウントは、Google連携経由でもログインさせない
+                    // （パスワードログインと同じ扱い。未連携の凍結アカウントの抜け道を塞ぐ）。
+                    throw AuthException::accountSuspended();
+                }
                 $existing->linkGoogle($googleSub, $now);
                 $this->users->save($existing);
                 return $existing;

@@ -105,6 +105,19 @@ final class ThreadController
             return Response::html($html, 403);
         }
 
+        // 凍結(suspend/ban)中のログインユーザーはスレ作成不可（IP-BANだけでは防げない）。
+        $uid = $this->auth->userId();
+        if ($uid !== null) {
+            $actor = $this->users->findById($uid);
+            if ($actor !== null && !$actor->isActive()) {
+                $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
+                    'error' => t('err.banned'),
+                    'title' => $title,
+                ]);
+                return Response::html($html, 403);
+            }
+        }
+
         // 連投規制（クールダウン）と時間あたり上限。NPCはこのコントローラを通らないので対象外。
         if (
             $this->rateLimiter->tooManyAttempts('thread_cd:' . $ip, 1)
