@@ -48,7 +48,8 @@ final class BanController
     public function add(Request $request): Response
     {
         $ip     = (string) $request->input('ip', '');
-        $reason = trim((string) $request->input('reason', ''));
+        // 列長(200)に収まるよう切り詰め（桁あふれ500の防止）。
+        $reason = mb_substr(trim((string) $request->input('reason', '')), 0, 200);
         $days   = (int) $request->input('days', 0);
         $expiresAt = $days > 0 ? new \DateTimeImmutable('+' . $days . ' days') : null;
 

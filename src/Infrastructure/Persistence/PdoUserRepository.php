@@ -22,6 +22,15 @@ final class PdoUserRepository implements UserRepository
         return $row ? $this->hydrate($row) : null;
     }
 
+    public function findByIdForUpdate(string $id): ?User
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = ? FOR UPDATE');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+
+        return $row ? $this->hydrate($row) : null;
+    }
+
     public function findByEmail(string $email): ?User
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = ?');

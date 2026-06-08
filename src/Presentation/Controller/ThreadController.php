@@ -97,7 +97,7 @@ final class ThreadController
         $ip    = $request->ip();
 
         // IP BAN チェック。
-        if ($this->bans->isBanned('ip', hash('sha256', $ip))) {
+        if ($this->bans->isBanned('ip', \App\Infrastructure\Security\IpHash::of($ip))) {
             $html = $this->page($this->market, $this->auth, $this->users, t('thread_create.title'), 'Thread/create', [
                 'error' => t('err.banned'),
                 'title' => $title,

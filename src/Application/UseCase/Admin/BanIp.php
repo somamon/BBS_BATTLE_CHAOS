@@ -41,7 +41,7 @@ final class BanIp
         if ($ipAddress === '') {
             return false;
         }
-        $hash = hash('sha256', $ipAddress);
+        $hash = \App\Infrastructure\Security\IpHash::of($ipAddress);
         $this->bans->insert(Ban::create('ip', $hash, $reason, $adminId, new DateTimeImmutable(), $expiresAt));
         $this->audit->record($adminId, 'ban.ip', 'ip', $hash, $reason, $opIp);
         return true;

@@ -46,7 +46,8 @@ final class InvestInPost
         }
 
         return $this->tx->run(function () use ($investorId, $postId, $amount, $now): InvestResult {
-            $investor = $this->users->findById($investorId);
+            // 残高の read-modify-write 競合（別投稿への同時投資での二重支払い）を防ぐため行ロック。
+            $investor = $this->users->findByIdForUpdate($investorId);
             if ($investor === null) {
                 throw InvestException::insufficientFunds();
             }

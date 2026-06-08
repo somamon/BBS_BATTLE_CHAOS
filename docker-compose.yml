@@ -16,6 +16,8 @@ services:
       APP_ENV: ${APP_ENV}
       APP_URL: ${APP_URL}
       APP_TIMEZONE: ${APP_TIMEZONE}
+      APP_SECRET: ${APP_SECRET}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES}
       DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -41,6 +43,8 @@ services:
     build: ./docker/php
     environment:
       APP_TIMEZONE: ${APP_TIMEZONE}
+      APP_SECRET: ${APP_SECRET}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES}
       DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
