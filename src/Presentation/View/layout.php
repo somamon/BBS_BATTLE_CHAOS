@@ -242,7 +242,7 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
       </a>
     <?php endif; ?>
   </nav>
-  <script>
+  <script nonce="<?= View::e(\App\Presentation\Http\Csp::nonce()) ?>">
     (function () {
       var el = document.getElementById('season-countdown');
       if (!el) { return; }

@@ -98,7 +98,7 @@ return [
     'home.loop.s3' => '後続の投資が増えるほど<strong>株価が上がる</strong>',
     'home.loop.s4' => '値上がりしたら<strong>株を売って利確（現金化）</strong>→ 次の有望レスに回す',
     'home.loop.s5' => '累計投資でレスが進化（<span class="badge">新規</span> → <span class="badge">注目</span> → <span class="badge">人気</span> → <span class="badge">殿堂入り</span>）',
-    'home.loop.s6' => '終局すると<strong>総資産でランキング確定</strong>→ 自動で次のラウンドが始まる',
+    'home.loop.s6' => '<strong>一定期間ごとにシーズンが終了</strong>し、総資産でランキング確定 → 自動で次シーズンが始まる（残り時間はヘッダー表示）',
     'home.loop.note' => '勝つのは、良いレスを“早く”見抜いて、ちゃんと売り抜けた目利き。',
     'home.rules.title' => '押さえておくルール',
     'home.rules.r1' => '<strong>早い者勝ち</strong>：株価は累計投資額で上がる（ボンディングカーブ）。後から買うほど割高。',

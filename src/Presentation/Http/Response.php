@@ -11,13 +11,13 @@ final class Response
      * - frame-ancestors / X-Frame-Options: クリックジャッキング防止
      * - nosniff: MIME スニッフィング防止
      * - Referrer-Policy: URL（確認トークン等）の Referer 漏洩防止
-     * - CSP: 既定は self のみ。インラインstyleを使うため style だけ unsafe-inline を許可
+     * - CSP: 既定は self のみ。インラインstyleは unsafe-inline、インラインscriptは
+     *   {@see Csp} のリクエスト単位 nonce のみ許可（{@see headers()} で動的に組み立てる）。
      */
     private const SECURITY_HEADERS = [
         'X-Frame-Options'        => 'DENY',
         'X-Content-Type-Options' => 'nosniff',
         'Referrer-Policy'        => 'no-referrer',
-        'Content-Security-Policy' => "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'self'; frame-ancestors 'none'",
     ];
 
     /** @var array<string,string> */
@@ -68,7 +68,10 @@ final class Response
      */
     public function headers(): array
     {
-        return array_merge(self::SECURITY_HEADERS, $this->headers);
+        $security = self::SECURITY_HEADERS;
+        // CSP は nonce を含むため毎回組み立てる（レイアウトの <script nonce> と同値）。
+        $security['Content-Security-Policy'] = Csp::policy();
+        return array_merge($security, $this->headers);
     }
 
     public function status(): int
