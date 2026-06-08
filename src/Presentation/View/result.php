@@ -11,8 +11,9 @@ use App\Presentation\View\View;
 $roundNo = $roundNo ?? null;
 
 $reasonKey = match ($reason) {
+    'time_up'  => 'result.reason.time_up',
     'all_dead' => 'result.reason.all_dead',
-    'no_money' => 'result.reason.no_money',
+    'no_money' => 'result.reason.no_money', // 旧ラウンドの履歴表示用（新規には発生しない）
     default    => 'result.reason.over',
 };
 ?>

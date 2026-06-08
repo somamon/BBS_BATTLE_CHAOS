@@ -189,6 +189,13 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
     <span class="phase-badge" style="color: <?= View::e($phaseColor) ?>">
       <?= View::e(t('header.market')) ?>: <?= View::e($phaseLabel) ?>
     </span>
+    <?php $seasonEndsAt = \App\Infrastructure\Runtime\SeasonState::endsAtEpoch(); ?>
+    <?php if ($seasonEndsAt !== null): ?>
+      <span class="phase-badge" style="color:#cc6600;">
+        <?= View::e(t('header.season_ends_in')) ?>:
+        <span id="season-countdown" data-ends="<?= View::e((string) $seasonEndsAt) ?>" data-soon="<?= View::e(t('header.season_renewing')) ?>">…</span>
+      </span>
+    <?php endif; ?>
     <?php if ($me !== null): ?>
       <span class="money"><?= View::e(t('header.cash')) ?> <?= View::e(number_format($me['money'])) ?></span>
       <span class="muted"><?= View::e($me['name']) ?></span>
@@ -235,5 +242,25 @@ $isTab = static function (string ...$prefixes) use ($path): bool {
       </a>
     <?php endif; ?>
   </nav>
+  <script>
+    (function () {
+      var el = document.getElementById('season-countdown');
+      if (!el) { return; }
+      var endsAt = parseInt(el.getAttribute('data-ends'), 10);
+      var soon = el.getAttribute('data-soon') || '';
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      function tick() {
+        var left = endsAt - Math.floor(Date.now() / 1000);
+        if (left <= 0) { el.textContent = soon; return; }
+        var d = Math.floor(left / 86400);
+        var h = Math.floor((left % 86400) / 3600);
+        var m = Math.floor((left % 3600) / 60);
+        var s = left % 60;
+        el.textContent = (d > 0 ? d + 'd ' : '') + pad(h) + ':' + pad(m) + ':' + pad(s);
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 </body>
 </html>

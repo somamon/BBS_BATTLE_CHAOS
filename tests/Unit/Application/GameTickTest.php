@@ -62,7 +62,7 @@ final class GameTickTest extends TestCase
             $invest, new PostReply($tx, $decay, $this->threads, $posts), new CreateThread($this->threads),
             new InMemoryRateLimiter(), new InMemoryEmailVerificationRepository(), new InMemoryPasswordResetRepository(),
         );
-        $endgame = new EndgameStatus($decay, $this->threads, $this->users);
+        $endgame = new EndgameStatus($decay, $this->threads, $this->users, $this->rounds);
         $finalize = new FinalizeAndResetRound($tx, $endgame, new RankingQuery($decay, $this->users, $holdings, $posts), $this->rounds, $this->resetter);
 
         $this->rounds->start($this->now);
@@ -77,9 +77,8 @@ final class GameTickTest extends TestCase
     public function testAutoResetsWhenOver(): void
     {
         $tick = $this->makeTick($this->now->modify('-1 hour')); // 占有可
-        // ボット無し（NPCは動かない）・人間1人が現金0・生存スレあり → no_money で終局。
+        // 人間1人あり・生存スレ無し → all_dead で終局し自動リセット。
         $this->users->insert(new User('h1', 'h@e.com', 'H', 'x', 0, $this->now));
-        $this->threads->insert(Thread::create(null, 'alive', $this->now));
 
         $tick->run($this->now);
 
@@ -102,8 +101,7 @@ final class GameTickTest extends TestCase
     public function testSkipsEndgameCheckWhenTickNotClaimed(): void
     {
         $tick = $this->makeTick($this->now); // 直近tick=now → 間隔未満で占有できない
-        $this->users->insert(new User('h1', 'h@e.com', 'H', 'x', 0, $this->now)); // 本来は終局
-        $this->threads->insert(Thread::create(null, 'alive', $this->now));
+        $this->users->insert(new User('h1', 'h@e.com', 'H', 'x', 0, $this->now)); // 生存スレ無し＝本来は all_dead で終局
 
         $tick->run($this->now);
 

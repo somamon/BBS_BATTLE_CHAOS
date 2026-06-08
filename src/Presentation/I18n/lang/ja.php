@@ -11,6 +11,8 @@ return [
     'nav.mypage'   => 'マイページ',
     'header.market' => '相場',
     'header.cash'  => '所持金',
+    'header.season_ends_in' => 'シーズン終了まで',
+    'header.season_renewing' => 'まもなく更新',
     'auth.logout'  => 'ログアウト',
     'auth.register' => '登録',
     'auth.login'   => 'ログイン',
@@ -246,6 +248,7 @@ return [
 
     // 結果
     'result.world_end' => '世界の終わり',
+    'result.reason.time_up' => 'シーズン終了（時間切れ）',
     'result.reason.all_dead' => '全てのスレッドが朽ち果てました',
     'result.reason.no_money' => '市場の資金が尽きました',
     'result.reason.over' => 'ゲーム終了',

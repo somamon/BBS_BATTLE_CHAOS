@@ -48,7 +48,7 @@ final class FinalizeAndResetRoundTest extends TestCase
         $this->resetter = new FakeGameStateResetter();
 
         $decay   = new DecayRate($market, $this->users);
-        $endgame = new EndgameStatus($decay, $this->threads, $this->users);
+        $endgame = new EndgameStatus($decay, $this->threads, $this->users, $this->rounds);
         $ranking = new RankingQuery($decay, $this->users, $holdings, $posts);
 
         $this->useCase = new FinalizeAndResetRound(

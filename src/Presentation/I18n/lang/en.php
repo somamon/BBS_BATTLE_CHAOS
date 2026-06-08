@@ -11,6 +11,8 @@ return [
     'nav.mypage'   => 'My Page',
     'header.market' => 'Market',
     'header.cash'  => 'Cash',
+    'header.season_ends_in' => 'Season ends in',
+    'header.season_renewing' => 'Renewing soon',
     'auth.logout'  => 'Log out',
     'auth.register' => 'Sign up',
     'auth.login'   => 'Log in',
@@ -246,6 +248,7 @@ return [
 
     // Result
     'result.world_end' => 'The world has ended',
+    'result.reason.time_up' => 'Season finished (time up)',
     'result.reason.all_dead' => 'All threads have decayed',
     'result.reason.no_money' => 'The market ran out of money',
     'result.reason.over' => 'Game over',

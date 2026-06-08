@@ -7,8 +7,9 @@ namespace App\Domain\Entity;
 use DateTimeImmutable;
 
 /**
- * ラウンド（M2）。1回の「ゲームの始まり〜終局」を表す。番号 = id。
- * 終局すると endedAt と reason が確定し、最終ランキングが {@see Round} 単位で保存される。
+ * ラウンド（M2）。1回の「シーズンの始まり〜終局」を表す。番号 = id。
+ * 終局すると endedAt と reason（time_up / all_dead / manual）が確定し、
+ * 最終ランキングが {@see Round} 単位で保存される。
  */
 final class Round
 {

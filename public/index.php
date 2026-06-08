@@ -92,6 +92,20 @@ if ($request->method() === 'GET' && (getenv('GAME_TICK_DRIVER') ?: 'web') !== 'c
     $container->get(App\Application\Service\GameTick::class)->run(new DateTimeImmutable());
 }
 
+// シーズン終了予定時刻をレイアウトのカウントダウンへ供給（GameTick の後に取り、リセット直後の新ラウンドを反映）。
+// 時間制オフ（期間0以下）やラウンド未取得・取得失敗時は非表示のまま続行する。
+try {
+    $duration = App\Config\Game::seasonDurationSec();
+    if ($duration > 0) {
+        $round = $container->get(App\Domain\Repository\RoundRepository::class)->current();
+        if ($round !== null) {
+            App\Infrastructure\Runtime\SeasonState::boot($round->startedAt->modify("+{$duration} seconds"));
+        }
+    }
+} catch (\Throwable $e) {
+    $logger->warning('season_state_boot_failed', ['error' => $e->getMessage()]);
+}
+
 try {
     $response = $router->dispatch($request);
 } catch (NotFoundException) {

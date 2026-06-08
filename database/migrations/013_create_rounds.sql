@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS rounds (
     id         BIGINT      NOT NULL AUTO_INCREMENT,
     started_at DATETIME    NOT NULL,
     ended_at   DATETIME    NULL DEFAULT NULL,          -- NULL=進行中。確定時に記録
-    reason     VARCHAR(20) NULL DEFAULT NULL,          -- 終局理由（all_dead / no_money / manual）
+    reason     VARCHAR(20) NULL DEFAULT NULL,          -- 終局理由（time_up / all_dead / manual）
     PRIMARY KEY (id),
     INDEX idx_rounds_ended (ended_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
