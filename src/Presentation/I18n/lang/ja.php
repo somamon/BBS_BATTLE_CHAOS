@@ -245,6 +245,10 @@ return [
     'me.col_value' => '評価額',
     'me.col_pnl' => '含み損益',
     'me.col_status' => '状態',
+    'me.name_label' => '表示名',
+    'me.name_hint' => 'ランキング・結果ページに表示される名前です。本名を出したくない場合は変更してください。',
+    'me.name_change' => '表示名を変更',
+    'me.name_changed' => '表示名を変更しました。',
 
     // 結果
     'result.world_end' => '世界の終わり',

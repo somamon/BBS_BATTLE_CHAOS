@@ -78,10 +78,13 @@ final class LoginWithGoogleTest extends TestCase
         $this->useCase->execute('sub-bot', 'bot@bots.local', true, '名前', $this->now);
     }
 
-    public function testFallbackDisplayNameWhenGoogleNameEmpty(): void
+    public function testUsesAnonymousHandleNotGoogleName(): void
     {
-        $result = $this->useCase->execute('sub-2', 'taro@example.com', true, '   ', $this->now);
-        // 空名はメールのローカル部にフォールバック。
-        self::assertSame('taro', $result->name);
+        // Google の表示名(本名想定)もメールのローカル部も既定の公開名には使わず、
+        // 匿名ハンドルにする（公開ランキングへの本名漏れ防止。マイページで変更可）。
+        $result = $this->useCase->execute('sub-2', 'taro@example.com', true, '山田太郎', $this->now);
+        self::assertNotSame('山田太郎', $result->name);
+        self::assertNotSame('taro', $result->name);
+        self::assertMatchesRegularExpression('/^ユーザー\d+$/u', $result->name);
     }
 }

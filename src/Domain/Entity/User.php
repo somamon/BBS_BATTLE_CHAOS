@@ -16,7 +16,7 @@ final class User
     public function __construct(
         public readonly string $id,
         public readonly string $email,
-        public readonly string $name,
+        public string $name,
         private ?string $passwordHash,
         private int $money,
         public readonly DateTimeImmutable $createdAt,
@@ -59,6 +59,12 @@ final class User
             isBot: false,
             googleSub: $googleSub,
         );
+    }
+
+    /** 表示名を変更する（呼び出し側で DisplayName により検証済みの値を渡すこと）。 */
+    public function rename(string $name): void
+    {
+        $this->name = $name;
     }
 
     /** メール確認が完了しているか。 */

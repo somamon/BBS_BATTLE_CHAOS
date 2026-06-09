@@ -85,7 +85,8 @@ final class PdoUserRepository implements UserRepository
     {
         $stmt = $this->pdo->prepare(
             'UPDATE users
-                SET money = :money,
+                SET name = :name,
+                    money = :money,
                     email_verified_at = :email_verified_at,
                     password_hash = :password_hash,
                     google_sub = :google_sub,
@@ -95,6 +96,7 @@ final class PdoUserRepository implements UserRepository
              WHERE id = :id'
         );
         $stmt->execute([
+            ':name'              => $user->name,
             ':money'             => $user->money(),
             ':email_verified_at' => $user->emailVerifiedAt()?->format('Y-m-d H:i:s'),
             ':password_hash'     => $user->passwordHash(),

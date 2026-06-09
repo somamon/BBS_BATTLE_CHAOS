@@ -10,10 +10,22 @@ use App\Presentation\View\View;
 ?>
 <h2><?= t('me.title') ?></h2>
 
+<?php if (!empty($flash)): ?><div class="flash"><?= View::e($flash) ?></div><?php endif; ?>
+
 <div class="card">
   <div><?= t('me.cash') ?> <strong><?= View::e(number_format($money)) ?></strong></div>
   <div><?= t('me.share_value') ?> <strong><?= View::e(number_format($shareValue)) ?></strong></div>
   <div><?= t('me.total') ?> <strong style="color:#cc0000;"><?= View::e(number_format($total)) ?></strong></div>
+</div>
+
+<div class="card">
+  <form method="post" action="/me/name">
+    <?= \App\Presentation\Http\Csrf::field() ?>
+    <label for="name"><?= t('me.name_label') ?></label>
+    <input type="text" id="name" name="name" value="<?= View::e($name) ?>" maxlength="50" required>
+    <div class="muted" style="margin-top:4px;"><?= t('me.name_hint') ?></div>
+    <button type="submit"><?= t('me.name_change') ?></button>
+  </form>
 </div>
 
 <h3><?= t('me.holdings_title') ?></h3>
