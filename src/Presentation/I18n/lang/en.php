@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 return [
+    // SEO (site-wide fallback meta description)
+    'seo.description' => 'A battle BBS where replies carry a stock price. Spot great posts early, invest, and sell high. Good posts survive, dead ones rot — an economy game that rewards a sharp eye.',
+
     // Common / nav
     'nav.overview' => 'Overview',
     'nav.threads'  => 'Threads',

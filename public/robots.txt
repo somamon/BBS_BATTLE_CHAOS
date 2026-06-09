@@ -1,0 +1,19 @@
+User-agent: *
+# 私的・フォーム・管理系はクロール不要（インデックスのゴミ防止）
+Disallow: /admin
+Disallow: /me
+Disallow: /account
+Disallow: /login
+Disallow: /register
+Disallow: /password
+Disallow: /verify
+Disallow: /report
+Disallow: /contact
+Disallow: /auth
+Disallow: /lang
+Disallow: /logout
+Disallow: /thread/create
+Disallow: /threads/dead
+Allow: /
+
+Sitemap: https://bbs-chaos.jp/sitemap.xml
