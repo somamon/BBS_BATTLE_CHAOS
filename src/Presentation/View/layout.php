@@ -273,19 +273,12 @@ foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/ad
 <?php endif; ?>
 <?= $content ?>
 <?php if ($showAd): ?>
-    <?php
-      // 広告(忍者admax)。検証クローラがタグを検出できるよう <script> をページに直書きする。
-      // 端末(UA)で出し分け：スマホ=320x50 / PC=728x90。同時読み込み＝二重表示を避ける。
-      $admaxUa  = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
-      $admaxSp  = preg_match('/Android|iPhone|iPod|Windows Phone|Mobile/i', $admaxUa) === 1;
-      $admaxSrc = $admaxSp
-          ? 'https://adm.shinobi.jp/s/0f43c4ef4902f683c8a53881a50a99da'
-          : 'https://adm.shinobi.jp/s/d18d7f080301bab1c4f5999780805793';
-    ?>
+    <?php /* 広告(忍者admax) 切り替えタグ。1本で PC 728x90 / SP 320x50 を忍者側が自動出し分け。
+             <script> を直書きするので検証クローラもタグを検出できる。 */ ?>
     <div class="ad-slot">
       <span class="ad-label">広告</span>
       <!-- admax -->
-      <script src="<?= View::e($admaxSrc) ?>"></script>
+      <script src="https://adm.shinobi.jp/o/768808d681842e89d0b88acbda54ac3d"></script>
       <!-- admax -->
     </div>
 <?php endif; ?>
