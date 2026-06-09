@@ -38,8 +38,10 @@ final class Csp
     {
         return "default-src 'self'; "
             . "script-src 'self' 'unsafe-inline' https:; "
-            . "style-src 'self' 'unsafe-inline'; "
+            . "style-src 'self' 'unsafe-inline' https:; "
             . "img-src 'self' data: https:; "
+            . "media-src https: data:; "
+            . "font-src 'self' data: https:; "
             . "frame-src https:; "
             . "connect-src 'self' https:; "
             . "base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
