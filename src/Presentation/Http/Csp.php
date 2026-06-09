@@ -37,7 +37,7 @@ final class Csp
     public static function policy(): string
     {
         return "default-src 'self'; "
-            . "script-src 'self' 'unsafe-inline' https:; "
+            . "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; "
             . "style-src 'self' 'unsafe-inline' https:; "
             . "img-src 'self' data: https:; "
             . "media-src https: data:; "

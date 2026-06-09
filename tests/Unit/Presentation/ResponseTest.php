@@ -26,8 +26,9 @@ final class ResponseTest extends TestCase
         // 広告(忍者admax)を動かすため、インライン＋https のスクリプト/フレームを許可すること。
         $csp = Response::html('<p>hi</p>')->headers()['Content-Security-Policy'];
 
-        self::assertStringContainsString("script-src 'self' 'unsafe-inline' https:", $csp);
+        self::assertStringContainsString("script-src 'self' 'unsafe-inline' 'unsafe-eval' https:", $csp);
         self::assertStringContainsString('frame-src https:', $csp);
+        self::assertStringContainsString('media-src https:', $csp);
     }
 
     public function testRedirectAlsoCarriesSecurityHeaders(): void
