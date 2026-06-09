@@ -146,9 +146,12 @@ foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/ad
   .resbody { margin: 4px 0 4px 1.5em; white-space: pre-wrap; }
 
   /* 広告枠（中身は同一オリジンの /ads/*.html を iframe 埋め込み） */
-  .ad-slot { text-align: center; margin: 14px 0; min-height: 90px; }
-  .ad-slot iframe { border: 0; display: inline-block; max-width: 100%; }
-  .ad-slot .ad-label { display: block; font-size: 10px; color: #999; margin-bottom: 2px; }
+  /* 広告枠。admax が吐く要素が左寄せ/float になっても中央に揃うよう flex で中央寄せ
+     （flex アイテムは float が無効化されるため、広告側の float:left も打ち消せる）。 */
+  .ad-slot { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 14px 0; }
+  .ad-slot > * { float: none; margin-left: 0; margin-right: 0; }
+  .ad-slot iframe, .ad-slot img, .ad-slot ins { max-width: 100%; border: 0; }
+  .ad-slot .ad-label { font-size: 10px; color: #999; }
 
   /* スマホ専用パーツ（PCでは隠す） */
   .tabbar { display: none; }
@@ -197,9 +200,6 @@ foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/ad
 
     /* 列の多い表は横スクロール */
     .table-wrap table { white-space: nowrap; }
-
-    /* スマホ広告は 300x50 なので予約高さを詰める（余白防止） */
-    .ad-slot { min-height: 50px; }
 
     h2 { font-size: 19px; }
     h3 { font-size: 15px; }
