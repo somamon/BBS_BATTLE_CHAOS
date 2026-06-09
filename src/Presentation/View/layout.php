@@ -36,13 +36,53 @@ $showAd = (
     || $isTab('/threads', '/ranking', '/result')  // 一覧・墓場・ランキング・結果
     || str_starts_with($path, '/thread/')          // スレ詳細(レス書き込み) ＆ スレ作成フォーム
 );
+
+// ===== SEO（タイトル/説明/正規URL/OGP/noindex）=====
+$siteName  = 'BBS BATTLE CHAOS';
+$pageTitle = ($title ?? '') !== '' && ($title ?? '') !== $siteName
+    ? ($title . '｜' . $siteName)
+    : $siteName;
+
+// ページ側が description を渡せば優先、無ければサイト共通の説明。
+$desc = (($description ?? null) !== null && $description !== '') ? $description : t('seo.description');
+
+// 絶対URLの基点。本番は APP_URL、無ければリクエストから構築。
+$seoBase = rtrim((string) (getenv('APP_URL') ?: ''), '/');
+if ($seoBase === '') {
+    $seoHttps = (($_SERVER['HTTPS'] ?? '') === 'on') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $seoBase  = ($seoHttps ? 'https' : 'http') . '://' . (string) ($_SERVER['HTTP_HOST'] ?? 'localhost');
+}
+$canonical = $seoBase . $path; // 正規URLからクエリは落とす（?page= 等の重複を防ぐ）
+$ogImg = (($ogImage ?? null) !== null && $ogImage !== '') ? $ogImage : ($seoBase . '/og.png');
+
+// noindex：私的・フォーム・薄いページは検索インデックスに載せない。
+$noindex = false;
+foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/admin', '/report', '/contact', '/lang', '/auth', '/logout', '/thread/create', '/threads/dead'] as $p) {
+    if ($path === $p || str_starts_with($path, $p . '/')) { $noindex = true; break; }
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= View::e($locale) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= View::e($title ?? 'BBS') ?></title>
+<title><?= View::e($pageTitle) ?></title>
+<meta name="description" content="<?= View::e($desc) ?>">
+<link rel="canonical" href="<?= View::e($canonical) ?>">
+<?php if ($noindex): ?>
+<meta name="robots" content="noindex,follow">
+<?php endif; ?>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="<?= View::e($siteName) ?>">
+<meta property="og:title" content="<?= View::e($pageTitle) ?>">
+<meta property="og:description" content="<?= View::e($desc) ?>">
+<meta property="og:url" content="<?= View::e($canonical) ?>">
+<meta property="og:image" content="<?= View::e($ogImg) ?>">
+<meta property="og:locale" content="<?= $locale === 'ja' ? 'ja_JP' : 'en_US' ?>">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<?= View::e($pageTitle) ?>">
+<meta name="twitter:description" content="<?= View::e($desc) ?>">
+<meta name="twitter:image" content="<?= View::e($ogImg) ?>">
 <style>
   body {
     font-family: "MS PGothic","ＭＳ Ｐゴシック","Hiragino Kaku Gothic ProN","ヒラギノ角ゴ ProN W3",Meiryo,sans-serif;

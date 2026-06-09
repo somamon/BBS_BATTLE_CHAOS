@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 安定ページのみ。個別スレは朽ちる/リセットされるため動的には載せない（soft-404防止）。 -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bbs-chaos.jp/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://bbs-chaos.jp/threads</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://bbs-chaos.jp/ranking</loc><changefreq>hourly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bbs-chaos.jp/result</loc><changefreq>daily</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bbs-chaos.jp/terms</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://bbs-chaos.jp/privacy</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+</urlset>

@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 return [
+    // SEO（メタ説明のサイト共通フォールバック）
+    'seo.description' => '掲示板のレスに株価がつく対戦型BBS。早く良レスを見抜いて投資し、高騰したら売り抜けろ。名作は生き残り過疎は朽ちる——目利きが報われる経済ゲーム。',
+
     // 共通・ナビ
     'nav.overview' => '概要',
     'nav.threads'  => 'スレ一覧',

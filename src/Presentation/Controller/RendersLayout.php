@@ -41,10 +41,13 @@ trait RendersLayout
         $content = View::render($template, $data);
 
         return View::render('layout', [
-            'title'   => $title,
-            'phase'   => $phase,
-            'me'      => $me,
-            'content' => $content,
+            'title'       => $title,
+            'phase'       => $phase,
+            'me'          => $me,
+            'content'     => $content,
+            // SEO: ページが $data に description / ogImage を入れれば layout が拾う（無ければ既定）。
+            'description' => $data['description'] ?? null,
+            'ogImage'     => $data['ogImage'] ?? null,
         ]);
     }
 }

@@ -86,6 +86,8 @@ final class ThreadController
             'posts'   => $data['posts'],
             'isLogin' => $this->auth->check(),
             'flash'   => Flash::pull(),
+            // SEO: スレ固有の説明（重複descriptionを避ける）。
+            'description' => mb_substr($data['thread']['title'], 0, 80) . '｜レスに投資して株価を動かす掲示板バトル。良レスを早く見抜いて仕込め。',
         ]);
         return Response::html($html);
     }
