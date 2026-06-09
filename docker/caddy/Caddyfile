@@ -15,26 +15,13 @@
 	file_server
 	encode gzip zstd
 
-	# 広告(忍者admax)用の静的HTMLだけ例外扱い。X-Frame-Options を SAMEORIGIN にして
-	# 自サイトのページから iframe で埋め込めるようにし、Referrer-Policy を緩めて
-	# 広告配信側に自サイトのオリジンを伝える(ドメイン検証が通らないと広告が出ない)。
-	@ads path /ads/*
-	@notads not path /ads/*
-
 	# HSTS（常時HTTPS強制）。HTTPS は Caddy が自動付与するため 80→443 も自動。
-	# /ads 以外は従来どおり厳格（DENY / no-referrer）。
-	header @notads {
+	# 広告タグはページに直書き（iframe隔離をやめた）ため、全パス一律のヘッダでよい。
+	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		X-Frame-Options "DENY"
 		Referrer-Policy "no-referrer"
-	}
-	# /ads は同一オリジンの iframe 埋め込みとリファラ送出のみ許可（中身は静的広告タグのみ）。
-	header @ads {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		X-Frame-Options "SAMEORIGIN"
-		Referrer-Policy "strict-origin-when-cross-origin"
 	}
 
 	# 機微ファイルへの直アクセス遮断（.env / .git / vendor 等は公開ルート外だが二重防御）。

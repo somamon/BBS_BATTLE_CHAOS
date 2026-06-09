@@ -273,27 +273,21 @@ foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/ad
 <?php endif; ?>
 <?= $content ?>
 <?php if ($showAd): ?>
-    <?php /* 広告（忍者admax）。端末ごとに片方だけ iframe を挿入＝見えない広告の二重表示を避ける。 */ ?>
+    <?php
+      // 広告(忍者admax)。検証クローラがタグを検出できるよう <script> をページに直書きする。
+      // 端末(UA)で出し分け：スマホ=320x50 / PC=728x90。同時読み込み＝二重表示を避ける。
+      $admaxUa  = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+      $admaxSp  = preg_match('/Android|iPhone|iPod|Windows Phone|Mobile/i', $admaxUa) === 1;
+      $admaxSrc = $admaxSp
+          ? 'https://adm.shinobi.jp/s/0f43c4ef4902f683c8a53881a50a99da'
+          : 'https://adm.shinobi.jp/s/d18d7f080301bab1c4f5999780805793';
+    ?>
     <div class="ad-slot">
       <span class="ad-label">広告</span>
-      <div id="ad-slot-main"></div>
+      <!-- admax -->
+      <script src="<?= View::e($admaxSrc) ?>"></script>
+      <!-- admax -->
     </div>
-    <script nonce="<?= View::e(\App\Presentation\Http\Csp::nonce()) ?>">
-    (function () {
-      var slot = document.getElementById('ad-slot-main');
-      if (!slot) { return; }
-      // 忍者admaxで登録した枠サイズに合わせる。違うサイズで登録したらここを直す。
-      var sp = window.matchMedia('(max-width: 600px)').matches;
-      var f  = document.createElement('iframe');
-      f.src    = sp ? '/ads/sp.html' : '/ads/pc.html';
-      f.width  = sp ? 320 : 728;   // スマホ:320x50 / PC:728x90
-      f.height = sp ? 50 : 90;
-      f.scrolling = 'no';
-      f.loading   = 'lazy';
-      f.title     = '広告';
-      slot.appendChild(f);
-    })();
-    </script>
 <?php endif; ?>
   </div>
   <footer style="border-top:1px solid #ccc; margin-top:16px; padding:10px; text-align:center; font-size:11px; color:#666;">

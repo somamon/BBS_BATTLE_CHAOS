@@ -24,12 +24,24 @@ final class Csp
         return self::$nonce;
     }
 
-    /** 送出する CSP ヘッダ値。script は self ＋ 当該リクエストの nonce のみ許可。 */
+    /**
+     * 送出する CSP ヘッダ値。
+     *
+     * 広告(忍者admax)はページ内で外部+インラインのスクリプトを実行し、
+     * 広告クリエイティブを各種ドメインの iframe/画像/ビーコンで配信するため、
+     * script/img/frame/connect を https に開く（'unsafe-inline' も許可）。
+     * トレードオフ: 厳格な nonce ベースより XSS 耐性は下がるが、ユーザー出力は
+     * すべて View::e でエスケープ済みのため実用上の露出は限定的（広告掲載のための妥協）。
+     * nonce は自前インラインJSの保険として引き続き付与するが、'unsafe-inline' 下では装飾的。
+     */
     public static function policy(): string
     {
-        $nonce = self::nonce();
-        return "default-src 'self'; script-src 'self' 'nonce-{$nonce}'; "
-            . "style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+        return "default-src 'self'; "
+            . "script-src 'self' 'unsafe-inline' https:; "
+            . "style-src 'self' 'unsafe-inline'; "
+            . "img-src 'self' data: https:; "
+            . "frame-src https:; "
+            . "connect-src 'self' https:; "
             . "base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
     }
 }
