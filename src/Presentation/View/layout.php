@@ -38,13 +38,16 @@ $showAd = (
 );
 
 // ===== SEO（タイトル/説明/正規URL/OGP/noindex）=====
+// 未指定でも安全に扱えるよう既定化（RendersLayout が通常は渡す）。
+$title       ??= '';
+$description ??= null;
+$ogImage     ??= null;
+
 $siteName  = 'BBS BATTLE CHAOS';
-$pageTitle = ($title ?? '') !== '' && ($title ?? '') !== $siteName
-    ? ($title . '｜' . $siteName)
-    : $siteName;
+$pageTitle = ($title !== '' && $title !== $siteName) ? ($title . '｜' . $siteName) : $siteName;
 
 // ページ側が description を渡せば優先、無ければサイト共通の説明。
-$desc = (($description ?? null) !== null && $description !== '') ? $description : t('seo.description');
+$desc = ($description !== null && $description !== '') ? $description : t('seo.description');
 
 // 絶対URLの基点。本番は APP_URL、無ければリクエストから構築。
 $seoBase = rtrim((string) (getenv('APP_URL') ?: ''), '/');
@@ -53,7 +56,7 @@ if ($seoBase === '') {
     $seoBase  = ($seoHttps ? 'https' : 'http') . '://' . (string) ($_SERVER['HTTP_HOST'] ?? 'localhost');
 }
 $canonical = $seoBase . $path; // 正規URLからクエリは落とす（?page= 等の重複を防ぐ）
-$ogImg = (($ogImage ?? null) !== null && $ogImage !== '') ? $ogImage : ($seoBase . '/og.png');
+$ogImg = ($ogImage !== null && $ogImage !== '') ? $ogImage : ($seoBase . '/og.png');
 
 // noindex：私的・フォーム・薄いページは検索インデックスに載せない。
 $noindex = false;
@@ -79,7 +82,7 @@ foreach (['/login', '/register', '/password', '/verify', '/me', '/account', '/ad
 <meta property="og:url" content="<?= View::e($canonical) ?>">
 <meta property="og:image" content="<?= View::e($ogImg) ?>">
 <meta property="og:locale" content="<?= $locale === 'ja' ? 'ja_JP' : 'en_US' ?>">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="<?= View::e($pageTitle) ?>">
 <meta name="twitter:description" content="<?= View::e($desc) ?>">
 <meta name="twitter:image" content="<?= View::e($ogImg) ?>">
