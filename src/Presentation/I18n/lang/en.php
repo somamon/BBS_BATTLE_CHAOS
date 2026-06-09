@@ -245,6 +245,10 @@ return [
     'me.col_value' => 'Value',
     'me.col_pnl' => 'P&L',
     'me.col_status' => 'Status',
+    'me.name_label' => 'Display name',
+    'me.name_hint' => 'This name appears on the ranking and result pages. Change it if you do not want to show your real name.',
+    'me.name_change' => 'Change display name',
+    'me.name_changed' => 'Display name updated.',
 
     // Result
     'result.world_end' => 'The world has ended',

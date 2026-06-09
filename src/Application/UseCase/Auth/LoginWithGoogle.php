@@ -9,7 +9,6 @@ use App\Application\Port\Logger;
 use App\Application\Port\TransactionManager;
 use App\Domain\Entity\User;
 use App\Domain\Repository\UserRepository;
-use App\Domain\ValueObject\DisplayName;
 use App\Domain\ValueObject\Email;
 use DateTimeImmutable;
 
@@ -64,7 +63,9 @@ final class LoginWithGoogle
         } catch (\Throwable) {
             throw AuthException::googleFailed();
         }
-        $name = $this->safeDisplayName($nameRaw, $email->value);
+        // Google の表示名は本名であることが多い。公開ランキング等に出る表示名へは使わず、
+        // プライバシー優先で匿名ハンドルを既定にする（ユーザーはマイページで任意に変更できる）。
+        $name = $this->randomHandle();
 
         return $this->tx->run(function () use ($googleSub, $email, $name, $now): User {
             // 3. 同一メールの既存アカウントに連携。
@@ -99,27 +100,9 @@ final class LoginWithGoogle
         });
     }
 
-    /** Google の表示名を安全な DisplayName に整える（不正・長すぎ・空はフォールバック）。 */
-    private function safeDisplayName(string $nameRaw, string $email): string
+    /** 新規Googleユーザーの既定表示名。本名を避けた匿名ハンドル（後からマイページで変更可）。 */
+    private function randomHandle(): string
     {
-        // 制御文字を除去し、50文字に丸める。
-        $name = preg_replace('/[\x00-\x1F\x7F]/u', '', trim($nameRaw)) ?? '';
-        $name = mb_substr($name, 0, DisplayName::MAX_LENGTH);
-
-        if ($name === '') {
-            // メールのローカル部、それも不可なら固定文言。
-            $local = (string) strstr($email, '@', true);
-            $name  = mb_substr(preg_replace('/[\x00-\x1F\x7F]/u', '', $local) ?? '', 0, DisplayName::MAX_LENGTH);
-            if ($name === '') {
-                $name = 'ユーザー';
-            }
-        }
-
-        // 念のため VO で最終検証（ここを通れば保存可能）。失敗時は固定文言。
-        try {
-            return DisplayName::fromString($name)->value;
-        } catch (\Throwable) {
-            return 'ユーザー';
-        }
+        return 'ユーザー' . random_int(1000, 999999);
     }
 }

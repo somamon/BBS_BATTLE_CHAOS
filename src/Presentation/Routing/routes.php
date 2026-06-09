@@ -61,6 +61,7 @@ $router->post('/password/reset', [AuthController::class, 'reset'], ['csrf']);   
 
 // マイページ・ランキング・結果
 $router->get('/me', [MyPageController::class, 'index'], ['auth']);
+$router->post('/me/name', [MyPageController::class, 'updateName'], ['csrf', 'auth']); // 表示名の変更
 $router->get('/ranking', [RankingController::class, 'index']);
 $router->get('/result', [ResultController::class, 'index']);
 
