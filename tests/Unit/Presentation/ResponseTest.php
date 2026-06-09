@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Presentation;
 
-use App\Presentation\Http\Csp;
 use App\Presentation\Http\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -22,12 +21,13 @@ final class ResponseTest extends TestCase
         self::assertSame('text/html; charset=UTF-8', $headers['Content-Type']);
     }
 
-    public function testCspAllowsTheRequestNonceForInlineScript(): void
+    public function testCspAllowsInlineAndHttpsForAdNetwork(): void
     {
-        // レイアウトのカウントダウン等のインラインJSが nonce で許可されること。
+        // 広告(忍者admax)を動かすため、インライン＋https のスクリプト/フレームを許可すること。
         $csp = Response::html('<p>hi</p>')->headers()['Content-Security-Policy'];
 
-        self::assertStringContainsString("script-src 'self' 'nonce-" . Csp::nonce() . "'", $csp);
+        self::assertStringContainsString("script-src 'self' 'unsafe-inline' https:", $csp);
+        self::assertStringContainsString('frame-src https:', $csp);
     }
 
     public function testRedirectAlsoCarriesSecurityHeaders(): void
